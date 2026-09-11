@@ -7,18 +7,18 @@ from pydantic import BaseModel, Field
 
 
 class Memory(BaseModel):
-    shortMemory: list[dict[str, Any]] = Field(default_factory=list)
-    longMemory: dict[str, Any] = Field(default_factory=dict)
+    shortMemory: list[dict[str, Any]] | None = Field(default_factory=list)
+    longMemory: dict[str, Any] | None = Field(default_factory=dict)
 
 
 class SlowData(BaseModel):
-    query: str = ""
+    query: str | None = ""
     tvMode: str | int | None = None
-    segment: dict[str, Any] = Field(default_factory=dict)
-    memory: Memory = Field(default_factory=Memory)
-    toolHistory: list[dict[str, Any]] = Field(default_factory=list)
-    toolList: list[Any] = Field(default_factory=list)
-    timestamp: str | None = None
+    segment: dict[str, Any] | None = Field(default_factory=dict)
+    memory: Memory | None = Field(default_factory=Memory)
+    toolHistory: list[dict[str, Any]] | None = Field(default_factory=list)
+    toolList: list[Any] | None = Field(default_factory=list)
+    timestamp: str | int | float | None = None
     debug: bool | None = None
 
     class Config:
@@ -26,10 +26,10 @@ class SlowData(BaseModel):
 
 
 class SlowRequest(BaseModel):
-    traceId: str = ""
-    deviceId: str = ""
+    traceId: str | None = ""
+    deviceId: str | None = ""
     deviceType: str | None = None
-    data: SlowData = Field(default_factory=SlowData)
+    data: SlowData | None = Field(default_factory=SlowData)
 
     class Config:
         extra = "allow"

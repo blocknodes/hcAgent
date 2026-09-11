@@ -23,6 +23,8 @@ _CARTOON_RE = re.compile(r"动漫|动画片|卡通")
 
 
 def build_slow_response(req: SlowRequest) -> dict[str, Any]:
+    if req.data is None:
+        return _error("missing data")
     query = (req.data.query or "").strip()
     if not query:
         return _error("empty query")
