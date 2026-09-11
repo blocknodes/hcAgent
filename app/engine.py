@@ -13,13 +13,14 @@
 """
 from __future__ import annotations
 
+import asyncio
 import threading
 import time
 import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from . import config, llm
+from . import config, hctools, llm
 from .prompts import T0_PLAN_PROMPT, T1_STEP_PROMPT
 
 # 域名闭合集（供 LLM 输出校验）。空串=未定，由 LLM 必须给出；为保鲁棒给一个中性默认。
@@ -199,15 +200,15 @@ class TraceStateMachine:
         self._state: dict[str, dict[str, Any]] = {}
         self._ttl = ttl
 
-    def tick(self, trace_id: str, query: str, history: list[dict[str, Any]] | None) -> tuple[list[Intent], bool]:
+    async def tick(self, trace_id: str, query: str, history: list[dict[str, Any]] | None) -> tuple[list[Intent], bool]:
         entry = self._load(trace_id)
         if entry is None:
-            return self._first(trace_id, query, history)
-        return self._continue(trace_id, history)
+            return await self._first(trace_id, query, history)
+        return await self._continue(trace_id, history)
 
     # ---- 首轮：T0（一次 LLM）----
-    def _first(self, trace_id: str, query: str, history) -> tuple[list[Intent], bool]:
-        plan = self._plan(query)
+    async def _first(self, trace_id: str, query: str, history) -> tuple[list[Intent], bool]:
+        plan = await self._plan(query)
         if not plan.intents:
             # LLM 没出计划（空/纯聊天/失败）→ 兜底：单一自包含意图（非语言规则）
             return [Intent(query=query, domain="", tool="execute", index=1)], True
@@ -220,8 +221,8 @@ class TraceStateMachine:
             self._store(trace_id, plan)
         return batch, stop
 
-    def _plan(self, query: str) -> Plan:
-        message = llm.chat([{"role": "system", "content": T0_PLAN_PROMPT},
+    async def _plan(self, query: str) -> Plan:
+        message = await llm.chat([{"role": "system", "content": T0_PLAN_PROMPT},
                             {"role": "user", "content": f"用户请求：{query}"}],
                            model=config.MODEL)
         if "__error__" in message:
@@ -240,7 +241,7 @@ class TraceStateMachine:
         return parse_plan(parsed)
 
     # ---- 续跑：T1+（纯 LLM 改写当前 step 的自包含 query）----
-    def _continue(self, trace_id: str, history) -> tuple[list[Intent], bool]:
+    async def _continue(self, trace_id: str, history) -> tuple[list[Intent], bool]:
         plan: Plan = self._state[trace_id]["plan"]
         executed = _executed_indexes(history)
         batch = next_batch(plan, executed)
@@ -248,14 +249,16 @@ class TraceStateMachine:
             self._clear(trace_id)
             return [], True
         tool_result = _tool_result_text(history)
-        resolved: list[Intent] = []
-        for it in batch:
+        # 批内依赖改写的多个意图相互独立，并发执行（真并发收益点）
+        async def resolve(it: Intent) -> Intent:
             if it.depends:
-                q = self._rewrite_step(it.query, tool_result)
+                q = await self._rewrite_step(it.query, tool_result)
             else:
                 q = it.query
-            resolved.append(Intent(query=q, domain=it.domain, tool=it.tool,
-                                   index=it.index, depends=it.depends, dep_on=it.dep_on))
+            return Intent(query=q, domain=it.domain, tool=it.tool,
+                          index=it.index, depends=it.depends, dep_on=it.dep_on)
+
+        resolved = list(await asyncio.gather(*[resolve(it) for it in batch]))
         cursor = max((i.index for i in resolved), default=0)
         remaining = [i for i in plan.intents if i.index > cursor]
         stop = not remaining
@@ -265,9 +268,9 @@ class TraceStateMachine:
             self._store(trace_id, plan)
         return resolved, stop
 
-    def _rewrite_step(self, q: str, tool_result: str) -> str:
+    async def _rewrite_step(self, q: str, tool_result: str) -> str:
         user = f"待执行意图:{q}\n" + (f"工具结果:{tool_result}" if tool_result else "")
-        message = llm.chat([{"role": "system", "content": T1_STEP_PROMPT},
+        message = await llm.chat([{"role": "system", "content": T1_STEP_PROMPT},
                             {"role": "user", "content": user}],
                            model=config.MODEL)
         if "__error__" in message:
@@ -297,15 +300,35 @@ class TraceStateMachine:
 
 
 # ---------------------------------------------------------------------------
+# hcTools 参数解析（不再 mock：把 (query, domain) 交给 hcTools，拿最终 tool+params）
+# ---------------------------------------------------------------------------
+# hcAgent 内部域 → hcTools domain_key。当前只启用了 vod（其余暂不接）。
+_HCTOOLS_DOMAINS = {"vod": "vod"}
+
+
+async def _hctools_params(it: Intent) -> tuple[str, dict[str, Any]]:
+    """对启用域调用 hcTools 拿最终参数；未启用/失败返回 ("", {})，沿用 mock 参数。"""
+    domain_key = _HCTOOLS_DOMAINS.get(it.domain)
+    if not domain_key:
+        return "", {}
+    try:
+        return await hctools.predict(it.query, domain_key)
+    except Exception:  # noqa: BLE001 hcTools 不可用不阻断编排
+        return "", {}
+
+
+# ---------------------------------------------------------------------------
 # 响应组装
 # ---------------------------------------------------------------------------
-def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
+async def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
+    # 批内各 step 的 hcTools 调用相互独立，并发执行
+    results = await asyncio.gather(*[_hctools_params(it) for it in batch])
     steps: list[dict[str, Any]] = []
-    for it in batch:
+    for it, (tool, params) in zip(batch, results):
         steps.append({
             "id": f"s{it.index}",
-            "toolName": it.tool or "execute",
-            "parameters": {"query": it.query},
+            "toolName": tool or it.tool or "execute",
+            "parameters": params or {"query": it.query},
             "plan": None,
             "dependsOn": [f"s{it.dep_on}"] if it.depends else [],
             "retext": it.query,
@@ -316,7 +339,7 @@ def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
 _SM = TraceStateMachine()
 
 
-def build_response(req) -> dict[str, Any]:
+async def build_response(req) -> dict[str, Any]:
     if req.data is None:
         return _error("missing data")
     query = (req.data.query or "").strip()
@@ -326,8 +349,8 @@ def build_response(req) -> dict[str, Any]:
     device_id = req.deviceId or ""
     history = req.data.toolHistory or []
 
-    batch, stop = _SM.tick(trace_id, query, history)
-    steps = _build_steps(batch)
+    batch, stop = await _SM.tick(trace_id, query, history)
+    steps = await _build_steps(batch)
     body = {
         "code": 200, "message": "success", "traceId": trace_id, "deviceId": device_id,
         "data": {

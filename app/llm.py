@@ -1,6 +1,6 @@
-"""LLM 客户端：OpenAI-format /v1/chat/completions + 重试 + JSON 提取。
+"""LLM 客户端（异步）：OpenAI-format /v1/chat/completions + 重试 + JSON 提取。
 
-对齐 juagent/orchestrator/llm.py 契约，够编排侧拆解/改写用即可。
+对齐 hcTools 的做法：用 httpx.AsyncClient 实现真并发（单连接池复用）。
 会以 info 级打印每次调用的输入与输出（便于观测 LLM 链路）。
 """
 from __future__ import annotations
@@ -8,16 +8,26 @@ from __future__ import annotations
 import json
 import logging
 import time
-import urllib.error
-import urllib.request
 from typing import Any
+
+import httpx
 
 from . import config
 
 logger = logging.getLogger("hcAgent.llm")
 
+# 复用连接池：并发请求共享一个客户端，避免每次新建连接。
+_client: httpx.AsyncClient | None = None
 
-def chat(
+
+def _get_client() -> httpx.AsyncClient:
+    global _client
+    if _client is None:
+        _client = httpx.AsyncClient(timeout=config.TIMEOUT)
+    return _client
+
+
+async def chat(
     messages: list[dict[str, Any]],
     *,
     model: str = config.MODEL,
@@ -27,24 +37,29 @@ def chat(
 
     带小型重试：429/反序列化失败重试，4xx 非 429 直接放弃。
     """
-    payload = {"model": model, "messages": messages, "temperature": temperature}
-    body = json.dumps(payload, ensure_ascii=False).encode()
+    payload: dict[str, Any] = {"model": model, "messages": messages}
+    if not model.startswith("gpt-5"):
+        payload["temperature"] = temperature
+        # 参考 hcTools/compare：禁用 thinking，baseline 不开只会回 " thinking"
+        payload["chat_template_kwargs"] = {"enable_thinking": False}
+
+    headers = {"Content-Type": "application/json"}
+    if config.API_KEY:
+        headers["Authorization"] = f"Bearer {config.API_KEY}"
+
     last = ""
     started = time.perf_counter()
+    client = _get_client()
     for attempt in range(max(1, config.MAX_RETRY)):
-        req = urllib.request.Request(
-            f"{config.API_BASE}/chat/completions",
-            data=body,
-            headers={"Authorization": f"Bearer {config.API_KEY}",
-                     "Content-Type": "application/json"},
-            method="POST",
-        )
         try:
-            with urllib.request.urlopen(req, timeout=config.TIMEOUT) as resp:
-                data = json.loads(resp.read().decode())
-        except urllib.error.HTTPError as exc:
-            last = f"HTTP {exc.code}: {exc.read().decode('utf-8', 'ignore')[:200]}"
-            if exc.code != 429 and 400 <= exc.code < 500:
+            resp = await client.post(
+                f"{config.API_BASE}/chat/completions", json=payload, headers=headers
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        except httpx.HTTPStatusError as exc:
+            last = f"HTTP {exc.response.status_code}: {exc.response.text[:200]}"
+            if exc.response.status_code != 429 and 400 <= exc.response.status_code < 500:
                 break
             continue
         except Exception as exc:  # noqa: BLE001
@@ -63,6 +78,14 @@ def chat(
         )
         return message
     return {"__error__": last}
+
+
+async def close() -> None:
+    """关闭复用的连接池（应用退出时调用）。"""
+    global _client
+    if _client is not None:
+        await _client.aclose()
+        _client = None
 
 
 def text_of(message: dict[str, Any]) -> str:

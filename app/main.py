@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -32,10 +33,21 @@ logging.basicConfig(
 )
 logger = logging.getLogger("hcAgent")
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    # 关闭复用的异步连接池（LLM 网关 / hcTools）
+    from . import hctools, llm
+    await llm.close()
+    await hctools.close()
+
+
 app = FastAPI(
     title="hcAgent",
     description="juagent poc 慢任务接口（纯 LLM 编排入口）",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 
@@ -90,7 +102,7 @@ async def slow_agent(poc_id: str, req: SlowRequest, request: Request) -> JSONRes
         json.dumps(req.model_dump(), ensure_ascii=False),
     )
 
-    # 目标架构：恒定走 LLM 主干（T0/T1 全 LLM，编排层零规则）。
-    body = build_response_llm(req)
+    # 目标架构：恒定走 LLM 主干（T0/T1 全 LLM，编排层零规则）。异步执行以支持并发。
+    body = await build_response_llm(req)
     logger.info("RESP %s body=%s", poc_id, json.dumps(body, ensure_ascii=False))
     return JSONResponse(content=body, status_code=body.get("code", 200))

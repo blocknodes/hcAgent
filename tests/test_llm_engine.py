@@ -34,7 +34,7 @@ class FakeLLM:
         self.t0_times = 0
         self.t1_times = 0
 
-    def chat(self, messages, model="", temperature=0.0):
+    async def chat(self, messages, model="", temperature=0.0):
         sys_prompt = messages[0]["content"]
         if T0_PLAN_PROMPT in sys_prompt:
             self.t0_times += 1
@@ -49,6 +49,10 @@ class FakeLLM:
 def fllm(monkeypatch):
     fake = FakeLLM()
     monkeypatch.setattr(engine.llm, "chat", fake.chat)
+    # 测试不连网：mock hcTools，域 vod 直接返回占位 (tool, params)
+    async def fake_hctools(query, domain, metadata=None):
+        return "vod_search", {"query": query}
+    monkeypatch.setattr(engine.hctools, "predict", fake_hctools)
     return fake
 
 

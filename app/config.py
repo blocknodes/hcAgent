@@ -11,6 +11,9 @@ import os
 API_BASE = (os.environ.get("HC_LLM_API_BASE", "http://10.19.96.219:4003/v1")).rstrip("/")
 API_KEY = os.environ.get("HC_LLM_API_KEY", "")
 
+# hcTools 意图解析服务地址（POST /api/predict，拿最终工具与参数）。
+HCTOOLS_BASE = (os.environ.get("HC_HCTOOLS_BASE", "http://127.0.0.1:8084")).rstrip("/")
+
 # ---- 常量默认值（不读环境）----
 MODEL = "baseline"
 TIMEOUT = 120.0
