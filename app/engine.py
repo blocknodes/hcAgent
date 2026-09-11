@@ -20,7 +20,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from . import config, hctools, llm
+from . import config, detect, hctools, llm
 from .prompts import T0_PLAN_PROMPT, T1_STEP_PROMPT
 
 # 域名闭合集（供 LLM 输出校验）。空串=未定，由 LLM 必须给出；为保鲁棒给一个中性默认。
@@ -35,6 +35,7 @@ class Intent:
     index: int = 0          # 1-start 计划序号
     depends: bool = False
     dep_on: int = 0        # 所依赖条的 1-start 计划序号（0=无依赖）
+    src: str = ""          # 喂给 hcTools 做权威解析的原文（无小，默认=query）
 
 
 @dataclass
@@ -89,6 +90,20 @@ def parse_plan(value: Any) -> Plan:
             depends=dep_on > 0, dep_on=dep_on, index=i,
         ))
     return Plan(intents=intents)
+
+
+def _with_source(plan: Plan, src: str) -> Plan:
+    """给计划内每个意图拍上 src=原文 + detect 判域修正。
+
+    detect_domain 用原文在 LLM 判的 domain 上做确定性覆盖（badcase/正则）。
+    命中即改 domain；未命中保留 LLM 判定。domain 定了，tool+params 仍交给 hcTools。
+    """
+    out: list[Intent] = []
+    for it in plan.intents:
+        domain = detect.detect_domain(src, it.domain)
+        out.append(Intent(query=it.query, domain=domain, tool=it.tool,
+                          index=it.index, depends=it.depends, dep_on=it.dep_on, src=src))
+    return Plan(intents=out)
 
 
 def _extract_bare_objects(text: str) -> list[dict]:
@@ -211,7 +226,8 @@ class TraceStateMachine:
         plan = await self._plan(query)
         if not plan.intents:
             # LLM 没出计划（空/纯聊天/失败）→ 兜底：单一自包含意图（非语言规则）
-            return [Intent(query=query, domain="", tool="execute", index=1)], True
+            return [Intent(query=query, domain="", tool="execute", index=1, src=query)], True
+        plan = _with_source(plan, query)
         executed = _executed_indexes(history)
         batch = next_batch(plan, executed)
         if not batch:
@@ -256,7 +272,7 @@ class TraceStateMachine:
             else:
                 q = it.query
             return Intent(query=q, domain=it.domain, tool=it.tool,
-                          index=it.index, depends=it.depends, dep_on=it.dep_on)
+                          index=it.index, depends=it.depends, dep_on=it.dep_on, src=it.src)
 
         resolved = list(await asyncio.gather(*[resolve(it) for it in batch]))
         cursor = max((i.index for i in resolved), default=0)
@@ -302,17 +318,31 @@ class TraceStateMachine:
 # ---------------------------------------------------------------------------
 # hcTools 参数解析（不再 mock：把 (query, domain) 交给 hcTools，拿最终 tool+params）
 # ---------------------------------------------------------------------------
-# hcAgent 内部域 → hcTools domain_key。当前只启用了 vod（其余暂不接）。
-_HCTOOLS_DOMAINS = {"vod": "vod"}
+# hcAgent 内部域 → hcTools domain_key。全部 e2e 域都接 hcTools 解析最终 tool+params。
+_HCTOOLS_DOMAINS = {
+    "vod": "vod",
+    "audio": "audio",
+    "music": "music",
+    "device": "device",
+    "education": "education",
+    "sports": "sports",
+    "children": "children",
+}
 
 
 async def _hctools_params(it: Intent) -> tuple[str, dict[str, Any]]:
-    """对启用域调用 hcTools 拿最终参数；未启用/失败返回 ("", {})，沿用 mock 参数。"""
+    """对启用域调用 hcTools 拿最终参数；未启用/失败返回 ("", {})，沿用 mock 参数。
+
+    用 src=原文 让 hcTools 做权威 select+fill（它对这些域确定性/示例已达 97-100%）。
+    改写 q 仅用于显示/指代解析；非依赖步的改写会丢掉唱/队/可爱 等判别信号，
+    故工具选型必须以用户原话为准。
+    """
     domain_key = _HCTOOLS_DOMAINS.get(it.domain)
     if not domain_key:
         return "", {}
     try:
-        return await hctools.predict(it.query, domain_key)
+        src = it.src or it.query
+        return await hctools.predict(src, domain_key)
     except Exception:  # noqa: BLE001 hcTools 不可用不阻断编排
         return "", {}
 
