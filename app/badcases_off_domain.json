@@ -1,0 +1,320 @@
+{
+ "badcases": [
+  {
+   "query": "Taylor Swift的《1989》专辑里有哪些歌",
+   "domain": "qa"
+  },
+  {
+   "query": "长安三万里通过哪些诗句串联起了李白的一生？",
+   "domain": "qa"
+  },
+  {
+   "query": "《再见爱人第五季》有哪些值得关注的短评？",
+   "domain": "qa"
+  },
+  {
+   "query": "哪吒为什么要用莲花给自己做新的身体呀？",
+   "domain": "qa"
+  },
+  {
+   "query": "关于‘三角形内角和’的知识课程有哪些？",
+   "domain": "qa"
+  },
+  {
+   "query": "小猪佩奇里佩奇的班级里有多少个同学？",
+   "domain": "qa"
+  },
+  {
+   "query": "辛芷蕾凭借哪部影片获得了威尼斯影后",
+   "domain": "qa"
+  },
+  {
+   "query": "我要看田曦薇说我要杀猪养你那个片段",
+   "domain": "qa"
+  },
+  {
+   "query": "周杰伦的《七里香》专辑是哪年出的？",
+   "domain": "qa"
+  },
+  {
+   "query": "《我是歌手》最新一期什么时候播？",
+   "domain": "qa"
+  },
+  {
+   "query": "播放张东升带岳父岳母爬山那个片段",
+   "domain": "qa"
+  },
+  {
+   "query": "怎么给3岁的小朋友选适合听的儿歌",
+   "domain": "music"
+  },
+  {
+   "query": "Beyond（乐队）是哪年成立的",
+   "domain": "qa"
+  },
+  {
+   "query": "《黑色风暴》这首歌所在专辑是什么",
+   "domain": "qa"
+  },
+  {
+   "query": "根据张桂梅真实事迹改编的电视剧",
+   "domain": "qa"
+  },
+  {
+   "query": "我要看安陵容在冰上跳舞那个片段",
+   "domain": "qa"
+  },
+  {
+   "query": "给初中生推荐的全科考点冲刺课程",
+   "domain": "qa"
+  },
+  {
+   "query": "我要看第一次鸦片战争相关的课程",
+   "domain": "qa"
+  },
+  {
+   "query": "中国香港票房最高的影片是哪部",
+   "domain": "qa"
+  },
+  {
+   "query": "获得金鸡奖最佳女主角的是谁？",
+   "domain": "qa"
+  },
+  {
+   "query": "天赐的声音里面比较好听的歌曲",
+   "domain": "qa"
+  },
+  {
+   "query": "我要看高启强认干爹那个片段",
+   "domain": "qa"
+  },
+  {
+   "query": "米奇妙妙屋里住了多少小动物",
+   "domain": "qa"
+  },
+  {
+   "query": "汪汪队立大功里有几只狗狗？",
+   "domain": "qa"
+  },
+  {
+   "query": "《漫长的季节》讲了什么？",
+   "domain": "qa"
+  },
+  {
+   "query": "甄嬛在倚梅园许愿那个片段",
+   "domain": "qa"
+  },
+  {
+   "query": "泰坦尼克号最经典的cut",
+   "domain": "qa"
+  },
+  {
+   "query": "小学语文作文辅导的课程？",
+   "domain": "qa"
+  },
+  {
+   "query": "打开斗罗大陆大结局那一集",
+   "domain": "audio"
+  },
+  {
+   "query": "2026年春晚周深唱的歌",
+   "domain": "qa"
+  },
+  {
+   "query": "甄嬛传沈眉庄扮演者是谁",
+   "domain": "qa"
+  },
+  {
+   "query": "祁同伟吞枪自尽那个片段",
+   "domain": "qa"
+  },
+  {
+   "query": "樱桃小丸子的好朋友是谁",
+   "domain": "qa"
+  },
+  {
+   "query": "超级飞侠的总部在哪里？",
+   "domain": "qa"
+  },
+  {
+   "query": "熊出没主要讲了什么故事",
+   "domain": "qa"
+  },
+  {
+   "query": "播放1岁半宝宝听的歌曲",
+   "domain": "music"
+  },
+  {
+   "query": "播放儿歌爸爸妈妈去上班",
+   "domain": "music"
+  },
+  {
+   "query": "我要看化学质量守恒定律",
+   "domain": "qa"
+  },
+  {
+   "query": "有哪些周杰伦作曲的歌？",
+   "domain": "qa"
+  },
+  {
+   "query": "无间道天台对决的片段",
+   "domain": "qa"
+  },
+  {
+   "query": "小猪佩奇今年多大了？",
+   "domain": "qa"
+  },
+  {
+   "query": "海底小纵队里谁是队长",
+   "domain": "qa"
+  },
+  {
+   "query": "疯狂元素城二上映了吗",
+   "domain": "qa"
+  },
+  {
+   "query": "播放三国演义火烧赤壁",
+   "domain": "audio"
+  },
+  {
+   "query": "找自己这首歌是谁唱的",
+   "domain": "qa"
+  },
+  {
+   "query": "放首孙燕姿治愈系的歌",
+   "domain": "qa"
+  },
+  {
+   "query": "高中生物理考点精讲",
+   "domain": "qa"
+  },
+  {
+   "query": "给我放西游记第六集",
+   "domain": "audio"
+  },
+  {
+   "query": "这首歌演唱者的简介",
+   "domain": "qa"
+  },
+  {
+   "query": "《甄嬛传》演员表",
+   "domain": "qa"
+  },
+  {
+   "query": "宝宝巴士儿歌免费",
+   "domain": "music"
+  },
+  {
+   "query": "播放不花钱的儿歌",
+   "domain": "music"
+  },
+  {
+   "query": "高中语文课外内容",
+   "domain": "qa"
+  },
+  {
+   "query": "免费初中生物课程",
+   "domain": "qa"
+  },
+  {
+   "query": "小升初英语辅导课",
+   "domain": "qa"
+  },
+  {
+   "query": "直角三角形的面积",
+   "domain": "qa"
+  },
+  {
+   "query": "帮我播放风起洛阳",
+   "domain": "audio"
+  },
+  {
+   "query": "给我放雪中悍刀行",
+   "domain": "audio"
+  },
+  {
+   "query": "直接播三体第二部",
+   "domain": "audio"
+  },
+  {
+   "query": "兰亭序是谁写的词",
+   "domain": "qa"
+  },
+  {
+   "query": "播放情深深雨濛濛",
+   "domain": "music"
+  },
+  {
+   "query": "播放偷偷藏不住",
+   "domain": "audio"
+  },
+  {
+   "query": "送你一朵小红花",
+   "domain": "music"
+  },
+  {
+   "query": "适合睡前听的歌",
+   "domain": "qa"
+  },
+  {
+   "query": "小兔子乖乖儿歌",
+   "domain": "music"
+  },
+  {
+   "query": "我要听虫儿飞",
+   "domain": "music"
+  },
+  {
+   "query": "小学数学内容",
+   "domain": "qa"
+  },
+  {
+   "query": "游泳安全知识",
+   "domain": "qa"
+  },
+  {
+   "query": "给我放庆余年",
+   "domain": "audio"
+  },
+  {
+   "query": "播放觉醒年代",
+   "domain": "audio"
+  },
+  {
+   "query": "邓紫棋的简介",
+   "domain": "qa"
+  },
+  {
+   "query": "英语启蒙儿歌",
+   "domain": "music"
+  },
+  {
+   "query": "拔萝卜儿歌",
+   "domain": "music"
+  },
+  {
+   "query": "白龙马儿歌",
+   "domain": "music"
+  },
+  {
+   "query": "小学素质课",
+   "domain": "qa"
+  },
+  {
+   "query": "播放虫儿飞",
+   "domain": "music"
+  },
+  {
+   "query": "贝乐虎儿歌",
+   "domain": "music"
+  },
+  {
+   "query": "巴士儿歌",
+   "domain": "music"
+  },
+  {
+   "query": "播放三体",
+   "domain": "audio"
+  }
+ ]
+}

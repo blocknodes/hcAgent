@@ -92,15 +92,16 @@ def parse_plan(value: Any) -> Plan:
     return Plan(intents=intents)
 
 
-def _with_source(plan: Plan, src: str) -> Plan:
+def _with_source(plan: Plan, src: str, tv_mode: str | int = "0") -> Plan:
     """给计划内每个意图拍上 src=原文 + detect 判域修正。
 
-    detect_domain 用原文在 LLM 判的 domain 上做确定性覆盖（badcase/正则）。
+    detect_domain 用原文在 LLM 判的 domain 上做确定性覆盖（badcase/正则），
+    tv_mode 透传到 detect（0=亮屏 / 6=息屏分叉）。
     命中即改 domain；未命中保留 LLM 判定。domain 定了，tool+params 仍交给 hcTools。
     """
     out: list[Intent] = []
     for it in plan.intents:
-        domain = detect.detect_domain(src, it.domain)
+        domain = detect.detect_domain(src, it.domain, tv_mode=tv_mode)
         out.append(Intent(query=it.query, domain=domain, tool=it.tool,
                           index=it.index, depends=it.depends, dep_on=it.dep_on, src=src))
     return Plan(intents=out)
@@ -215,19 +216,26 @@ class TraceStateMachine:
         self._state: dict[str, dict[str, Any]] = {}
         self._ttl = ttl
 
-    async def tick(self, trace_id: str, query: str, history: list[dict[str, Any]] | None) -> tuple[list[Intent], bool]:
+    async def tick(self, trace_id: str, query: str, history: list[dict[str, Any]] | None,
+                   tv_mode: str | int = "0") -> tuple[list[Intent], bool]:
         entry = self._load(trace_id)
         if entry is None:
-            return await self._first(trace_id, query, history)
+            return await self._first(trace_id, query, history, tv_mode=tv_mode)
         return await self._continue(trace_id, history)
 
     # ---- 首轮：T0（一次 LLM）----
-    async def _first(self, trace_id: str, query: str, history) -> tuple[list[Intent], bool]:
+    async def _first(self, trace_id: str, query: str, history,
+                     tv_mode: str | int = "0") -> tuple[list[Intent], bool]:
         plan = await self._plan(query)
         if not plan.intents:
-            # LLM 没出计划（空/纯聊天/失败）→ 兜底：单一自包含意图（非语言规则）
-            return [Intent(query=query, domain="", tool="execute", index=1, src=query)], True
-        plan = _with_source(plan, query)
+            # LLM 没出方案（空/纯聊天/失败）→ 兜底：单一自包含意图（非语言规则），
+            # 但仍过 detect 判域，息屏(tv_mode=6)知识/点歌/有声查询可被纠正到对应域；
+            # 亮屏默认不干预（llm_domain="" 保留空，交由外部）。
+            dom = detect.detect_domain(query, "", tv_mode=tv_mode)
+            if not dom:
+                dom = ""
+            return [Intent(query=query, domain=dom, tool="execute", index=1, src=query)], True
+        plan = _with_source(plan, query, tv_mode=tv_mode)
         executed = _executed_indexes(history)
         batch = next_batch(plan, executed)
         if not batch:
@@ -327,6 +335,7 @@ _HCTOOLS_DOMAINS = {
     "education": "education",
     "sports": "sports",
     "children": "children",
+    "qa": "qa",
 }
 
 
@@ -378,8 +387,9 @@ async def build_response(req) -> dict[str, Any]:
     trace_id = req.traceId or ""
     device_id = req.deviceId or ""
     history = req.data.toolHistory or []
+    tv_mode = req.data.tvMode if req.data.tvMode is not None else "0"
 
-    batch, stop = await _SM.tick(trace_id, query, history)
+    batch, stop = await _SM.tick(trace_id, query, history, tv_mode=tv_mode)
     steps = await _build_steps(batch)
     body = {
         "code": 200, "message": "success", "traceId": trace_id, "deviceId": device_id,

@@ -297,18 +297,19 @@ def _run_runtime(retext: str, *, feature_code: str, device_id: str,
         data = frame.get("data") or {}
         if msg_type == "FIRST_PACKAGE":
             continue
-        if msg_type == "DEBUG_MAP":
-            app = data.get("application_data") or {}
-            dbg = (app.get("debug") or {}) if isinstance(app, dict) else {}
+        # 计划帧可能落在 DEBUG_MAP 或结束型 TEXT 帧(status=2)的 application_data.debug.traces 里
+        # (播放控制类短命令常只回一条 TEXT 结束帧)，故不按 messageType 过滤，凡带 traces 的帧都解析。
+        app = data.get("application_data") or {}
+        dbg = (app.get("debug") or {}) if isinstance(app, dict) else {}
+        if dbg and dbg.get("traces"):
             for trace in dbg.get("traces") or []:
                 d = _summarize_debug_trace(trace)
                 if d:
                     plans.append(d)
-            continue
         if msg_type == "TOOL":
             summary = _summarize_tool_frame(data)
             tools.append(summary)
-        else:
+        elif msg_type in ("DEBUG_MAP", "TEXT") and not dbg:
             content = data.get("content") or ""
             if content:
                 texts.append(content)

@@ -1,27 +1,81 @@
 {
   "_comment": "跨域判域 badcase：精确句→目标域。命中即覆盖规则与 LLM 判定（L2 最高优先，仿 hcTools）。这些句在各自 testset 只出现于单域，detect 规则误判时用精确句纠正音轨/影视/教育边界。",
   "badcases": [
-    { "query": "我想看戏曲铡美案", "domain": "vod" },
-    { "query": "我想看电视台同步在播的剧", "domain": "vod" },
-
-    { "query": "杜比全景声的电影", "domain": "vod" },
-    { "query": "中央广播电视总台2025年春节联欢晚会", "domain": "vod" },
-    { "query": "评书隋唐演义", "domain": "vod" },
-    { "query": "麻烦放一下你妈没告诉你别欺负熊孩子吗的电影片段啊", "domain": "vod" },
-    { "query": "看下熊出没之雪岭熊风，熊就要有个熊样", "domain": "vod" },
-
-    { "query": "听下历史类的节目吧", "domain": "audio" },
-    { "query": "播放儿童国学启蒙故事", "domain": "audio" },
-    { "query": "帮我查找适合孩子听的历史节目", "domain": "audio" },
-    { "query": "正史讲解类历史节目有哪些？", "domain": "audio" },
-    { "query": "放一下儿童故事人气榜前五的内容", "domain": "audio" },
-    { "query": "帮我找播放量最高的儿童故事", "domain": "audio" },
-
-    { "query": "播放我的历史记录", "domain": "music" },
-
-    { "query": "贝瓦儿歌开始", "domain": "children" },
-    { "query": "不带英语的小砾工程家族", "domain": "children" },
-
-    { "query": "播放儿童篮球课程", "domain": "education" }
+    {
+      "query": "我想看戏曲铡美案",
+      "domain": "vod"
+    },
+    {
+      "query": "我想看电视台同步在播的剧",
+      "domain": "vod"
+    },
+    {
+      "query": "杜比全景声的电影",
+      "domain": "vod"
+    },
+    {
+      "query": "中央广播电视总台2025年春节联欢晚会",
+      "domain": "vod"
+    },
+    {
+      "query": "评书隋唐演义",
+      "domain": "vod"
+    },
+    {
+      "query": "麻烦放一下你妈没告诉你别欺负熊孩子吗的电影片段啊",
+      "domain": "vod"
+    },
+    {
+      "query": "看下熊出没之雪岭熊风，熊就要有个熊样",
+      "domain": "vod"
+    },
+    {
+      "query": "听下历史类的节目吧",
+      "domain": "audio"
+    },
+    {
+      "query": "播放儿童国学启蒙故事",
+      "domain": "audio"
+    },
+    {
+      "query": "帮我查找适合孩子听的历史节目",
+      "domain": "audio"
+    },
+    {
+      "query": "正史讲解类历史节目有哪些？",
+      "domain": "audio"
+    },
+    {
+      "query": "放一下儿童故事人气榜前五的内容",
+      "domain": "audio"
+    },
+    {
+      "query": "帮我找播放量最高的儿童故事",
+      "domain": "audio"
+    },
+    {
+      "query": "播放我的历史记录",
+      "domain": "music"
+    },
+    {
+      "query": "贝瓦儿歌开始",
+      "domain": "children"
+    },
+    {
+      "query": "不带英语的小砾工程家族",
+      "domain": "children"
+    },
+    {
+      "query": "播放儿童篮球课程",
+      "domain": "education"
+    },
+    {
+      "query": "我要听虫儿飞",
+      "domain": "children"
+    },
+    {
+      "query": "直角三角形的面积",
+      "domain": "qa"
+    }
   ]
 }
