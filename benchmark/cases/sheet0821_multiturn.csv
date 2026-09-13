@@ -1,0 +1,210 @@
+﻿会话id,业务,组号,轮次,query,修正后工具,修正后参数,源行号
+1,影视,1,第1轮,最近有啥好看的电影,vod_search,"{""action"":""search"",""retext"":""最近有啥好看的电影"",""query"":{""field"":""category"",""value"":""电影""},""sort"":{""new"":{""order"":""desc""}}}",2
+1,影视,1,第2轮,想看悬疑的,vod_search,"{""action"":""search"",""retext"":""搜索好看的悬疑电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""悬疑""}]}}",3
+1,影视,1,第3轮,国内的有没有,vod_search_all,"{""action"":""search"",""retext"":""搜索国内好看的悬疑电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""悬疑""},{""field"":""area"",""value"":""国内""}]}}",4
+1,影视,1,第4轮,评分高一点,vod_search_all,"{""action"":""search"",""retext"":""搜索国内评分高的悬疑电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""悬疑""},{""field"":""area"",""value"":""国内""}]},""sort"":{""rate"":{""order"":""desc""}}}",5
+1,影视,1,第5轮,日语的,vod_search_all,"{""action"":""search"",""retext"":""搜索国内评分高的日语悬疑电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""悬疑""},{""field"":""area"",""value"":""国内""},{""field"":""language"",""value"":""日语""}]},""sort"":{""rate"":{""order"":""desc""}}}",6
+2,影视,2,第1轮,有什么古装剧在播,vod_search,"{""action"":""search"",""retext"":""搜索正在播出的古装剧"",""query"":{""and"":[{""field"":""category"",""value"":""电视剧""},{""field"":""tag"",""value"":""古装""},{""field"":""is_over"",""value"":0}]}}",7
+2,影视,2,第2轮,最近开播的那种,vod_search,"{""action"":""search"",""retext"":""搜索最近开播的古装剧"",""query"":{""and"":[{""field"":""category"",""value"":""电视剧""},{""field"":""tag"",""value"":""古装""}]},""sort"":{""new"":{""order"":""desc""}}}",8
+2,影视,2,第3轮,女主演技好点的,vod_fuzzy_search,"{""query"":""最近开播、女主演技好的古装剧""}",9
+2,影视,2,第4轮,集数别太长的,vod_fuzzy_search,"{""query"":""最近开播、女主演技好且集数较短的古装剧""}",10
+2,影视,2,第5轮,有没有免费的,vod_fuzzy_search,"{""query"":""免费、集数较短、女主演技好的最近开播古装剧""}",11
+3,影视,3,第1轮,想看点搞笑综艺,vod_search,"{""action"":""search"",""retext"":""搜索搞笑综艺"",""query"":{""and"":[{""field"":""category"",""value"":""综艺""},{""field"":""tag"",""value"":""搞笑""}]}}",12
+3,影视,3,第2轮,周六播出的,vod_fuzzy_search,"{""query"":""周六播出的搞笑综艺""}",13
+3,影视,3,第3轮,有明星嘉宾的,vod_fuzzy_search,"{""query"":""周六播出且有明星嘉宾的搞笑综艺""}",14
+3,影视,3,第4轮,新一季的,vod_fuzzy_search,"{""query"":""周六播出有明星嘉宾的最新一季搞笑综艺""}",15
+3,影视,3,第5轮,能免费看的,vod_fuzzy_search,"{""query"":""可免费观看周六播出有明星嘉宾的最新一季搞笑综艺""}",16
+4,影视,4,第1轮,推荐几部动作片,vod_search,"{""action"":""search"",""retext"":""推荐动作电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""动作""}]}}",17
+4,影视,4,第2轮,好莱坞的,vod_search_all,"{""action"":""search"",""retext"":""推荐好莱坞动作电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""动作""},{""field"":""company"",""value"":""好莱坞""}]}}",18
+4,影视,4,第3轮,去年上映的,vod_search_all,"{""action"":""search"",""retext"":""搜索2025年上映的好莱坞动作电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""动作""},{""field"":""company"",""value"":""好莱坞""},{""field"":""release_time"",""to"":""20251231"",""from"":""20250101""}]}}",19
+4,影视,4,第4轮,票房高的,fan_knowledge_agent,"{""query"":""2025年上映且票房高的好莱坞动作电影""}",20
+4,影视,4,第5轮,有普通话配音,fan_knowledge_agent,"{""query"":""有普通话配音、2025年上映且票房高的好莱坞动作电影""}",21
+5,影视,5,第1轮,有啥好看的韩剧,vod_search_all,"{""action"":""search"",""retext"":""推荐好看的韩剧"",""query"":{""and"":[{""field"":""category"",""value"":""电视剧""},{""field"":""area"",""value"":""韩国""}]},""sort"":{""rate"":{""order"":""desc""}}}",22
+5,影视,5,第2轮,已经完结的,vod_search_all,"{""action"":""search"",""retext"":""搜索已完结韩剧"",""query"":{""and"":[{""field"":""category"",""value"":""电视剧""},{""field"":""area"",""value"":""韩国""},{""field"":""is_over"",""value"":1}]}}",23
+5,影视,5,第3轮,口碑特别好的,vod_search_all,"{""action"":""search"",""retext"":""搜索已完结且口碑好的韩剧"",""query"":{""and"":[{""field"":""category"",""value"":""电视剧""},{""field"":""area"",""value"":""韩国""},{""field"":""is_over"",""value"":1}]},""sort"":{""rate"":{""order"":""desc""}}}",24
+5,影视,5,第4轮,男主帅气点的,vod_fuzzy_search,"{""query"":""已完结口碑好且男主帅气的韩剧""}",25
+5,影视,5,第5轮,免费能看的,vod_fuzzy_search,"{""query"":""可免费观看已完结口碑好且男主帅气的韩剧""}",26
+6,影视,6,第1轮,想看美食纪录片,vod_search,"{""action"":""search"",""retext"":""搜索美食纪录片"",""query"":{""and"":[{""field"":""category"",""value"":""纪录片""},{""field"":""tag"",""value"":""美食""}]}}",27
+6,影视,6,第2轮,国产的,vod_search_all,"{""action"":""search"",""retext"":""搜索国产美食纪录片"",""query"":{""and"":[{""field"":""category"",""value"":""纪录片""},{""field"":""tag"",""value"":""美食""},{""field"":""area"",""value"":""中国""}]}}",28
+6,影视,6,第3轮,最近更新的,vod_search_all,"{""action"":""search"",""retext"":""搜索最近更新的国产美食纪录片"",""query"":{""and"":[{""field"":""category"",""value"":""纪录片""},{""field"":""tag"",""value"":""美食""},{""field"":""area"",""value"":""中国""}]},""sort"":{""new"":{""order"":""desc""}}}",29
+6,影视,6,第4轮,评分9分以上的,vod_search_all,"{""action"":""search"",""retext"":""搜索评分9分以上、最近更新的国产美食纪录片"",""query"":{""and"":[{""field"":""category"",""value"":""纪录片""},{""field"":""tag"",""value"":""美食""},{""field"":""area"",""value"":""中国""},{""field"":""rate"",""to"":10,""from"":9}]},""sort"":{""new"":{""order"":""desc""}}}",30
+6,影视,6,第5轮,在上海拍的,vod_fuzzy_search,"{""query"":""在上海拍摄评分9分以上且最近更新的国产美食纪录片""}",31
+7,影视,7,第1轮,有啥好看的科幻片,vod_search,"{""action"":""search"",""retext"":""推荐科幻电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""科幻""}]}}",32
+7,影视,7,第2轮,国外的,vod_search_all,"{""action"":""search"",""retext"":""推荐国外科幻电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""科幻""},{""field"":""area"",""value"":""国外""}]}}",33
+7,影视,7,第3轮,近三年的,vod_search_all,"{""action"":""search"",""retext"":""推荐近三年的国外科幻电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""科幻""},{""field"":""area"",""value"":""国外""},{""field"":""release_time"",""to"":""20260831"",""from"":""20230831""}]}}",34
+7,影视,7,第4轮,视觉震撼的,vod_fuzzy_search,"{""query"":""近三年国外且视觉震撼的科幻电影""}",35
+7,影视,7,第5轮,适合带娃看的,vod_fuzzy_search,"{""query"":""近三年国外视觉震撼且适合带孩子观看的科幻电影""}",36
+8,影视,8,第1轮,推荐国产恐怖片,vod_search_all,"{""action"":""search"",""retext"":""推荐国产恐怖电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""恐怖""},{""field"":""area"",""value"":""中国""}]}}",37
+8,影视,8,第2轮,今年上映的,vod_search_all,"{""action"":""search"",""retext"":""搜索2026年上映的国产恐怖电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""恐怖""},{""field"":""area"",""value"":""中国""},{""field"":""release_time"",""to"":""20261231"",""from"":""20260101""}]}}",38
+8,影视,8,第3轮,不太吓人的,vod_fuzzy_search,"{""query"":""2026年上映不太吓人的国产恐怖电影""}",39
+8,影视,8,第4轮,剧情好点的,vod_fuzzy_search,"{""query"":""2026年上映不太吓人且剧情好的国产恐怖电影""}",40
+8,影视,8,第5轮,时长一个半小时,vod_fuzzy_search,"{""query"":""时长约90分钟2026年上映不太吓人且剧情好的国产恐怖电影""}",41
+9,影视,9,第1轮,想看宫崎骏的动画,vod_search_all,"{
+  ""action"": ""search"",
+  ""retext"": ""想看宫崎骏的动画"",
+  ""query"": {
+    ""and"": [
+      {
+        ""field"": ""tag"",
+        ""value"": ""动画""
+      },
+      {
+        ""or"": [
+          {
+            ""field"": ""writer"",
+            ""value"": ""宫崎骏""
+          },
+          {
+            ""field"": ""director"",
+            ""value"": ""宫崎骏""
+          }
+        ]
+      }
+    ]
+  }
+}",42
+9,影视,9,第2轮,日本的那版,vod_search_all,"{
+  ""action"": ""search"",
+  ""retext"": ""搜索日本的宫崎骏动画"",
+  ""query"": {
+    ""and"": [
+      {
+        ""field"": ""area"",
+        ""value"": ""日本""
+      },
+      {
+        ""field"": ""tag"",
+        ""value"": ""动画""
+      },
+      {
+        ""or"": [
+          {
+            ""field"": ""writer"",
+            ""value"": ""宫崎骏""
+          },
+          {
+            ""field"": ""director"",
+            ""value"": ""宫崎骏""
+          }
+        ]
+      }
+    ]
+  }
+}",43
+9,影视,9,第3轮,治愈系的,vod_fuzzy_search,"{""query"": ""搜索日本治愈系的宫崎骏动画""}",44
+9,影视,9,第4轮,有国语版吗,vod_fuzzy_search,"{""query"": ""搜索有国语版的日本治愈系宫崎骏动画""}",45
+9,影视,9,第5轮,高清画质的,vod_fuzzy_search,"{""query"": ""搜索高清国语版日本治愈系宫崎骏动画""}",46
+10,影视,10,第1轮,有啥二战题材电影,vod_search,"{""action"":""search"",""retext"":""搜索二战题材电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""二战""}]}}",47
+10,影视,10,第2轮,美国的,vod_search_all,"{""action"":""search"",""retext"":""搜索美国二战题材电影"",""query"":{""and"":[{""field"":""category"",""value"":""电影""},{""field"":""tag"",""value"":""二战""},{""field"":""area"",""value"":""美国""}]}}",48
+10,影视,10,第3轮,经典老片,vod_fuzzy_search,"{""query"": ""搜索美国经典二战电影""}",49
+10,影视,10,第4轮,有中文字幕,vod_fuzzy_search,"{""query"":""有中文字幕的美国经典二战老电影""}",50
+10,影视,10,第5轮,黑白的那种也行,vod_fuzzy_search,"{""query"":""有中文字幕的美国经典二战老电影黑白片也可以""}",51
+11,少儿,1,第1轮,有适合小孩学英语的动画吗,educ_search,"{""retext"":""搜索适合孩子学英语的动画"",""query"":{""and"":[{""field"":""children_second_genre"",""value"":""英语""},{""field"":""content_type"",""value"":""动画""}]}}",52
+11,少儿,1,第2轮,学龄前的,educ_search,"{""retext"":""搜索适合学龄前孩子学英语的动画"",""query"":{""and"":[{""field"":""children_second_genre"",""value"":""英语""},{""field"":""content_type"",""value"":""动画""}]}}",53
+11,少儿,1,第3轮,中文的,educ_search,"{""retext"":""搜索中文版学龄前英语启蒙动画"",""query"":{""and"":[{""field"":""children_third_genre"",""value"":""英语启蒙""},{""field"":""language"",""value"":""中文""},{""field"":""content_type"",""value"":""动画""}]}}",54
+11,少儿,1,第4轮,免费的,educ_search,"{""retext"":""搜索免费中文版学龄前英语启蒙动画"",""query"":{""and"":[{""field"":""children_third_genre"",""value"":""英语启蒙""},{""field"":""language"",""value"":""中文""},{""field"":""content_type"",""value"":""动画""},{""field"":""is_fee"",""value"":0}]}}",55
+11,少儿,1,第5轮,可以跟读的,educ_fuzzy_search,"{""query"":""可跟读的免费中文版学龄前英语启蒙动画""}",56
+12,少儿,2,第1轮,有啥3岁小孩听的儿歌,educ_search,"{""retext"":""推荐适合3岁孩子的儿歌"",""query"":{""and"":[{""field"":""children_second_genre"",""value"":""儿歌""},{""field"":""age_range"",""to"":3,""from"":3}]}}",57
+12,少儿,2,第2轮,能跟唱的,educ_search,"{""retext"":""推荐适合3岁孩子跟唱的儿歌"",""query"":{""and"":[{""field"":""children_second_genre"",""value"":""儿歌""},{""field"":""age_range"",""to"":3,""from"":3}]}}",58
+12,少儿,2,第3轮,中文的那版,educ_search,"{""retext"":""推荐适合3岁孩子跟唱的中文版儿歌"",""query"":{""and"":[{""field"":""children_second_genre"",""value"":""儿歌""},{""field"":""age_range"",""to"":3,""from"":3},{""field"":""language"",""value"":""中文版""}]}}",59
+12,少儿,2,第4轮,适合5到6岁的,educ_search,"{""retext"":""推荐适合5到6岁孩子跟唱的中文版儿歌"",""query"":{""and"":[{""field"":""children_second_genre"",""value"":""儿歌""},{""field"":""age_range"",""to"":6,""from"":5},{""field"":""language"",""value"":""中文""}]}}",60
+12,少儿,2,第5轮,去年的,educ_search_all,"{""retext"":""推荐2025年的、适合5到6岁孩子跟唱的中文版儿歌"",""query"":{""and"":[{""field"":""children_second_genre"",""value"":""儿歌""},{""field"":""age_range"",""to"":6,""from"":5},{""field"":""language"",""value"":""中文""},{""field"":""release_time"",""to"":""20251231"",""from"":""20250101""}]}}",61
+13,少儿,3,第1轮,推荐点恐龙科普动画,educ_search,"{""retext"":""推荐恐龙科普动画"",""query"":{""and"":[{""field"":""children_third_genre"",""value"":""恐龙""},{""field"":""children_second_genre"",""value"":""科普""},{""field"":""content_type"",""value"":""动画""}]}}",62
+13,少儿,3,第2轮,适合8岁男孩的,educ_search,"{""retext"":""推荐适合8岁男孩的恐龙科普动画"",""query"":{""and"":[{""field"":""children_third_genre"",""value"":""恐龙""},{""field"":""children_second_genre"",""value"":""科普""},{""field"":""gender"",""value"":""男""},{""field"":""age_range"",""to"":8,""from"":8},{""field"":""content_type"",""value"":""动画""}]}}",63
+13,少儿,3,第3轮,有国产的吗,educ_search_all,"{""retext"":""推荐适合8岁男孩的国产恐龙科普动画"",""query"":{""and"":[{""field"":""children_third_genre"",""value"":""恐龙""},{""field"":""children_second_genre"",""value"":""科普""},{""field"":""country"",""value"":""中国""},{""field"":""gender"",""value"":""男""},{""field"":""age_range"",""to"":8,""from"":8},{""field"":""content_type"",""value"":""动画""}]}}",64
+13,少儿,3,第4轮,一季以上的,educ_fuzzy_search,"{""query"":""一季以上、适合8岁男孩的国产恐龙科普动画""}",65
+13,少儿,3,第5轮,换一个其他类型的,educ_fuzzy_search,"{""query"":""换一个其他类型、适合8岁男孩的国产科普动画""}",66
+14,少儿,4,第1轮,我想看双语绘本,educ_fuzzy_search,"{""query"":""搜索双语绘本""}",67
+14,少儿,4,第2轮,适合睡前听的,educ_fuzzy_search,"{""query"":""搜索适合睡前听的双语绘本""}",68
+14,少儿,4,第3轮,有声朗读的,educ_fuzzy_search,"{""query"":""搜索适合睡前听、有声朗读的双语绘本""}",69
+14,少儿,4,第4轮,女声配音的,educ_fuzzy_search,"{""query"":""搜索适合睡前听、女声有声朗读的双语绘本""}",70
+14,少儿,4,第5轮,换个故事吧,,,71
+15,设备控制,1,第1轮,设置定时关机,timer_control,"{""operation"":""打开"",""object"":""关机"",""value"":"""",""device"":"""",""location"":"""",""date_time"":""定时""}",72
+15,设备控制,1,第2轮,两个小时后,timer_control,"{""operation"":""打开"",""object"":""关机"",""value"":"""",""device"":"""",""location"":"""",""date_time"":""2小时""}",73
+15,设备控制,1,第3轮,改成3个小时,timer_control,"{""operation"":""打开"",""object"":""关机"",""value"":"""",""device"":"""",""location"":"""",""date_time"":""3小时""}",74
+15,设备控制,1,第4轮,取消,timer_control,"{""operation"":""关闭"",""object"":""关机"",""value"":"""",""device"":"""",""location"":""""}",75
+15,设备控制,1,第5轮,设成10点,timer_control,"{""operation"":""打开"",""object"":""关机"",""value"":"""",""device"":"""",""location"":"""",""date_time"":""10:00""}",76
+16,设备控制,2,第1轮,把音量调大点,numeric_adjust,"{""operation"":""提高"",""object"":""音量"",""value"":"""",""device"":"""",""location"":""""}",77
+16,设备控制,2,第2轮,再大一点,numeric_adjust,"{""operation"":""提高"",""object"":""音量"",""value"":"""",""device"":"""",""location"":""""}",78
+16,设备控制,2,第3轮,调到30吧,numeric_adjust,"{""operation"":""设置"",""object"":""音量"",""value"":""30"",""device"":"""",""location"":""""}",79
+16,设备控制,2,第4轮,再调大点,numeric_adjust,"{""operation"":""提高"",""object"":""音量"",""value"":"""",""device"":"""",""location"":""""}",80
+16,设备控制,2,第5轮,调小点吧,numeric_adjust,"{""operation"":""降低"",""object"":""音量"",""value"":"""",""device"":"""",""location"":""""}",81
+17,设备控制,3,第1轮,色度太低了,numeric_adjust,"{""operation"":""提高"",""object"":""色度"",""value"":"""",""device"":"""",""location"":""""}",82
+17,设备控制,3,第2轮,太高点,numeric_adjust,"{""operation"":""提高"",""object"":""色度"",""value"":"""",""device"":"""",""location"":""""}",83
+17,设备控制,3,第3轮,调一下对比度,numeric_adjust,"{""operation"":""设置"",""object"":""对比度"",""value"":"""",""device"":"""",""location"":""""}",84
+17,设备控制,3,第4轮,调高点,numeric_adjust,"{""operation"":""提高"",""object"":""对比度"",""value"":"""",""device"":"""",""location"":""""}",85
+17,设备控制,3,第5轮,改成调亮度,numeric_adjust,"{""operation"":""设置"",""object"":""亮度"",""value"":"""",""device"":"""",""location"":""""}",86
+18,设备控制,4,第1轮,电视画面调亮点,numeric_adjust,"{""operation"":""提高"",""object"":""亮度"",""value"":"""",""device"":"""",""location"":""""}",87
+18,设备控制,4,第2轮,调暗点,numeric_adjust,"{""operation"":""降低"",""object"":""亮度"",""value"":"""",""device"":"""",""location"":""""}",88
+18,设备控制,4,第3轮,太暗了,numeric_adjust,"{""operation"":""提高"",""object"":""亮度"",""value"":"""",""device"":"""",""location"":""""}",89
+18,设备控制,4,第4轮,再调亮点,numeric_adjust,"{""operation"":""提高"",""object"":""亮度"",""value"":"""",""device"":"""",""location"":""""}",90
+18,设备控制,4,第5轮,调到最大,numeric_adjust,"{""operation"":""设置"",""object"":""亮度"",""value"":""最大"",""device"":"""",""location"":""""}",91
+19,教育,1,第1轮,有三年级的数学课吗,edu_search,"{""query"":{""and"":[{""field"":""grade"",""value"":""三年级""},{""field"":""first_subject"",""value"":""数学""},{""field"":""k12_category"",""values"":[""同步课"",""同步拓展课""],""operator"":""or""}]}}",92
+19,教育,1,第2轮,北师大版的,edu_search,"{""query"":{""and"":[{""field"":""grade"",""value"":""三年级""},{""field"":""first_subject"",""value"":""数学""},{""field"":""material_version"",""value"":""北师大版""},{""field"":""k12_category"",""values"":[""同步课"",""同步拓展课""],""operator"":""or""}]}}",93
+19,教育,1,第3轮,免费的,edu_search,"{""query"":{""and"":[{""field"":""grade"",""value"":""三年级""},
+{""field"":""first_subject"",""value"":""数学""},
+{""field"":""material_version"",""value"":""北师大版""},
+{ ""field"": ""is_fee"", ""value"": 0 },
+{""field"":""k12_category"",""values"":[""同步课"",""同步拓展课""],""operator"":""or""}]}}",94
+19,教育,1,第4轮,初中二年级的,edu_search,"{""query"":{""and"":[{""field"":""grade"",""value"":""八年级""},
+{""field"":""first_subject"",""value"":""数学""},
+{""field"":""material_version"",""value"":""北师大版""},
+{ ""field"": ""is_fee"", ""value"": 0 },
+{""field"":""k12_category"",""values"":[""同步课"",""同步拓展课""],""operator"":""or""}]}}",95
+19,教育,1,第5轮,有老师讲解的,edu_slow_search_data_search,"{""query"":""有老师讲解的""}",96
+20,教育,2,第1轮,想学英语口语,edu_slow_search_data_search,"{""query"":""想学英语口语""}",97
+20,教育,2,第2轮,外教教的,edu_slow_search_data_search,"{""query"":""外教教的""}",98
+20,教育,2,第3轮,一对一的,edu_slow_search_data_search,"{""query"":""一对一的""}",99
+20,教育,2,第4轮,价格实惠点,edu_slow_search_data_search,"{""query"":""价格实惠点""}",100
+20,教育,2,第5轮,不收费的,edu_search,"{""query"":{""and"":[{ ""field"": ""is_fee"", ""value"": 0 },
+{""field"":""k12_category"",""values"":[""同步课"",""同步拓展课""],""operator"":""or""}]}}",101
+21,教育,3,第1轮,有少儿编程课吗,edu_slow_search_data_search,"{""query"":""有少儿编程课吗""}",102
+21,教育,3,第2轮,Python入门的,edu_slow_search_data_search,"{""query"":""Python入门的""}",103
+21,教育,3,第3轮,零基础能学,edu_slow_search_data_search,"{""query"":""零基础能学""}",104
+21,教育,3,第4轮,带实战项目,edu_slow_search_data_search,"{""query"":""带实战项目""}",105
+21,教育,3,第5轮,有试听课的,edu_slow_search_data_search,"{""query"":""有试听课的""}",106
+22,教育,4,第1轮,小学必背古诗有哪些,edu_slow_search_data_search,"{""query"":""小学必背古诗有哪些""}",107
+22,教育,4,第2轮,带讲解的,edu_slow_search_data_search,"{""query"":""带讲解的""}",108
+22,教育,4,第3轮,动画形式的,edu_slow_search_data_search,"{""query"":""动画形式的""}",109
+22,教育,4,第4轮,有朗读示范,edu_slow_search_data_search,"{""query"":""有朗读示范""}",110
+22,教育,4,第5轮,按年级分类,edu_slow_search_data_search,"{""query"":""按年级分类""}",111
+23,音乐,1,第1轮,推荐几首流行歌,music_song_search,"{""retext"":""推荐流行歌曲"",""tag"":[""流行""]}",112
+23,音乐,1,第2轮,华语的,music_song_search,"{""retext"":""推荐华语流行歌曲"",""tag"":[""华语"",""流行""]}",113
+23,音乐,1,第3轮,男歌手唱的,music_song_search,"{""retext"":""推荐华语男歌手的流行歌曲"",""gender"":[""男""],""tag"":[""华语"",""流行""]}",114
+23,音乐,1,第4轮,最新的,music_song_search,"{""retext"":""推荐最新的华语男歌手流行歌曲"",""gender"":[""男""],""tag"":[""华语"",""流行"",""最新""]}",115
+23,音乐,1,第5轮,免费能听的,music_song_search,"{""retext"":""推荐免费收听的最新华语男歌手流行歌曲"",""gender"":[""男""],""version"":[""免费版""],""tag"":[""华语"",""流行"",""最新""]}",116
+24,音乐,2,第1轮,放点周杰伦的歌,music_song_search,"{""retext"":""播放周杰伦的歌"",""singer"":[""周杰伦""]}",117
+24,音乐,2,第2轮,最有名的那首,music_song_search,"{""retext"":""播放周杰伦最有名的歌"",""singer"":[""周杰伦""],""tag"":[""经典""]}",118
+24,音乐,2,第3轮,2026年的,music_song_search,"{""retext"":""播放周杰伦2026年最有名的歌"",""singer"":[""周杰伦""],""tag"":[""2026年"",""经典""]}",119
+24,音乐,2,第4轮,歌名是英文的那个,music_song_search,"{""retext"":""播放周杰伦2026年最有名且歌名为英文的歌"",""singer"":[""周杰伦""],""tag"":[""2026年"",""经典"",""英文歌名""]}",120
+24,音乐,2,第5轮,换成张靓颖的吧,music_song_search,"{""retext"":""播放张靓颖2026年歌名为英文的知名歌曲"",""singer"":[""张靓颖""],""tag"":[""2026年"",""经典"",""英文歌名""]}",121
+25,音乐,3,第1轮,想听点摇滚乐,music_song_search,"{""retext"":""推荐摇滚乐"",""tag"":[""摇滚""]}",122
+25,音乐,3,第2轮,国外乐队的,music_song_search,"{""retext"":""推荐国外乐队的摇滚乐"",""tag"":[""摇滚"",""国外乐队""]}",123
+25,音乐,3,第3轮,演唱会现场版,music_song_search,"{""retext"":""推荐国外乐队的演唱会现场版摇滚乐"",""version"":[""live版""],""tag"":[""摇滚"",""国外乐队"",""演唱会""]}",124
+25,音乐,3,第4轮,高音质的,music_song_search,"{""retext"":""推荐高音质的国外乐队演唱会现场版摇滚乐"",""version"":[""live版""],""tag"":[""摇滚"",""国外乐队"",""演唱会"",""高音质""]}",125
+25,音乐,3,第5轮,清唱版,music_song_search,"{""retext"":""推荐高音质的国外乐队演唱会现场版摇滚乐"",""version"":[""live版""],""tag"":[""摇滚"",""国外乐队"",""演唱会"",""高音质"",""清唱""]}",126
+26,音乐,4,第1轮,有简单的英文儿歌吗,music_song_search,"{""retext"":""推荐简单的英文儿歌"",""tag"":[""英文"",""儿歌"",""简单""]}",127
+26,音乐,4,第2轮,适合零基础的,music_song_search,"{""retext"":""推荐适合零基础的简单英文儿歌"",""tag"":[""英文"",""儿歌"",""简单"",""零基础""]}",128
+26,音乐,4,第3轮,律动感强的,music_song_search,"{""retext"":""推荐适合零基础、律动感强的简单英文儿歌"",""tag"":[""英文"",""儿歌"",""简单"",""零基础"",""律动感强""]}",129
+26,音乐,4,第4轮,歌词简单的,music_song_search,"{""retext"":""推荐适合零基础、律动感强且歌词简单的英文儿歌"",""tag"":[""英文"",""儿歌"",""零基础"",""律动感强"",""歌词简单""]}",130
+26,音乐,4,第5轮,带中文翻译,music_song_search,"{""retext"":""推荐带中文翻译、适合零基础、律动感强且歌词简单的英文儿歌"",""tag"":[""英文"",""儿歌"",""零基础"",""律动感强"",""歌词简单"",""中文翻译""]}",131
+27,体育,1,第1轮,有啥足球比赛视频,sports_vod_search,"{""query"":{""field"":""sport_name"",""value"":""足球""}}",132
+27,体育,1,第2轮,英超的,sports_vod_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""足球""},{""field"":""sport_game"",""value"":""英超""}]}}",133
+27,体育,1,第3轮,半决赛那场,sports_match_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""足球""},{""field"":""sport_game"",""value"":""英超""},{""field"":""sport_competition_phase"",""value"":""半决赛""}]}}",134
+27,体育,1,第4轮,7月21日踢的,sports_match_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""足球""},{""field"":""sport_game"",""value"":""英超""},{""field"":""sport_competition_phase"",""value"":""半决赛""},{""field"":""sport_time"",""value"":""20260721""}]}}",135
+27,体育,1,第5轮,谁赢了,fan_knowledge_agent,"{""query"":""英超半决赛0721那场谁赢了""}",136
+28,体育,2,第1轮,推荐点篮球比赛视频,sports_vod_search,"{""query"":{""field"":""sport_name"",""value"":""篮球""}}",137
+28,体育,2,第2轮,CBA的,sports_vod_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""篮球""},{""field"":""sport_game"",""value"":""CBA""}]}}",138
+28,体育,2,第3轮,季后赛阶段,sports_match_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""篮球""},{""field"":""sport_game"",""value"":""CBA""},{""field"":""sport_competition_phase"",""value"":""季后赛""}]}}",139
+28,体育,2,第4轮,在广州打的那场,sports_match_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""篮球""},{""field"":""sport_game"",""value"":""CBA""},{""field"":""sport_competition_phase"",""value"":""季后赛""},{""field"":""sport_team_home"",""value"":""广州""}]}}",140
+28,体育,2,第5轮,新疆队的,sports_match_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""篮球""},{""field"":""sport_game"",""value"":""CBA""},{""field"":""sport_competition_phase"",""value"":""季后赛""},{""field"":""sport_team_home"",""value"":""广州""},{""field"":""sport_team_guest"",""value"":""新疆""}]}}",141
+29,体育,3,第1轮,有没有网球的视频,sports_vod_search,"{""query"":{""field"":""sport_name"",""value"":""网球""}}",142
+29,体育,3,第2轮,大满贯的,sports_vod_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""网球""},{""field"":""sport_game"",""value"":""大满贯""}]}}",143
+29,体育,3,第3轮,看决赛轮,sports_match_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""网球""},{""field"":""sport_game"",""value"":""大满贯""},{""field"":""sport_competition_phase"",""value"":""决赛""}]}}",144
+29,体育,3,第4轮,昨晚打的,sports_match_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""网球""},{""field"":""sport_game"",""value"":""大满贯""},{""field"":""sport_competition_phase"",""value"":""决赛""},{""field"":""sport_time"",""value"":""20260830""}]}}",145
+29,体育,3,第5轮,郑钦文那场,sports_match_search,"{""query"":{""and"":[{""field"":""sport_name"",""value"":""网球""},{""field"":""sport_game"",""value"":""大满贯""},{""field"":""sport_competition_phase"",""value"":""决赛""},{""field"":""sport_time"",""value"":""20260830""},{""field"":""sport_star"",""value"":""郑钦文""}]}}",146
+30,体育,4,第1轮,世界杯的比赛,sports_match_search,"{""query"":{""field"":""sport_game"",""value"":""世界杯""}}",147
+30,体育,4,第2轮,在哪里举办的,fan_knowledge_agent,"{""query"":""世界杯在哪里举办的""}",148
+30,体育,4,第3轮,最后谁夺冠了,fan_knowledge_agent,"{""query"":""世界杯最后谁夺冠了""}",149
+30,体育,4,第4轮,金球奖得主是谁,fan_knowledge_agent,"{""query"":""世界杯金球奖得主是谁""}",150
+30,体育,4,第5轮,哪天进行的决赛,fan_knowledge_agent,"{""query"":""世界杯哪天进行的决赛""}",151

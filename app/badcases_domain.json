@@ -74,7 +74,15 @@
       "domain": "children"
     },
     {
-      "query": "直角三角形的面积",
+      "query": "2026年春晚周深唱的歌",
+      "domain": "qa"
+    },
+    {
+      "query": "适合睡前听的歌",
+      "domain": "qa"
+    },
+    {
+      "query": "《黑色风暴》这首歌所在专辑是什么",
       "domain": "qa"
     }
   ]

@@ -1,0 +1,43 @@
+{
+  "sessions": 30,
+  "turns": 150,
+  "errors": 0,
+  "by_biz": {
+    "体育": {
+      "turns": 20,
+      "tool_ok": 17,
+      "both_ok": 12
+    },
+    "少儿": {
+      "turns": 20,
+      "tool_ok": 11,
+      "both_ok": 4
+    },
+    "影视": {
+      "turns": 50,
+      "tool_ok": 24,
+      "both_ok": 13
+    },
+    "教育": {
+      "turns": 20,
+      "tool_ok": 4,
+      "both_ok": 3
+    },
+    "设备控制": {
+      "turns": 20,
+      "tool_ok": 14,
+      "both_ok": 7
+    },
+    "音乐": {
+      "turns": 20,
+      "tool_ok": 11,
+      "both_ok": 7
+    }
+  },
+  "summary": {
+    "tool_ok": 81,
+    "tool_acc": 54.0,
+    "both_ok": 46,
+    "both_acc": 30.7
+  }
+}
