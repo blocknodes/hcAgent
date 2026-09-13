@@ -29,8 +29,12 @@ def _get_client() -> httpx.AsyncClient:
     return _client
 
 
-async def predict(query: str, domain: str, metadata: dict[str, Any] | None = None) -> tuple[str, dict[str, Any]]:
-    """调用 hcTools，返回 (tool, params)。失败返回 ("", {})，由调用方决定降级。"""
+async def predict(query: str, domain: str, metadata: dict[str, Any] | None = None) -> tuple[str, dict[str, Any], str]:
+    """调用 hcTools，返回 (tool, params, hit_source)。
+
+    hit_source 是与工具同源的审计字段（如 general_rule:audio_history_explicit），
+    说明这条 prediction 由 hcTools 里哪条规则判定；失败时为空字符串，调用方决定降级。
+    """
     payload = {"query": query, "domain": domain}
     if metadata:
         payload["metadata"] = metadata
@@ -46,12 +50,13 @@ async def predict(query: str, domain: str, metadata: dict[str, Any] | None = Non
             data = resp.json()
             tool = data.get("tool", "")
             params = data.get("params") if isinstance(data.get("params"), dict) else {}
+            hit_source = data.get("hit_source", "")
             logger.info(
-                "HCTOOLS %s | %s\n  >> %s\n  << tool=%s params=%s  (%.0fms)",
+                "HCTOOLS %s | %s\n  >> %s\n  << tool=%s params=%s  hit_source=%s  (%.0fms)",
                 domain, query, payload, tool, json.dumps(params, ensure_ascii=False),
-                (time.perf_counter() - started) * 1000,
+                hit_source, (time.perf_counter() - started) * 1000,
             )
-            return tool, params
+            return tool, params, hit_source
         except httpx.HTTPStatusError as exc:
             last = f"HTTP {exc.response.status_code}: {exc.response.text[:200]}"
             if exc.response.status_code != 429 and 400 <= exc.response.status_code < 500:
@@ -59,7 +64,7 @@ async def predict(query: str, domain: str, metadata: dict[str, Any] | None = Non
         except Exception as exc:  # noqa: BLE001
             last = f"{type(exc).__name__}: {exc}"
     logger.warning("hcTools predict 失败 (%s)：%s", url, last)
-    return "", {}
+    return "", {}, ""
 
 
 async def close() -> None:

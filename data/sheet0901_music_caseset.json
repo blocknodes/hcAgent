@@ -1,0 +1,2801 @@
+{
+ "records": [
+  {
+   "row": 2,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "K歌潮湿的心",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "K歌潮湿的心",
+    "song": [
+     "潮湿的心"
+    ]
+   }
+  },
+  {
+   "row": 3,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "K歌上山岗龙飘飘",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "K歌上山岗龙飘飘",
+    "song": [
+     "上山岗"
+    ],
+    "singer": [
+     "龙飘飘"
+    ]
+   }
+  },
+  {
+   "row": 4,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放\"而我将爱你所爱的人间，愿你所愿的笑颜\"这首歌的视频",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "播放\"而我将爱你所爱的人间，愿你所愿的笑颜\"这首歌的视频",
+    "lyrics": [
+     "而我将爱你所爱的人间愿你所愿的笑颜"
+    ]
+   }
+  },
+  {
+   "row": 5,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放QQ音乐恐龙抗狼",
+   "intent": "music_song_qqmusic_search",
+   "expected_tool": "music_song_qqmusic_search",
+   "expected_params": {
+    "retext": "播放QQ音乐恐龙抗狼",
+    "keywords": [
+     "恐龙抗狼"
+    ]
+   }
+  },
+  {
+   "row": 6,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放QQ音乐上的流行歌曲",
+   "intent": "music_song_qqmusic_search",
+   "expected_tool": "music_song_qqmusic_search",
+   "expected_params": {
+    "retext": "播放QQ音乐上的流行歌曲",
+    "keywords": [
+     "热门"
+    ]
+   }
+  },
+  {
+   "row": 7,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放李贞贤mv",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "播放李贞贤mv",
+    "singer": [
+     "李贞贤"
+    ]
+   }
+  },
+  {
+   "row": 8,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放视频版凤凰花开的路口",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "播放视频版凤凰花开的路口",
+    "song": [
+     "凤凰花开的路口"
+    ]
+   }
+  },
+  {
+   "row": 9,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放泰坦尼克号的歌曲视频",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "播放泰坦尼克号的歌曲视频",
+    "ip": [
+     "泰坦尼克号"
+    ]
+   }
+  },
+  {
+   "row": 10,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放天地龙鳞mv",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "播放天地龙鳞mv",
+    "song": [
+     "天地龙鳞"
+    ]
+   }
+  },
+  {
+   "row": 11,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放周杰伦女儿殿下MV",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "播放周杰伦女儿殿下MV",
+    "song": [
+     "女儿殿下"
+    ],
+    "singer": [
+     "周杰伦"
+    ]
+   }
+  },
+  {
+   "row": 12,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放自由飞翔音乐视频",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "播放自由飞翔音乐视频",
+    "song": [
+     "自由飞翔"
+    ]
+   }
+  },
+  {
+   "row": 13,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "唱阿云朵的最真的梦",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "唱阿云朵的最真的梦",
+    "song": [
+     "最真的梦"
+    ],
+    "singer": [
+     "阿云朵"
+    ]
+   }
+  },
+  {
+   "row": 14,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "唱个戏卷席筒",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "唱个戏卷席筒",
+    "song": [
+     "卷席筒"
+    ]
+   }
+  },
+  {
+   "row": 15,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "唱孙悦的歌",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "唱孙悦的歌",
+    "singer": [
+     "孙悦"
+    ]
+   }
+  },
+  {
+   "row": 16,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "唱豫剧穆桂英下山",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "唱豫剧穆桂英下山",
+    "song": [
+     "穆桂英下山"
+    ],
+    "tag": [
+     "豫剧"
+    ]
+   }
+  },
+  {
+   "row": 17,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "唱再遇梨花颂杨钰莹",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "唱再遇梨花颂杨钰莹",
+    "song": [
+     "再遇梨花颂"
+    ],
+    "singer": [
+     "杨钰莹"
+    ]
+   }
+  },
+  {
+   "row": 18,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "点一首周传雄免费的歌",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "点一首周传雄免费的歌",
+    "singer": [
+     "周传雄"
+    ],
+    "version": [
+     "免费版"
+    ]
+   }
+  },
+  {
+   "row": 19,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "歌曲热搜榜MV",
+   "intent": "music_song_mv_search",
+   "expected_tool": "fan_knowledge_agent",
+   "expected_params": null
+  },
+  {
+   "row": 20,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "嗯唱一个落花",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "嗯唱一个落花",
+    "song": [
+     "落花"
+    ]
+   }
+  },
+  {
+   "row": 21,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "搜索谢娜参演的MV视频",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "搜索谢娜参演的MV视频",
+    "singer": [
+     "谢娜"
+    ]
+   }
+  },
+  {
+   "row": 22,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想唱蔡琴的你的眼神",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "我想唱蔡琴的你的眼神",
+    "song": [
+     "你的眼神"
+    ],
+    "singer": [
+     "蔡琴"
+    ]
+   }
+  },
+  {
+   "row": 23,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想唱李荣浩的歌曲",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "我想唱李荣浩的歌曲",
+    "singer": [
+     "李荣浩"
+    ]
+   }
+  },
+  {
+   "row": 24,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想看国庆节歌曲的MV",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "我想看国庆节歌曲的MV",
+    "tag": [
+     "国庆节"
+    ]
+   }
+  },
+  {
+   "row": 25,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想看王蓉的MV",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "我想看王蓉的MV",
+    "singer": [
+     "王蓉"
+    ]
+   }
+  },
+  {
+   "row": 26,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我要唱不要钱的猪猪侠",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "我要唱不要钱的猪猪侠",
+    "song": [
+     "猪猪侠"
+    ],
+    "version": [
+     "免费版"
+    ]
+   }
+  },
+  {
+   "row": 27,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我要唱歌曲，新不了情",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "我要唱歌曲，新不了情",
+    "song": [
+     "新不了情"
+    ]
+   }
+  },
+  {
+   "row": 28,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我要唱这一生还有多少遗憾",
+   "intent": "music_kg_ksong_search",
+   "expected_tool": "music_ksong_search",
+   "expected_params": {
+    "retext": "我要唱这一生还有多少遗憾",
+    "song": [
+     "这一生能有多少的遗憾"
+    ]
+   }
+  },
+  {
+   "row": 29,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我要听mv",
+   "intent": "music_song_mv_search",
+   "expected_tool": "music_song_mv_search",
+   "expected_params": {
+    "retext": "我要听mv"
+   }
+  },
+  {
+   "row": 30,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放小马宝莉全歌版",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放小马宝莉全歌版",
+    "ip": [
+     "小马宝莉"
+    ]
+   }
+  },
+  {
+   "row": 31,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "海信小聚00后热歌榜的歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "fan_knowledge_agent",
+   "expected_params": null
+  },
+  {
+   "row": 32,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放喜庆的音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放喜庆的音乐",
+    "tag": [
+     "喜庆"
+    ]
+   }
+  },
+  {
+   "row": 33,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放想见你的插曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放想见你的插曲",
+    "ip": [
+     "想见你"
+    ]
+   }
+  },
+  {
+   "row": 34,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放抒情音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放抒情音乐",
+    "tag": [
+     "抒情"
+    ]
+   }
+  },
+  {
+   "row": 35,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "听一首歌曲\"十年之后，我们是朋友\"",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "听一首歌曲\"十年之后，我们是朋友\"",
+    "lyrics": [
+     "十年之后我们是朋友"
+    ]
+   }
+  },
+  {
+   "row": 36,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听YouTube音乐排行榜的歌",
+   "intent": "music_song_search",
+   "expected_tool": "fan_knowledge_agent",
+   "expected_params": null
+  },
+  {
+   "row": 37,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放华语歌，不用花钱的",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "放华语歌，不用花钱的",
+    "version": [
+     "免费版"
+    ],
+    "tag": [
+     "华语"
+    ]
+   }
+  },
+  {
+   "row": 38,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "帮我放速度与激情的主题曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "帮我放速度与激情的主题曲",
+    "ip": [
+     "速度与激情"
+    ]
+   }
+  },
+  {
+   "row": 39,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "推荐几首元旦节适合听的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "推荐几首元旦节适合听的歌",
+    "tag": [
+     "元旦"
+    ]
+   }
+  },
+  {
+   "row": 40,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "来一个歌曲，歌词是 \"窗外的麻雀，在电线杆上多嘴\"",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "_raw": "{\"retext\": \"来一个歌曲，歌词是 \"窗外的麻雀，在电线杆上多嘴\"\", \"lyrics\": [\"窗外的麻雀在电线杆上多嘴\"]}"
+   }
+  },
+  {
+   "row": 41,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放喊麦歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放喊麦歌曲",
+    "tag": [
+     "喊麦"
+    ]
+   }
+  },
+  {
+   "row": 42,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放开心锤锤动漫的片头曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "放开心锤锤动漫的片头曲",
+    "ip": [
+     "开心锤锤"
+    ]
+   }
+  },
+  {
+   "row": 43,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "孙楠和那英唱的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "孙楠和那英唱的歌",
+    "singer": [
+     "孙楠",
+     "那英"
+    ]
+   }
+  },
+  {
+   "row": 44,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听龚玥的十送红军",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我想听龚玥的十送红军",
+    "song": [
+     "十送红军"
+    ],
+    "singer": [
+     "龚玥"
+    ]
+   }
+  },
+  {
+   "row": 45,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放专辑一场游戏一场梦",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放专辑一场游戏一场梦",
+    "album": [
+     "一场游戏一场梦"
+    ]
+   }
+  },
+  {
+   "row": 46,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听雨一直下里的音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我想听雨一直下里的音乐",
+    "album": [
+     "雨一直下"
+    ]
+   }
+  },
+  {
+   "row": 47,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "欧美地区的音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "欧美地区的音乐",
+    "tag": [
+     "欧美"
+    ]
+   }
+  },
+  {
+   "row": 48,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "经典的男女对唱歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "经典的男女对唱歌曲",
+    "tag": [
+     "对唱",
+     "经典"
+    ]
+   }
+  },
+  {
+   "row": 49,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放陈奕迅的歌，不要付费的",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放陈奕迅的歌，不要付费的",
+    "version": [
+     "免费版"
+    ],
+    "singer": [
+     "陈奕迅"
+    ]
+   }
+  },
+  {
+   "row": 50,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "古装剧的OST歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "古装剧的OST歌曲",
+    "tag": [
+     "古装剧ost"
+    ]
+   }
+  },
+  {
+   "row": 51,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "林若宁填词的歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "林若宁填词的歌曲",
+    "lyricist": [
+     "林若宁"
+    ]
+   }
+  },
+  {
+   "row": 52,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "迈克尔杰克逊演唱会经典曲目",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "迈克尔杰克逊演唱会经典曲目",
+    "singer": [
+     "迈克尔杰克逊"
+    ],
+    "tag": [
+     "演唱会",
+     "经典"
+    ]
+   }
+  },
+  {
+   "row": 53,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "给我找‌新世纪音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "给我找‌新世纪音乐",
+    "tag": [
+     "新世纪音乐"
+    ]
+   }
+  },
+  {
+   "row": 54,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "唱周华健专辑",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "唱周华健专辑",
+    "singer": [
+     "周华健"
+    ]
+   }
+  },
+  {
+   "row": 55,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "00后DJ版音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "00后DJ版音乐",
+    "version": [
+     "dj版"
+    ],
+    "tag": [
+     "00后"
+    ]
+   }
+  },
+  {
+   "row": 56,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "有没有环保公益主题的音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "有没有环保公益主题的音乐",
+    "tag": [
+     "环保公益"
+    ]
+   }
+  },
+  {
+   "row": 57,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "来一首歌曲MORE MORE JUMP",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "来一首歌曲MORE MORE JUMP",
+    "song": [
+     "MORE MORE JUMP"
+    ]
+   }
+  },
+  {
+   "row": 58,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "为我播放原谅我年轻不懂爱的音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "为我播放原谅我年轻不懂爱的音乐",
+    "song": [
+     "原谅我年轻不懂爱"
+    ]
+   }
+  },
+  {
+   "row": 59,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听琅琊榜电视剧的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我想听琅琊榜电视剧的歌",
+    "ip": [
+     "琅琊榜"
+    ]
+   }
+  },
+  {
+   "row": 60,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我要听进击的巨人的片头曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我要听进击的巨人的片头曲",
+    "ip": [
+     "进击的巨人"
+    ]
+   }
+  },
+  {
+   "row": 61,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放歌曲来不来都等你陈瑞演唱",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放歌曲来不来都等你陈瑞演唱",
+    "song": [
+     "来不来都等你"
+    ],
+    "singer": [
+     "陈瑞"
+    ]
+   }
+  },
+  {
+   "row": 62,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我要听免费的起风了伴奏版",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我要听免费的起风了伴奏版",
+    "song": [
+     "起风了"
+    ],
+    "version": [
+     "伴奏版",
+     "免费版"
+    ]
+   }
+  },
+  {
+   "row": 63,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "欧若拉的音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "欧若拉的音乐",
+    "song": [
+     "欧若拉"
+    ]
+   }
+  },
+  {
+   "row": 64,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "小提琴演奏乐《梁祝》",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "小提琴演奏乐《梁祝》",
+    "song": [
+     "梁祝"
+    ],
+    "tag": [
+     "小提琴演奏"
+    ]
+   }
+  },
+  {
+   "row": 65,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "给我放点适合看书的，古典音乐或轻柔民谣吧",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放朋友聚会时听的歌",
+    "tag": [
+     "古典",
+     "轻柔"
+    ]
+   }
+  },
+  {
+   "row": 66,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我要听 周杰伦或者林俊杰的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我要听 周杰伦或者林俊杰的歌",
+    "singer": [
+     "周杰伦",
+     "林俊杰"
+    ]
+   }
+  },
+  {
+   "row": 67,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "开心的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "开心的歌",
+    "tag": [
+     "开心"
+    ]
+   }
+  },
+  {
+   "row": 68,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "换个一路向北",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "换个一路向北",
+    "song": [
+     "一路向北"
+    ]
+   }
+  },
+  {
+   "row": 69,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听孙露的小小的太阳",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我想听孙露的小小的太阳",
+    "song": [
+     "小小的太阳"
+    ],
+    "singer": [
+     "孙露"
+    ]
+   }
+  },
+  {
+   "row": 70,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放歌曲疼爱妈妈蓝琪儿演唱",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放歌曲疼爱妈妈蓝琪儿演唱",
+    "song": [
+     "疼爱妈妈"
+    ],
+    "singer": [
+     "蓝琪儿"
+    ]
+   }
+  },
+  {
+   "row": 71,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "刘德华梁朝伟一起唱的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "刘德华梁朝伟一起唱的歌",
+    "tag": [
+     "合唱"
+    ],
+    "singer": [
+     "刘德华",
+     "梁朝伟"
+    ]
+   }
+  },
+  {
+   "row": 72,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放《江南》专辑的全部歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放《江南》专辑的全部歌曲",
+    "album": [
+     "江南"
+    ]
+   }
+  },
+  {
+   "row": 73,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放古典音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放古典音乐",
+    "tag": [
+     "古典"
+    ]
+   }
+  },
+  {
+   "row": 74,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "给我放甄嬛传的片尾曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "给我放甄嬛传的片尾曲",
+    "ip": [
+     "甄嬛传"
+    ]
+   }
+  },
+  {
+   "row": 75,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "免费粤语音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "免费粤语音乐",
+    "version": [
+     "免费版"
+    ],
+    "tag": [
+     "粤语"
+    ]
+   }
+  },
+  {
+   "row": 76,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "李健创作的民谣歌曲有哪些",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "李健创作的民谣歌曲有哪些",
+    "composer": [
+     "李健"
+    ],
+    "tag": [
+     "古典民谣"
+    ]
+   }
+  },
+  {
+   "row": 77,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听神雕侠侣刘亦菲的主题曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我想听神雕侠侣刘亦菲的主题曲",
+    "ip": [
+     "神雕侠侣"
+    ]
+   }
+  },
+  {
+   "row": 78,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "王菲伤感免费版",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "王菲伤感免费版",
+    "version": [
+     "免费版"
+    ],
+    "singer": [
+     "王菲"
+    ],
+    "tag": [
+     "伤感"
+    ]
+   }
+  },
+  {
+   "row": 79,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "望海高歌专辑",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "望海高歌专辑",
+    "singer": [
+     "望海高歌"
+    ]
+   }
+  },
+  {
+   "row": 80,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "听滨崎步演唱会经典舞曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "听滨崎步演唱会经典舞曲",
+    "singer": [
+     "滨崎步"
+    ],
+    "tag": [
+     "演唱会",
+     "经典舞曲"
+    ]
+   }
+  },
+  {
+   "row": 81,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "搜索Super Star的歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "搜索Super Star的歌曲",
+    "song": [
+     "super star"
+    ]
+   }
+  },
+  {
+   "row": 82,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "你好我要听好汉歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "你好我要听好汉歌",
+    "song": [
+     "好汉歌"
+    ]
+   }
+  },
+  {
+   "row": 83,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我要的幸福专辑歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放我要的幸福专辑歌曲",
+    "album": [
+     "我要的幸福"
+    ]
+   }
+  },
+  {
+   "row": 84,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放朋友聚会时听的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放朋友聚会时听的歌",
+    "tag": [
+     "聚会"
+    ]
+   }
+  },
+  {
+   "row": 85,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "疯狂动物城歌曲免费版",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "疯狂动物城歌曲免费版",
+    "ip": [
+     "疯狂动物城"
+    ],
+    "version": [
+     "免费版"
+    ]
+   }
+  },
+  {
+   "row": 86,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放清早起来歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放清早起来歌曲",
+    "tag": [
+     "清早起来"
+    ]
+   }
+  },
+  {
+   "row": 87,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "适合在婚礼仪式上放的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "适合在婚礼仪式上放的歌",
+    "tag": [
+     "婚礼"
+    ]
+   }
+  },
+  {
+   "row": 88,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "陈少琪作词久石让作曲林忆莲演唱的电影主题曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "陈少琪作词久石让作曲林忆莲演唱的电影主题曲",
+    "lyricist": [
+     "陈少琪"
+    ],
+    "composer": [
+     "久石让"
+    ],
+    "singer": [
+     "林忆莲"
+    ],
+    "tag": [
+     "电影"
+    ]
+   }
+  },
+  {
+   "row": 89,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌扬琴演奏乐‌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "‌扬琴演奏乐‌",
+    "tag": [
+     "扬琴"
+    ]
+   }
+  },
+  {
+   "row": 90,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放一首留什么给你",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "放一首留什么给你",
+    "song": [
+     "留什么给你"
+    ]
+   }
+  },
+  {
+   "row": 91,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放一首由小柯作曲的音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "放一首由小柯作曲的音乐",
+    "composer": [
+     "小柯"
+    ]
+   }
+  },
+  {
+   "row": 92,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "来点香港商台榜的歌",
+   "intent": "music_song_search",
+   "expected_tool": "fan_knowledge_agent",
+   "expected_params": null
+  },
+  {
+   "row": 93,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "泰勒·斯威夫特、艾德·希兰合作的《I Knew You Were Trouble.》",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "泰勒·斯威夫特、艾德·希兰合作的《I Knew You Were Trouble.》",
+    "song": [
+     "I Knew You Were Trouble."
+    ],
+    "singer": [
+     "泰勒·斯威夫特",
+     "艾德希兰"
+    ]
+   }
+  },
+  {
+   "row": 94,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我要听我是歌手的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我要听我是歌手的歌",
+    "ip": [
+     "我是歌手"
+    ]
+   }
+  },
+  {
+   "row": 95,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "公主请开心这首歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "公主请开心这首歌",
+    "song": [
+     "公主请开心"
+    ]
+   }
+  },
+  {
+   "row": 96,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "听一个爵士风格的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "听一个爵士风格的歌",
+    "tag": [
+     "爵士"
+    ]
+   }
+  },
+  {
+   "row": 97,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听几首张信哲唱的经典歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我想听几首张信哲唱的经典歌曲",
+    "singer": [
+     "张信哲"
+    ],
+    "tag": [
+     "经典"
+    ]
+   }
+  },
+  {
+   "row": 98,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "长途开车容易犯困，来点提神的摇滚乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "长途开车容易犯困，来点提神的摇滚乐",
+    "tag": [
+     "摇滚"
+    ]
+   }
+  },
+  {
+   "row": 99,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "看苦乐村官片头曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "看苦乐村官片头曲",
+    "ip": [
+     "苦乐村官"
+    ]
+   }
+  },
+  {
+   "row": 100,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放包含妈妈坐在门前，哼着花儿与少年的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放包含妈妈坐在门前，哼着花儿与少年的歌",
+    "lyrics": [
+     "妈妈坐在门前哼着花儿与少年"
+    ]
+   }
+  },
+  {
+   "row": 101,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放歌放慢慢",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "放歌放慢慢",
+    "song": [
+     "慢慢"
+    ]
+   }
+  },
+  {
+   "row": 102,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "小提琴演奏的治愈系乐曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "小提琴演奏的治愈系乐曲",
+    "tag": [
+     "治愈系",
+     "小提琴"
+    ]
+   }
+  },
+  {
+   "row": 103,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放周深演唱的粤语歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放周深演唱的粤语歌曲",
+    "singer": [
+     "周深"
+    ],
+    "tag": [
+     "粤语"
+    ]
+   }
+  },
+  {
+   "row": 104,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "国风的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "国风的歌",
+    "tag": [
+     "国风"
+    ]
+   }
+  },
+  {
+   "row": 105,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放熊大熊二的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放熊大熊二的歌",
+    "ip": [
+     "熊出没"
+    ]
+   }
+  },
+  {
+   "row": 106,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放最新歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "fan_knowledge_agent",
+   "expected_params": null
+  },
+  {
+   "row": 107,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播几首薛之谦唱的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播几首薛之谦唱的歌",
+    "singer": [
+     "薛之谦"
+    ]
+   }
+  },
+  {
+   "row": 108,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放莫文蔚《不散，不见》专辑的最后一首",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放莫文蔚《不散，不见》专辑的最后一首",
+    "album": [
+     "不散不见"
+    ],
+    "singer": [
+     "莫文蔚"
+    ]
+   }
+  },
+  {
+   "row": 109,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放五月天《自传》专辑的第三首歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放五月天《自传》专辑的第三首歌",
+    "album": [
+     "自传"
+    ],
+    "singer": [
+     "五月天"
+    ],
+    "tag": [
+     "第三首歌"
+    ]
+   }
+  },
+  {
+   "row": 110,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "降央卓玛的专辑",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "降央卓玛的专辑",
+    "singer": [
+     "降央卓玛"
+    ]
+   }
+  },
+  {
+   "row": 111,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "搜索适合颁奖典礼的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "搜索适合颁奖典礼的歌",
+    "tag": [
+     "颁奖典礼"
+    ]
+   }
+  },
+  {
+   "row": 112,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放宋雨琦所有歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放宋雨琦所有歌曲",
+    "singer": [
+     "宋雨琦"
+    ]
+   }
+  },
+  {
+   "row": 113,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放松的歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "放松的歌曲",
+    "tag": [
+     "轻松"
+    ]
+   }
+  },
+  {
+   "row": 114,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听影视金曲榜",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "我想听影视金曲榜",
+    "toplist": [
+     "影视金曲榜"
+    ]
+   }
+  },
+  {
+   "row": 115,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "唐伯虎演唱的伯虎说免费版",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "唐伯虎演唱的伯虎说免费版",
+    "song": [
+     "伯虎说"
+    ],
+    "version": [
+     "免费版"
+    ],
+    "singer": [
+     "唐伯虎"
+    ]
+   }
+  },
+  {
+   "row": 116,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放网络歌曲榜的歌",
+   "intent": "music_song_search",
+   "expected_tool": "fan_knowledge_agent",
+   "expected_params": null
+  },
+  {
+   "row": 117,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "推荐一些适合多人合唱的流行歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "推荐一些适合多人合唱的流行歌曲",
+    "tag": [
+     "多人合唱",
+     "流行"
+    ]
+   }
+  },
+  {
+   "row": 118,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "兰亭序麒麟歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "兰亭序麒麟歌曲",
+    "song": [
+     "兰亭序麒麟"
+    ]
+   }
+  },
+  {
+   "row": 119,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "听一下逐玉的影视原声带",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "听一下逐玉的影视原声带",
+    "ip": [
+     "逐玉"
+    ]
+   }
+  },
+  {
+   "row": 120,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放哆啦A梦动画片的主题曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "放哆啦A梦动画片的主题曲",
+    "ip": [
+     "哆啦a梦"
+    ]
+   }
+  },
+  {
+   "row": 121,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "合唱歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "合唱歌曲",
+    "tag": [
+     "合唱"
+    ]
+   }
+  },
+  {
+   "row": 122,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放白噪音",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放白噪音",
+    "tag": [
+     "白噪音"
+    ]
+   }
+  },
+  {
+   "row": 123,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "快播放爵士音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "快播放爵士音乐",
+    "tag": [
+     "爵士"
+    ]
+   }
+  },
+  {
+   "row": 124,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "欧若拉的音乐",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "适合在婚礼仪式上放的歌",
+    "song": [
+     "欧若拉"
+    ]
+   }
+  },
+  {
+   "row": 125,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "蔡徐坤唱的情人",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "蔡徐坤唱的情人",
+    "song": [
+     "情人"
+    ],
+    "singer": [
+     "蔡徐坤"
+    ]
+   }
+  },
+  {
+   "row": 126,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我是歌手歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放我是歌手歌曲",
+    "ip": [
+     "我是歌手"
+    ]
+   }
+  },
+  {
+   "row": 127,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "换一个起风了",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "换一个起风了",
+    "song": [
+     "起风了"
+    ]
+   }
+  },
+  {
+   "row": 128,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放一下王赫野的大风吹",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "放一下王赫野的大风吹",
+    "song": [
+     "大风吹"
+    ],
+    "singer": [
+     "王赫野"
+    ]
+   }
+  },
+  {
+   "row": 129,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "小聚小聚，请播放王菲免费专辑",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "小聚小聚，请播放王菲免费专辑",
+    "version": [
+     "免费版"
+    ],
+    "singer": [
+     "王菲"
+    ]
+   }
+  },
+  {
+   "row": 130,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放动漫葫芦兄弟的主题曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "放动漫葫芦兄弟的主题曲",
+    "ip": [
+     "葫芦兄弟"
+    ]
+   }
+  },
+  {
+   "row": 131,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "来一首由黄伟文作词的粤语歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "来一首由黄伟文作词的粤语歌",
+    "lyricist": [
+     "黄伟文"
+    ],
+    "tag": [
+     "粤语"
+    ]
+   }
+  },
+  {
+   "row": 132,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "听一下张韶涵唱的歌",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "听一下张韶涵唱的歌",
+    "singer": [
+     "张韶涵"
+    ]
+   }
+  },
+  {
+   "row": 133,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放土坡上的狗尾草藏语版免费的",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "播放土坡上的狗尾草藏语版免费的",
+    "song": [
+     "土坡上的狗尾草"
+    ],
+    "version": [
+     "免费版"
+    ],
+    "tag": [
+     "藏语"
+    ]
+   }
+  },
+  {
+   "row": 134,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "林夕作词陈辉阳作曲王菲演唱的歌曲",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "林夕作词陈辉阳作曲王菲演唱的歌曲",
+    "lyricist": [
+     "林夕"
+    ],
+    "composer": [
+     "陈辉阳"
+    ],
+    "singer": [
+     "王菲"
+    ]
+   }
+  },
+  {
+   "row": 135,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "沂蒙山小调",
+   "intent": "music_song_search",
+   "expected_tool": "music_song_search",
+   "expected_params": {
+    "retext": "沂蒙山小调",
+    "song": [
+     "沂蒙山小调"
+    ]
+   }
+  },
+  {
+   "row": 136,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "CCTV-15音乐频道的经典民乐‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "CCTV-15音乐频道的经典民乐"
+   }
+  },
+  {
+   "row": 137,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌搜索CCTV音乐频道的流行金曲合集‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "搜索CCTV音乐频道的流行金曲合集"
+   }
+  },
+  {
+   "row": 138,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌我想听央视音乐频道的钢琴独奏曲目‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "我想听央视音乐频道的钢琴独奏曲目"
+   }
+  },
+  {
+   "row": 139,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌我想看CCTV-15的春节主题音乐‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "我想看CCTV-15的春节主题音乐"
+   }
+  },
+  {
+   "row": 140,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌请播放中央音乐频道的轻音乐精选‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "请播放中央音乐频道的轻音乐精选"
+   }
+  },
+  {
+   "row": 141,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌搜一下CCTV音乐频道的影视原声带‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "搜一下CCTV音乐频道的影视原声带"
+   }
+  },
+  {
+   "row": 142,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌放央视音乐频道的爵士乐",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "放央视音乐频道的爵士乐"
+   }
+  },
+  {
+   "row": 143,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌查找中央15台的民族风歌曲‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "查找中央15台的民族风歌曲"
+   }
+  },
+  {
+   "row": 144,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌中央音乐频道的儿童音乐",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "中央音乐频道的儿童音乐"
+   }
+  },
+  {
+   "row": 145,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "CCTV音乐频道的交响乐‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "CCTV音乐频道的交响乐"
+   }
+  },
+  {
+   "row": 146,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌央视音乐频道的电子音乐",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "央视音乐频道的电子音乐"
+   }
+  },
+  {
+   "row": 147,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌搜索CCTV15的怀旧老歌特辑‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "搜索CCTV15的怀旧老歌特辑"
+   }
+  },
+  {
+   "row": 148,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌播放中央音乐频道的世界音乐之旅‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "播放中央音乐频道的世界音乐之旅"
+   }
+  },
+  {
+   "row": 149,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌搜索CCTV音乐频道的现场演唱会音乐‌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "搜索CCTV音乐频道的现场演唱会音乐"
+   }
+  },
+  {
+   "row": 150,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "‌播放央视音乐频道的音乐",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "播放央视音乐频道的音乐"
+   }
+  },
+  {
+   "row": 151,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "中央电视台戏曲频道播放过的歌曲",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "中央电视台戏曲频道播放过的歌曲"
+   }
+  },
+  {
+   "row": 152,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "CCTV11唱过的戏曲音乐",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "CCTV11唱过的戏曲音乐"
+   }
+  },
+  {
+   "row": 153,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "在湖南台演唱的音乐",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "在湖南台演唱的音乐"
+   }
+  },
+  {
+   "row": 154,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放浙江卫视唱过的歌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "播放浙江卫视唱过的歌"
+   }
+  },
+  {
+   "row": 155,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听东方卫视的歌",
+   "intent": "tvchannel_music_search",
+   "expected_tool": "tvchannel_music_search",
+   "expected_params": {
+    "retext": "我想听东方卫视的歌"
+   }
+  },
+  {
+   "row": 156,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听我收藏的歌曲",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "我想听我收藏的歌曲"
+   }
+  },
+  {
+   "row": 157,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我收藏的歌曲",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "播放我收藏的歌曲"
+   }
+  },
+  {
+   "row": 158,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放一首我收藏的歌",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "放一首我收藏的歌"
+   }
+  },
+  {
+   "row": 159,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我收藏的列表内的音乐",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "播放我收藏的列表内的音乐"
+   }
+  },
+  {
+   "row": 160,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我收藏列表中的歌曲",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "播放我收藏列表中的歌曲"
+   }
+  },
+  {
+   "row": 161,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听我收藏的列表里的歌",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "我想听我收藏的列表里的歌"
+   }
+  },
+  {
+   "row": 162,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "来一首我收藏列表里的歌",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "来一首我收藏列表里的歌"
+   }
+  },
+  {
+   "row": 163,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我收藏的列表",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "播放我收藏的列表"
+   }
+  },
+  {
+   "row": 164,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我收藏列表里的歌",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "播放我收藏列表里的歌"
+   }
+  },
+  {
+   "row": 165,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "要听一首我收藏的歌曲",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "要听一首我收藏的歌曲"
+   }
+  },
+  {
+   "row": 166,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我要听我收藏的歌曲",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "我要听我收藏的歌曲"
+   }
+  },
+  {
+   "row": 167,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我收藏过的歌曲",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "播放我收藏过的歌曲"
+   }
+  },
+  {
+   "row": 168,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我收藏的全部歌曲",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "播放我收藏的全部歌曲"
+   }
+  },
+  {
+   "row": 169,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放我收藏的歌",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "放我收藏的歌"
+   }
+  },
+  {
+   "row": 170,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "来点收藏列表里的音乐",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "来点收藏列表里的音乐"
+   }
+  },
+  {
+   "row": 171,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播一首我收藏过的曲子",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "播一首我收藏过的曲子"
+   }
+  },
+  {
+   "row": 172,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "切一首收藏歌单里的歌",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "切一首收藏歌单里的歌"
+   }
+  },
+  {
+   "row": 173,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放几首我收藏的音乐",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "放几首我收藏的音乐"
+   }
+  },
+  {
+   "row": 174,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "给我放收藏列表里的全部歌曲",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "给我放收藏列表里的全部歌曲"
+   }
+  },
+  {
+   "row": 175,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听我收藏过的所有曲目",
+   "intent": "music_song_favorite_search",
+   "expected_tool": "music_song_favorite_search",
+   "expected_params": {
+    "retext": "我想听我收藏过的所有曲目"
+   }
+  },
+  {
+   "row": 176,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听我最近听过的歌",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "我想听我最近听过的歌"
+   }
+  },
+  {
+   "row": 177,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我最近听过的歌曲",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "播放我最近听过的歌曲"
+   }
+  },
+  {
+   "row": 178,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放一首我之前听过的歌",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "放一首我之前听过的歌"
+   }
+  },
+  {
+   "row": 179,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我的历史记录里的音乐",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "播放我的历史记录里的音乐"
+   }
+  },
+  {
+   "row": 180,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "来一首我之前听过的歌",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "来一首我之前听过的歌"
+   }
+  },
+  {
+   "row": 181,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我的历史记录",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "播放我的历史记录"
+   }
+  },
+  {
+   "row": 182,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "听我最近听过的歌单",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "听我最近听过的歌单"
+   }
+  },
+  {
+   "row": 183,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放历史播放列表",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "播放历史播放列表"
+   }
+  },
+  {
+   "row": 184,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "听我之前的播放记录",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "听我之前的播放记录"
+   }
+  },
+  {
+   "row": 185,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我之前听过的歌单",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "播放我之前听过的歌单"
+   }
+  },
+  {
+   "row": 186,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "听历史的歌",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "听历史的歌"
+   }
+  },
+  {
+   "row": 187,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "来一首历史里的歌",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "来一首历史里的歌"
+   }
+  },
+  {
+   "row": 188,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听以前播放过的歌",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "我想听以前播放过的歌"
+   }
+  },
+  {
+   "row": 189,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放历史播放过的歌曲",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "播放历史播放过的歌曲"
+   }
+  },
+  {
+   "row": 190,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我要听之前听过的歌曲",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "我要听之前听过的歌曲"
+   }
+  },
+  {
+   "row": 191,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听我听歌记录里的曲目",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "我想听我听歌记录里的曲目"
+   }
+  },
+  {
+   "row": 192,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "放听歌历史里的音乐",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "放听歌历史里的音乐"
+   }
+  },
+  {
+   "row": 193,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "来点之前听过的曲子",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "来点之前听过的曲子"
+   }
+  },
+  {
+   "row": 194,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听历史播放记录的歌",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "我想听历史播放记录的歌"
+   }
+  },
+  {
+   "row": 195,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "帮我放历史播放记录里的歌曲",
+   "intent": "music_song_history",
+   "expected_tool": "music_song_history",
+   "expected_params": {
+    "retext": "帮我放历史播放记录里的歌曲"
+   }
+  },
+  {
+   "row": 196,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "我想听歌",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "我想听歌"
+   }
+  },
+  {
+   "row": 197,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放几首歌",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "播放几首歌"
+   }
+  },
+  {
+   "row": 198,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "听歌",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "听歌"
+   }
+  },
+  {
+   "row": 199,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "有没有好听的歌",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "有没有好听的歌"
+   }
+  },
+  {
+   "row": 200,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "你唱歌吧",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "你唱歌吧"
+   }
+  },
+  {
+   "row": 201,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "单曲",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "单曲"
+   }
+  },
+  {
+   "row": 202,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "来点音乐",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "来点音乐"
+   }
+  },
+  {
+   "row": 203,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "免费歌曲播放",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "免费歌曲播放"
+   }
+  },
+  {
+   "row": 204,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "打开歌单",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "打开歌单"
+   }
+  },
+  {
+   "row": 205,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "换一个类型歌曲",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "换一个类型歌曲"
+   }
+  },
+  {
+   "row": 206,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "播放我的音乐",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "播放我的音乐"
+   }
+  },
+  {
+   "row": 207,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "随便听听音乐",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "随便听听音乐"
+   }
+  },
+  {
+   "row": 208,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "推荐一款音乐",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "推荐一款音乐"
+   }
+  },
+  {
+   "row": 209,
+   "domain": "music",
+   "domain_cn": "音乐",
+   "query": "唱首歌来听",
+   "intent": "music_song_recommend",
+   "expected_tool": "music_song_recommend",
+   "expected_params": {
+    "retext": "唱首歌来听"
+   }
+  }
+ ]
+}

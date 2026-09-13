@@ -37,6 +37,10 @@ sys.path.insert(0, str(HCROOT / "app"))
 
 def _load_agent_detect():
     """加载 hcAgent/app/detect.py（避免与 hcTools/app 的 'app' 包名冲突）。"""
+    # detect.py 依赖同级 detect_rulebase.py，需临时加入 sys.path 供裸 import 解析
+    _deps = str(AGENT / "app")
+    if _deps not in sys.path:
+        sys.path.insert(0, _deps)
     spec = importlib.util.spec_from_file_location("agentdetect", str(AGENT / "app" / "detect.py"))
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)

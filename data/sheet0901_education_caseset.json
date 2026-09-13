@@ -1,0 +1,6508 @@
+{
+ "records": [
+  {
+   "row": 2,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高三的物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高三"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 3,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初一语文湘教版同步课",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "material_version",
+       "value": "湘教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 4,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "1年级语文上人教版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "一年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 5,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版小学语文三年级",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "小学"
+      },
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 6,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "2025年3年级上册人教版英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 7,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放人教版地理七年级历史上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "地理",
+        "历史"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 8,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "九年级化学沪科版视频",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "material_version",
+       "value": "沪科版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 9,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "苏教版小学英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "小学"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "material_version",
+       "value": "苏教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 10,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "2025年3年级上册人教版英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 11,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放人教版七年级历史上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "历史"
+       ]
+      },
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 12,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "二年级上册数学青岛版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "二年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "material_version",
+       "value": "青岛版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 13,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "1年级的人教版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "一年级"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 14,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我想学3年级北师大版的英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "material_version",
+       "value": "北师大版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 15,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初中三年级语文上册鄂教版课文朗读",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "鄂教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 16,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版小学语文三年级上册课程",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 17,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "放高一人民教育出版社物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高一"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 18,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "7年级上册2024年人教版历史书",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "历史"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 19,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "7年级下册人教版历史",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "历史"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 20,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "三年级上册数学人教版教案",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 21,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版七年级上册政治",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "政治"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 22,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放新教材九年级化学人教版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 23,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "5年级下册英语人教版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "五年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 24,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "6年级上册英语人民教育出版社",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 25,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "四年级上册和下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "四年级"
+      },
+      {
+       "field": "semester",
+       "values": [
+        "上半学期",
+        "下半学期"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 26,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放1年级上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "一年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 27,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "3年级教育",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 28,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "查看高一高二高三同步教材",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "values": [
+        "高一",
+        "高二",
+        "高三"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 29,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "有初中二年级的课程吗",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 30,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我要看九年级教材同步课",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 31,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "7年级的书本下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 32,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初二下册所有的课文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 33,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "2年级不花钱免费的数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "二年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 34,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "给我播放免费的6年级上册数学人教版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 35,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "8年级免费的数学题",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 36,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "不要钱的科学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "first_subject",
+       "value": "科学"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 37,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "3年级上册数学免费",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 38,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高2年级的数学教学教程免费",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高二"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 39,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我想学高二化学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高二"
+      },
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 40,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "5年级英语书",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "五年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 41,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "7年级历史下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "历史"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 42,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "读一下五年级下册第一单元第三篇的英语课文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "五年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 43,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "八年级数学课程",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 44,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "点开9年级上册物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 45,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "2年级语文上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "二年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 46,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放1年级的英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "一年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 47,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "五年级的语文课本上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "五年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 48,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "6年级的数学教育视频",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 49,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "三年级的英语把它放出来",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 50,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "打开九年级的化学课本1~3单元上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 51,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "8年级数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 52,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "1年级课堂语文课1年级上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "一年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 53,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "4年级的数学和语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "四年级"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "语文",
+        "数学"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 54,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高中三年级的物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高三"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 55,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放所有高一生物",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高一"
+      },
+      {
+       "field": "first_subject",
+       "value": "生物"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 56,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "4年级下册语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "四年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 57,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "3年级的语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 58,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "八年级的物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 59,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高中物理和数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "高中"
+      },
+      {
+       "or": [
+        {
+         "field": "first_subject",
+         "values": [
+          "物理",
+          "数学"
+         ],
+         "operator": "or"
+        },
+        {
+         "field": "k12_category",
+         "values": [
+          "同步课",
+          "同步拓展课"
+         ],
+         "operator": "or"
+        }
+       ]
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 60,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "二年级的语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "小学"
+      },
+      {
+       "field": "grade",
+       "value": "二年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 61,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "8年级上册生物",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "生物"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 62,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "1年级下册语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "一年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 63,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "9年级的数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 64,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "适合高中二年级的政治课内容",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高二"
+      },
+      {
+       "field": "first_subject",
+       "value": "政治"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 65,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "三年级数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 66,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高一上半学期英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高一"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 67,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版初中七年级历史",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "历史"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 68,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高中的化学或者物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "高中"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "化学",
+        "物理"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 69,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "小学四年级和五年级的语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "values": [
+        "四年级",
+        "五年级"
+       ]
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 70,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "免费的初二地理课",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "地理"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 71,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高三下半学期，要数学或者物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高三"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "数学",
+        "物理"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 72,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "北师大版初中八年级下册，免费的数学或物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "北师大版"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "数学",
+        "物理"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 73,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高三下半学期付费的英语课",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高三"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 74,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初中七年级语文，要苏教版或北师大版，但不要免费的",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "material_version",
+       "values": [
+        "苏教版",
+        "北师大版"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 75,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初三化学下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 76,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初一英语上册人教版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 77,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初三年级的数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 78,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "八年级的英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 79,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高中二年级的数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高二"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 80,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高2年级的英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高二"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 81,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人民教育出版社六年级数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 82,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "六年级的英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 83,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "五年级数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "五年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 84,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "给我找四年级的语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "四年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 85,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高一的生物有哪些",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高一"
+      },
+      {
+       "field": "first_subject",
+       "value": "生物"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 86,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "来点高二英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高二"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 87,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "三年级生物",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "生物"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 88,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "九年级地理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "地理"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 89,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "七年级地理下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "地理"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 90,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "2年级语文上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "二年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 91,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "五年级数学下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "五年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 92,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "8年级英语上学期",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 93,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高二物理上学期",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高二"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 94,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高三化学下学期",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高三"
+      },
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 95,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "放七年级数学上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 96,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放九年级语文下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 97,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "六年级上册英语课本",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 98,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "四年级下册科学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "四年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "科学"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 99,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "一年级语文上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "一年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 100,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "三年级数学人教版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 101,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "沪科版九年级物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "material_version",
+       "value": "沪科版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 102,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "鄂教版八年级语文下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "鄂教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 103,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "湘教版七年级地理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "地理"
+      },
+      {
+       "field": "material_version",
+       "value": "湘教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 104,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "苏教版五年级数学上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "五年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "苏教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 105,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "北师大版高一数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高一"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "material_version",
+       "value": "北师大版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 106,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版九年级历史下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "历史"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 107,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我想看人教版高二物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高二"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 108,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "3年级英语外研版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "material_version",
+       "value": "外研版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 109,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版四年级数学下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "四年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 110,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "小学英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "小学"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 111,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初中物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "初中"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 112,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高中化学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "高中"
+      },
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 113,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "有小学数学的课吗",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "小学"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 114,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放初中的历史",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "初中"
+      },
+      {
+       "field": "first_subject",
+       "value": "历史"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 115,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "给我找高中的生物",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "高中"
+      },
+      {
+       "field": "first_subject",
+       "value": "生物"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 116,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版初中物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "初中"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 117,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "免费的高中英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "高中"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 118,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "免费的七年级数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 119,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "不花钱的三年级语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 120,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "九年级英语不要钱",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 121,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高一数学免费的",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高一"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 122,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "收费的高二物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高二"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 123,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "付费的初二英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 124,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我要看收费的六年级数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 125,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高三英语要收费的",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高三"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 126,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "免费的生物课",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "first_subject",
+       "value": "生物"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 127,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "付费的语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 128,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "五年级的语文和数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "五年级"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "语文",
+        "数学"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 129,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初一英语或者数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "英语",
+        "数学"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 130,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高二物理和化学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高二"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "物理",
+        "化学"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 131,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "八年级的生物或地理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "生物",
+        "地理"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 132,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "小学四年级和五年级的数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "小学"
+      },
+      {
+       "field": "grade",
+       "values": [
+        "四年级",
+        "五年级"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 133,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初二和初三的英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "values": [
+        "八年级",
+        "九年级"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 134,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高一高二的历史",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "values": [
+        "高一",
+        "高二"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "first_subject",
+       "value": "历史"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 135,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "三年级上册和下册的英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "semester",
+       "values": [
+        "上半学期",
+        "下半学期"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 136,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "六年级语文书上下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "semester",
+       "values": [
+        "上半学期",
+        "下半学期"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 137,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "苏教版或者北师大版的七年级数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "material_version",
+       "values": [
+        "苏教版",
+        "北师大版"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 138,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版或湘教版八年级语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "material_version",
+       "values": [
+        "人教版",
+        "湘教版"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 139,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "九年级的数学英语语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "数学",
+        "英语",
+        "语文"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 140,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "六年级的课",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 141,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我要看八年级的教材",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 142,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高三的同步课",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高三"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 143,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "有没有化学课",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 144,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我想学生物",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "first_subject",
+       "value": "生物"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 145,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放地理课",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "first_subject",
+       "value": "地理"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 146,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高一下半学期，要数学和英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高一"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "数学",
+        "英语"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 147,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "沪科版九年级下册，免费的化学或物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "沪科版"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "化学",
+        "物理"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 148,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初二上册人教版，付费的数学或英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "数学",
+        "英语"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 149,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "小学三年级和四年级，免费的语文或英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "values": [
+        "三年级",
+        "四年级"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "语文",
+        "英语"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 150,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版高中物理或化学，不要免费的",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "高中"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "物理",
+        "化学"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 151,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "免费的初一下册湘教版语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "material_version",
+       "value": "湘教版"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 152,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "来一份小学三年级的语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 153,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "免费的初中生物",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "初中"
+      },
+      {
+       "field": "first_subject",
+       "value": "生物"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 154,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "付费的高中历史",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "高中"
+      },
+      {
+       "field": "first_subject",
+       "value": "历史"
+      },
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 155,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初中和高中的化学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "values": [
+        "初中",
+        "高中"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 156,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "帮我打开初二下册的物理书",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 157,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初三的化学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 158,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "有没有免费的初一英语上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 159,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初一的课本",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 160,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "放一下六年级的英语课本上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 161,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "六年级下册数学北师大版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "六年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "material_version",
+       "value": "北师大版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 162,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "四年级科学上册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "四年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "科学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 163,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "七年级生物上册人教版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "七年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "生物"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 164,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "八年级地理下册湘教版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "地理"
+      },
+      {
+       "field": "material_version",
+       "value": "湘教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 165,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高一历史",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高一"
+      },
+      {
+       "field": "first_subject",
+       "value": "历史"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 166,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "9年级下册化学免费看",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "化学"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 167,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "五年级语文和英语都要",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "五年级"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "语文",
+        "英语"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 168,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "小学一二年级的数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "小学"
+      },
+      {
+       "field": "grade",
+       "values": [
+        "一年级",
+        "二年级"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 169,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我要看高二高三的物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "values": [
+        "高二",
+        "高三"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 170,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "三年级上册的数学或者英语",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "三年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "数学",
+        "英语"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 171,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "初三物理或化学下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "物理",
+        "化学"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 172,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "沪科版或者人教版的九年级物理",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "九年级"
+      },
+      {
+       "field": "first_subject",
+       "value": "物理"
+      },
+      {
+       "field": "material_version",
+       "values": [
+        "沪科版",
+        "人教版"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 173,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版五年级下册英语免费的",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "五年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "is_fee",
+       "value": 0
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 174,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放苏教版初二语文下册",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "material_version",
+       "value": "苏教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 175,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "四年级上册和五年级下册的数学",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "values": [
+        "四年级",
+        "五年级"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "semester",
+       "values": [
+        "上半学期",
+        "下半学期"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 176,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高三数学或英语，要付费的",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "高三"
+      },
+      {
+       "field": "first_subject",
+       "values": [
+        "数学",
+        "英语"
+       ],
+       "operator": "or"
+      },
+      {
+       "field": "is_fee",
+       "value": 1
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 177,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "二年级下册的语文",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "二年级"
+      },
+      {
+       "field": "semester",
+       "value": "下半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "语文"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 178,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "四年级上册数学人教版",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "四年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "数学"
+      },
+      {
+       "field": "material_version",
+       "value": "人教版"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 179,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "找一下高中英语的课",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "figures",
+       "value": "高中"
+      },
+      {
+       "field": "first_subject",
+       "value": "英语"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 180,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "打开八年级上册生物",
+   "intent": "edu_keyword_search",
+   "expected_tool": "edu_search",
+   "expected_params": {
+    "query": {
+     "and": [
+      {
+       "field": "grade",
+       "value": "八年级"
+      },
+      {
+       "field": "semester",
+       "value": "上半学期"
+      },
+      {
+       "field": "first_subject",
+       "value": "生物"
+      },
+      {
+       "field": "k12_category",
+       "values": [
+        "同步课",
+        "同步拓展课"
+       ],
+       "operator": "or"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "row": 181,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "扇形统计图的备课视频",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_slow_search_data_search",
+   "expected_params": {
+    "query": "扇形统计图的备课视频"
+   }
+  },
+  {
+   "row": 182,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放万唯名师的教育视频",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "播放万唯名师的教育视频"
+   }
+  },
+  {
+   "row": 183,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我要学星火教育高中一对一辅导课程",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "我要学星火教育高中一对一辅导课程"
+   }
+  },
+  {
+   "row": 184,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "有没有学而思的精讲课程",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "有没有学而思的精讲课程"
+   }
+  },
+  {
+   "row": 185,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我想看消防安全常识课",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "我想看消防安全常识课"
+   }
+  },
+  {
+   "row": 186,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "尤克里里零基础入门课",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "尤克里里零基础入门课"
+   }
+  },
+  {
+   "row": 187,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我想学下围棋",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "我想学下围棋"
+   }
+  },
+  {
+   "row": 188,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "古筝名曲教学入门",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "古筝名曲教学入门"
+   }
+  },
+  {
+   "row": 189,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "讲座",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "讲座"
+   }
+  },
+  {
+   "row": 190,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "有没有瑜伽课",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "有没有瑜伽课"
+   }
+  },
+  {
+   "row": 191,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "打开儿童演讲训练教程",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "打开儿童演讲训练教程"
+   }
+  },
+  {
+   "row": 192,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "有没有零基础儿童画画入门教程",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "有没有零基础儿童画画入门教程"
+   }
+  },
+  {
+   "row": 193,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我想学中国舞",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "我想学中国舞"
+   }
+  },
+  {
+   "row": 194,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "儿童彩铅绘画教学",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "儿童彩铅绘画教学"
+   }
+  },
+  {
+   "row": 195,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放儿童篮球课程",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "播放儿童篮球课程"
+   }
+  },
+  {
+   "row": 196,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "小学生自制手账的教程",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "小学生自制手账的教程"
+   }
+  },
+  {
+   "row": 197,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "吉他课程",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "吉他课程"
+   }
+  },
+  {
+   "row": 198,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "学习基本功形体训练",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "学习基本功形体训练"
+   }
+  },
+  {
+   "row": 199,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "少儿足球训练教程",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "少儿足球训练教程"
+   }
+  },
+  {
+   "row": 200,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "有没有非洲鼓入门课",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "有没有非洲鼓入门课"
+   }
+  },
+  {
+   "row": 201,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "免费的少儿硬笔书法",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "免费的少儿硬笔书法"
+   }
+  },
+  {
+   "row": 202,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "安全教育黑板报内容",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "安全教育黑板报内容"
+   }
+  },
+  {
+   "row": 203,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "打开免费的二胡",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "打开免费的二胡"
+   }
+  },
+  {
+   "row": 204,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "做贺卡教学视频",
+   "intent": "edu_holistic_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "做贺卡教学视频"
+   }
+  },
+  {
+   "row": 205,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我要看关于高一上册政治的复习视频",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "我要看关于高一上册政治的复习视频"
+   }
+  },
+  {
+   "row": 206,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "八年级上政治期末复习",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "八年级上政治期末复习"
+   }
+  },
+  {
+   "row": 207,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "人教版高一数学同步辅导精讲",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "人教版高一数学同步辅导精讲"
+   }
+  },
+  {
+   "row": 208,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "9年级上册期末考试的考试范围",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "9年级上册期末考试的考试范围"
+   }
+  },
+  {
+   "row": 209,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "帮我在B站里找到7年级上册历史全部期末考试复习集的视频",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "帮我在B站里找到7年级上册历史全部期末考试复习集的视频"
+   }
+  },
+  {
+   "row": 210,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "7年级上册的地理期末检测",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "7年级上册的地理期末检测"
+   }
+  },
+  {
+   "row": 211,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "请帮我写出九整个9年级的物理易错知识点",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "请帮我写出九整个9年级的物理易错知识点"
+   }
+  },
+  {
+   "row": 212,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "总结七年级下册政治第1单元",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "总结七年级下册政治第1单元"
+   }
+  },
+  {
+   "row": 213,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "高考语文冲刺",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "高考语文冲刺"
+   }
+  },
+  {
+   "row": 214,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "播放七年级初一知识精讲内容",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "播放七年级初一知识精讲内容"
+   }
+  },
+  {
+   "row": 215,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "搜索高三压轴题押题解析",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "搜索高三压轴题押题解析"
+   }
+  },
+  {
+   "row": 216,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "我要看语文阅读专项提升视频",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "我要看语文阅读专项提升视频"
+   }
+  },
+  {
+   "row": 217,
+   "domain": "education",
+   "domain_cn": "教育",
+   "query": "有没有课前预习的课程？",
+   "intent": "edu_extension_search",
+   "expected_tool": "edu_fuzzy_search",
+   "expected_params": {
+    "query": "有没有课前预习的课程？"
+   }
+  }
+ ]
+}

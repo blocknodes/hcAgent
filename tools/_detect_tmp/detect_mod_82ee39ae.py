@@ -14,11 +14,6 @@ import json
 import re
 from pathlib import Path
 
-try:
-    from .detect_rulebase import DetectRuleSet, Rule
-except ImportError:  # 被 tools 差异测试独立加载时无包上下文
-    from detect_rulebase import DetectRuleSet, Rule
-
 
 def _load_badcases() -> dict[str, str]:
     return _load_badcases_for("badcases_domain.json")
@@ -56,10 +51,6 @@ _RULES: list[tuple[str, str]] = [
     ("audio", r"(广播剧|广播|有声书|小说|听书|评书|收听|音频|听录音|有声|听音频|有声故事|有声剧|的FM|电台|广播)"),
     # audio 听剧/小说分集：我要听X第N集/趁X第二部 —— 「我要听」明确 audio，放 vod 具名前
     ("audio", r"(?:我要|我想|想|要|请帮我)?听.{0,4}(?:三体|庆余年|偷偷藏不住|风起洛阳|斗罗大陆).{0,6}第[0-9一二三四五六七八九十]+(?:[集部季]|部分)"),
-    # audio 通用「听 + 有声剧名 + 第N集/部/回」：听力动词显式标记听书意图，任何剧名都归 audio，
-    # 不依赖具名剧名言表。占比 0 误伤其它域；放 audio 具体剧名之后、vod 具名播放之前。
-    ("audio", r"(收听|想听|要听|听一下|给我听|请听|想去听|继续听|听听)\D{0,8}(?:第|部|回)?[0-9一二三四五六七八九十百]+(?:集|部|回)"),
-    ("audio", r"^\s*听\D{0,8}第[0-9一二三四五六七八九十百]+(?:集|部|回)"),
 
     # children 儿歌 —— 儿歌是少儿内容，golden 统一 edu search；放 music 的「.的歌」前
     ("children", r"儿歌"),
@@ -124,37 +115,11 @@ _RULES: list[tuple[str, str]] = [
     ]
 
 
-# 可审计规则集：由上方 _RULES 派生，保证与改造前逐条正则完全一致（零漂移）。
-# 每条 (domain, regex) 转成一个 Rule，decide 命中模式即返回域名，未匹配返回 None，
-# 交由下一优先级的规则继续评。供 tools/sheet0901_rule_regress.py 等审计工具枚举命中。
-# 业务的判定顺序仍由 detect_domain 的显式步骤决定，_SIGNALS 只作为「高置信信号」可枚举层。
-_SIGNALS = DetectRuleSet([
-    Rule(
-        id=f"signal_{i:02d}_{dom}",
-        priority=100 + i,
-        title=f"{dom} 高置信信号 #{i + 1}",
-        explain=f"正则子串命中 {dom}：{pat[:60]}",
-        decide=(lambda q, llm, tv, dom=dom, pat=pat:
-                dom if re.search(pat, q) else None),
-        scope="both",
-    )
-    for i, (dom, pat) in enumerate(_RULES)
-])
-
-
 def _match(q: str) -> tuple[str, str]:
     for dom, pat in _RULES:
         if re.search(pat, q):
             return dom, pat
     return "", ""
-
-
-def _match_rule(q: str) -> str | None:
-    """信号层命中明细：返回命中的 Rule id（审计用），保持 _RULES 为单一事实源。"""
-    for i, (dom, pat) in enumerate(_RULES):
-        if re.search(pat, q):
-            return f"signal_{i:02d}_{dom}"
-    return None
 
 
 # 泛知识开放域问答信号：影视/少儿/音乐/教育 的"信息求助"问句 → fan_knowledge_agent(qa 域)。
@@ -314,144 +279,107 @@ def _off_routing(q: str, llm_domain: str) -> str:
     疑问词抢走；反之真疑问句（哪些/谁/怎么/适合…但没有点名歌）走 qa。
     """
     if not q:
-        _det_note("off:empty->llm")
         return llm_domain or "qa"
-    # 1. 设备播控（暂停/环绕/快退/音量/定时/关机）——息屏第一优先级，避免"播放"误入
+    # 1. 设备播控（暂停/下一/快退/音量/定时/关机）——息屏第一优先，避免"播放"误入
     if _OFF_DEVICE.search(q) and not _OFF_AUDIO_TITLE.search(q):
-        _det_note("off:device")
         return "device"
     # 2. 有声剧：播放动词 + 明确剧名 → audio（息屏不播片，改听有声）
     if _OFF_AUDIO_VERB.search(q) and _OFF_AUDIO_TITLE.search(q):
-        _det_note("off:audio_drama")
         return "audio"
     # 3. 点歌/儿歌（强信号）——
     #    a) 儿歌/歌单/主题曲 歌单意图 → music
     #    b) 播放动词 + 歌名/听的歌 → music（播放命令说话）
     #    c) 裸歌名且无误问词 → music（具体点名播放）
     if _OFF_MUSIC_HINT.search(q):
-        _det_note("off:music_hint")
         return "music"
     if _OFF_MUSIC_VERB.search(q) and _OFF_SONG.search(q):
-        _det_note("off:music_verb_song")
         return "music"
     if re.search(r"(播放|播放|放|点|来|唱|直接放)", q) and re.search(r"(听歌|听的?(?:.{0,4})?歌|歌曲|儿歌|宝宝听)", q):
-        _det_note("off:music_play_listen")
         return "music"
     if _OFF_SONG.search(q) and not _OFF_QUESTION_QA.search(q):
-        _det_note("off:music_bare_song")
         return "music"
     # 3b. children 儿童向 IP/角色 → children（息屏不播片，也归儿童内容 educ_search）。
-    #     置于点歌/儿歌之后，避免"儿童角色"的歌被 music 抢（真正的点唱已在上面 music 返回）。
+    #     置于点歌/儿歌之后，避免"儿童角色"的歌被 music 抢（真正点唱已在上面 music 返回）。
     #     放 qa 之前：儿童内容播放意图明确，优先于泛知识问答。
     if _OFF_CHILDREN.search(q):
-        _det_note("off:children")
         return "children"
     # 4. 泛知识问答：强问词/推荐/信息求助 → qa（含息屏把 片段/学科/歌曲信息 归 qa）
     if _OFF_QUESTION_QA.search(q):
-        _det_note("off:qa")
         return "qa"
     # 5. 教育域学科查询在息屏归 qa（off golden 全教育行为 fan_knowledge_agent）。
     #    无播放/点歌信号，纯"内容/知识/科目"查询 → 泛知识问答。
     if llm_domain == "education" and not re.search(r"(播放|放|听|点)", q):
-        _det_note("off:edu_qa")
         return "qa"
     # 6. 兜底：交 LLM 判定（息屏 LLM 已按屏幕态给对 domain）
-    _det_note("off:llm_fallback")
     return llm_domain or "qa"
 
 
-_TRACE: dict = {}
-
-
-def _det_note(x):
-    """审计：记录本 query 命中的判定路径。默认空操作，审计工具注入后收集，不改判定。"""
-    _TRACE["step"] = x
-
-
-def _det_note_ctx(x, rule_id):
-    """审计：记录路径 + 命中的信号规则 id。"""
-    _TRACE["step"] = x
-    if rule_id:
-        _TRACE["rule"] = rule_id
-
-
 def detect_domain(query: str, llm_domain: str, tv_mode: str | int = "0") -> str:
-    """后处理 LLM 判的 domain。真主链：detect 判定由 _DETECT_RULES(DetectRuleSet) 按 priority 驱动。
+    """后处理 LLM 判的 domain。badcase 优先，其次高置信规则；都不命中保留 LLM。
 
-    每个 return 分支都是一个带 id 的 Rule（badcase/息屏/各保护节点/高置信信号/LLM 兜底）。
-    DetectRuleSet.select() 是唯一判定入口 —— 审计工具打印的 id 即真正决定 domain 的规则。
+    qa 域：问知识开放度问答命中即返回 "qa"（路由到 fan_knowledge_agent）。
+    放在 badcase 之后、_RULES 之前；但需避开明确 播放/片段/设备/学科检索意图。
+
+    tv_mode: 产品契约屏态参数（见 docs/runtime_execute_upstream.md），0=亮屏 / 6=息屏。
+    hcAgent 是纯 LLM 主干（亮屏 orchestrator），息屏 tv_mode=6 时，同一 query 走不同
+    工具（听有声/点歌/知识问答），由 _off_routing 关键词分诊链改到对应域；
+    亮点(默认 0)不触发分叉，保证既有亮屏得分与各域 testset 零回归。
     """
     q = (query or "").strip()
     if not q:
-        _det_note("empty->llm_domain")
         return llm_domain
-    domain, rule = _DETECT_RULES.select(q, llm_domain, str(tv_mode))
-    if rule is not None:
-        _det_note_ctx(rule.id, rule.id if rule.id.startswith("signal_") else None)
-    return domain if domain is not None else (llm_domain if llm_domain else "qa")
-
-
-# ---------------------------------------------------------------------------
-# _DETECT_RULES：判域主链（真 RuleSet）。priority 顺序严格等价原 if-栈，
-# decide 逐个复刻原分支判断（复用同一组谓词），选命中即返回 ⇒ 判定语义零变化。
-# ---------------------------------------------------------------------------
-try:
-    from .detect_rulebase import DetectRuleSet as _DetectRuleSet, Rule as _DRule
-except ImportError:  # 被 tools 独立加载时无包上下文
-    from detect_rulebase import DetectRuleSet as _DetectRuleSet, Rule as _DRule
-
-
-def _media_query_decide(q, llm, tv):
-    if llm == "vod" and _is_media_query(q):
+    # 息屏(tv_mode=6)：关键词分诊链（优先级），不命中交给 LLM 兜底；仅息屏态生效
+    if str(tv_mode) == "6":
+        return _off_routing(q, llm_domain)
+    exact = _badcases().get(q)
+    if exact:
+        return exact
+    # vod 媒资检索保护：LLM 已判 vod 且 query 带影视媒资载体词（电影/电视剧/纪录片/…）
+    # → 这是"按维度检索媒资/定位片段"，不是开放知识问答。_QA_HIT 的通用问词
+    #   (哪些/哪部/改编/上映/出自) 会误伤这类 query，此处放回 vod 交给 hcTools/vod。
+    # 仅当 LLM 域已是 vod（代表它本就想按媒资检索）才生效，避免影响其他域强制改判。
+    # 但若 _RULES 已确定性命中更具体的内容域（children/audio/music 等，如"小羊肖恩的电影"
+    # "汪汪队电影"），说明这是少儿/有声内容而非 vod 媒资，media 载体词不抢判。
+    if llm_domain == "vod" and _is_media_query(q):
         dom_kn, _ = _match(q)
         if dom_kn in ("children", "audio", "music"):
             return dom_kn
         return "vod"
-    return None
-
-
-def _audio_discovery(q):
-    return bool(re.search(r"(有声书|有声剧|广播剧|音频|评书|听书|有声读物|故事|电台|节目)", q) and
-                re.search(r"(哪些|有哪些|是什么|有什么|推荐|推荐。|哪本|哪些本|最火|口碑|在吗|在哪|有没有|搜索|查|找|唱下|听一下)", q))
-
-
-def _music_discovery(q):
-    return bool(re.search(r"(唱|唱的|唱歌|作词|作曲|填词|创作|演唱|演奏|乐曲|歌曲|民谣|粤语)", q)
-                and not re.search(r"(榜单|排行榜|热歌榜|热搜榜|最新歌曲|榜)", q)
-                and re.search(r"(哪些|有哪些|推荐|有没有|来一首|唱的歌|填词|作词|作曲|演唱|唱一下|听一下|创作)", q))
-
-
-def _sports_prediction(q):
-    return bool(re.search(r"(队|vs|VS|比赛|联赛|欧冠|世界杯|冬奥|冠军|晋级|小组赛|队决赛|决赛|篮球队|足球队|女排|乒乓球|亚运|国家队)", q)
-                and re.search(r"(谁能赢|谁能胜|谁能获胜|会夺冠|能否夺冠|能赢|会不会|谁能捧杯|谁赢|大获胜|谁会赢|能取胜|能否出线|进入决赛|拿到冠军|能取得冠军)", q))
-
-
-def _signal_table_match(q):
-    dom, _ = _match(q)
-    return dom or None
-
-
-def _make_detect_rules():
-    rules = []
-
-    def _add(rid, prio, title, dec):
-        rules.append(_DRule(id=rid, priority=prio, title=title, decide=dec, scope="both"))
-
-    # 依序复刻原 if-栈（priority 越小越先评估，等价原先后顺序）
-    _add("off_routing", 1, "息屏分诊链", lambda q, llm, tv: _off_routing(q, llm) if str(tv) == "6" else None)
-    _add("badcase", 100, "精确句 badcase", lambda q, llm, tv: _badcases().get(q) or None)
-    _add("media_query", 200, "vod 媒资载体保护", lambda q, llm, tv: _media_query_decide(q, llm, tv))
-    _add("media_locator", 300, "台词/片段/集数定位", lambda q, llm, tv: "vod" if (llm in ("vod", "qa") and _is_media_locator(q)) else None)
-    _add("children_locator", 400, "children 内容定位",
-         lambda q, llm, tv: "children" if (_match(q)[0] == "children" and re.search(r"绘本|动画|动漫|卡通|台词|哪部动画|哪个动画", q)) else None)
-    _add("audio_discovery", 500, "audio 内容 Discovery", lambda q, llm, tv: "audio" if _audio_discovery(q) else None)
-    _add("music_discovery", 600, "music 内容 Discovery", lambda q, llm, tv: "music" if _music_discovery(q) else None)
-    _add("sports_prediction", 700, "sports 赛事预测", lambda q, llm, tv: "sports" if _sports_prediction(q) else None)
-    _add("qa_open_knowledge", 800, "泛知识开放问答", lambda q, llm, tv: "qa" if _is_qa(q) else None)
-    _add("edu_no_anchor_qa", 900, "教育无锚问答→qa", lambda q, llm, tv: "qa" if _is_edu_no_anchor_qa(q, llm) else None)
-    _add("signal_match", 1100, "高置信信号", lambda q, llm, tv: _signal_table_match(q))
-    _add("llm_domain_keep", 1200, "保 LLM 兜底", lambda q, llm, tv: llm)
-    return _DetectRuleSet(rules)
-
-
-_DETECT_RULES = _make_detect_rules()
+    # 台词/片段/集数/名场面定位：LLM 已判 vod 或误判 qa 时，只要是"台词/片段/集数
+    # 归位具体影视"的定位问句 → 都是媒资定位，而非开放知识问答。
+    # 放 _is_qa 之前，避免 _QA_HIT(哪些/哪部/出自/是谁) 误翻成 qa/fan。
+    # 之所以覆盖 qa：这几类问句(台词出自哪部剧/是第几集/来自哪部电影)即使 LLM 误投成
+    # fan_knowledge_agent(qa)，用户意图仍是 vod 媒资定位，应被救回 vod。
+    if llm_domain in ("vod", "qa") and _is_media_locator(q):
+        return "vod"
+    # children 内容定位/识别：绘本/动漫/动画片的台词、出处、"这是哪个动画片/绘本"等问句，
+    # _RULES 已确定性命中 children 内容锚点，即使又是问句(被 _is_qa 标 qa) 也应是 children，
+    # 而非 fan_knowledge_agent。放 _is_qa 之前，避免"台词/哪部/出处"类疑问词把少儿内容误翻成 qa。
+    if _match(q)[0] == "children" and re.search(r"绘本|动画|动漫|卡通|台词|哪部动画|哪个动画", q):
+        return "children"
+    # audio 内容 Discovery：有声书/广播剧/音频/故事/节目 等载体 + 求索/推荐问句，
+    # 即使带"哪些/是什么/推荐"等问词(_is_qa 会标 qa)，只要是听书/广播内容就归 audio_search。
+    # 与 children rescue 同因：内容锚点比泛疑问词更具体。music 榜单/热门歌不带这些锚，不受影响。
+    if re.search(r"(有声书|有声剧|广播剧|音频|评书|听书|有声读物|故事|电台|节目)", q) and \
+       re.search(r"(哪些|有哪些|是什么|有什么|推荐|推荐。|哪本|哪些本|最火|口碑|在吗|在哪|有没有|搜索|查|找|唱下|听一下)", q):
+        return "audio"
+    # music 内容 Discovery：唱/作词/作曲/演唱/演奏/歌曲 等锚点 + 求索问句 → music_song_search。
+    # 排除 榜单/排行榜/热搜榜/热歌榜/最新歌曲 等「榜单型」—— 这些 golden 归 fan_knowledge_agent(资讯榜)。
+    # 放 _is_qa 之前：内容锚比泛疑问词更具体。
+    if re.search(r"(唱|唱的|唱歌|作词|作曲|填词|创作|演唱|演奏|乐曲|歌曲|民谣|粤语)", q) and \
+       not re.search(r"(榜单|排行榜|热歌榜|热搜榜|最新歌曲|榜)", q) and \
+       re.search(r"(哪些|有哪些|推荐|有没有|来一首|唱的歌|填词|作词|作曲|演唱|唱一下|听一下|创作)", q):
+        return "music"
+    # sports 赛事预测：谁能赢/会夺冠/能否胜出 等预测问句，即使被 _is_qa 标 qa，
+    # 只要带体育赛事锚点(队/比赛/vs/联赛/世界杯/晋级/vs 队名)就归 sports。放 _is_qa 之前。
+    if re.search(r"(队|vs|VS|比赛|联赛|欧冠|世界杯|冬奥|冠军|晋级|小组赛|半决赛|决赛|篮球队|足球队|女排|乒乓球|亚运|国家队)", q) and \
+       re.search(r"(谁能赢|谁能胜|谁能获胜|会夺冠|能否夺冠|能赢|会不会|谁能捧杯|谁赢|大获胜|谁会赢|能取胜|能否出线|进入决赛|拿到冠军|能取得冠军)", q):
+        return "sports"
+    if _is_qa(q):
+        return "qa"
+    # 教育事实知识问答 → 泛知识(qa)：教育域的「知识/学科」无学段/教材/课程锚点时，
+    # 是泛知识问答（游泳安全知识、直角三角形面积），而非课程检索。见 docs/query_pipeline.md。
+    if _is_edu_no_anchor_qa(q, llm_domain):
+        return "qa"
+    dom, _p = _match(q)
+    return dom if dom else llm_domain

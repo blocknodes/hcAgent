@@ -16,4 +16,6 @@ if command -v lsof >/dev/null 2>&1; then
   fi
 fi
 
-exec uvicorn app.main:app --host "$HOST" --port "$PORT" --reload
+# 统一日志文件：所有输出(stdout+stderr)都追加到这里。可用 HC_LOG_FILE 覆盖，默认 run.log。
+LOG_FILE="${HC_LOG_FILE:-run.log}"
+exec uvicorn app.main:app --host "$HOST" --port "$PORT" --reload 2>&1 | tee -a "$LOG_FILE"

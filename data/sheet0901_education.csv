@@ -1,0 +1,3984 @@
+﻿业务域,query,意图,期望工具,期望参数,是否合理,备注,,,,,,,,,,,,,
+教育,高三的物理,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""高三""
+},
+{
+""field"": ""first_subject"",
+""value"": ""物理""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,初一语文湘教版同步课,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""七年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""material_version"",
+""value"": ""湘教版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,1年级语文上人教版,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""一年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,人教版小学语文三年级,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""figures"",
+""value"": ""小学""
+},
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,2025年3年级上册人教版英语,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""英语""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,转慢链路,,,,,,,,,,,,,
+教育,播放人教版地理七年级历史上册,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""first_subject"",
+""values"": [
+""地理"",
+""历史""
+],
+""operator"": ""or""
+},
+{
+""field"": ""grade"",
+""value"": ""七年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,九年级化学沪科版视频,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""九年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""化学""
+},
+{
+""field"": ""material_version"",
+""value"": ""沪科版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,苏教版小学英语,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""figures"",
+""value"": ""小学""
+},
+{
+""field"": ""first_subject"",
+""value"": ""英语""
+},
+{
+""field"": ""material_version"",
+""value"": ""苏教版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,2025年3年级上册人教版英语,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""英语""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,转慢链路,,,,,,,,,,,,,
+教育,播放人教版七年级历史上册,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""first_subject"",
+""values"": [
+""历史""
+]
+},
+{
+""field"": ""grade"",
+""value"": ""七年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,二年级上册数学青岛版,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""二年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""material_version"",
+""value"": ""青岛版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,1年级的人教版,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""一年级""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,我想学3年级北师大版的英语,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""英语""
+},
+{
+""field"": ""material_version"",
+""value"": ""北师大版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",合理,"{
+""field"": ""figures"",
+""value"": ""小学""
+}条件冗余应删除",,,,,,,,,,,,,
+教育,初中三年级语文上册鄂教版课文朗读,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""九年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""material_version"",
+""value"": ""鄂教版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,人教版小学语文三年级上册课程,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",合理,"{
+""field"": ""figures"",
+""value"": ""小学""
+}条件冗余应删除",,,,,,,,,,,,,
+教育,放高一人民教育出版社物理,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""高一""
+},
+{
+""field"": ""first_subject"",
+""value"": ""物理""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",合理,"{
+""field"": ""figures"",
+""value"": ""高中""
+}条件冗余应删除",,,,,,,,,,,,,
+教育,7年级上册2024年人教版历史书,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""七年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""历史""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,转慢链路,,,,,,,,,,,,,
+教育,7年级下册人教版历史,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""七年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""历史""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""semester"",
+""value"": ""下半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,三年级上册数学人教版教案,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,人教版七年级上册政治,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""七年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""政治""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,播放新教材九年级化学人教版,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""九年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""化学""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,5年级下册英语人教版,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""五年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""英语""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""semester"",
+""value"": ""下半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",合理,"{
+""field"": ""material_version"",
+""value"": ""人教部编版""
+}未按照schema进行归一",,,,,,,,,,,,,
+教育,6年级上册英语人民教育出版社,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""六年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""英语""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,四年级上册和下册,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""四年级""
+},
+{
+""field"": ""semester"",
+""values"": [
+""上半学期"",
+""下半学期""
+],
+""operator"": ""or""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,播放1年级上册,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""一年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,3年级教育,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",合理,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,
+教育,查看高一高二高三同步教材,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""values"": [""高一"", ""高二"", ""高三""],
+""operator"": ""or""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,有初中二年级的课程吗,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""八年级""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,我要看九年级教材同步课,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""九年级""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,7年级的书本下册,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""七年级""
+},
+{
+""field"": ""semester"",
+""value"": ""下半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,初二下册所有的课文,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""八年级""
+},
+{
+""field"": ""semester"",
+""value"": ""下半学期""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",合理,"{
+""field"": ""figures"",
+""value"": ""初中""
+}多余条件应删除",,,,,,,,,,,,,
+教育,2年级不花钱免费的数学,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""二年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""is_fee"",
+""value"": 0
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,给我播放免费的6年级上册数学人教版,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""六年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""material_version"",
+""value"": ""人教版""
+},
+{
+""field"": ""is_fee"",
+""value"": 0
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,8年级免费的数学题,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""八年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""is_fee"",
+""value"": 0
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,不要钱的科学,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""first_subject"",
+""value"": ""科学""
+},
+{
+""field"": ""is_fee"",
+""value"": 0
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,3年级上册数学免费,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""is_fee"",
+""value"": 0
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,高2年级的数学教学教程免费,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""高二""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""is_fee"",
+""value"": 0
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,我想学高二化学,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""高二""
+},
+{
+""field"": ""first_subject"",
+""value"": ""化学""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,5年级英语书,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""五年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""英语""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,7年级历史下册,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""七年级""
+},
+{
+""field"": ""semester"",
+""value"": ""下半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""历史""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,读一下五年级下册第一单元第三篇的英语课文,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""五年级""
+},
+{
+""field"": ""semester"",
+""value"": ""下半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""英语""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,转慢链路,,,,,,,,,,,,,
+教育,八年级数学课程,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""八年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,点开9年级上册物理,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""九年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""物理""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,2年级语文上册,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""二年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,播放1年级的英语,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""一年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""英语""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,五年级的语文课本上册,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""五年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,6年级的数学教育视频,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""六年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,三年级的英语把它放出来,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""英语""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,打开九年级的化学课本1~3单元上册,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""九年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""化学""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,转慢链路,,,,,,,,,,,,,
+教育,8年级数学,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""八年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,1年级课堂语文课1年级上册,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""一年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,4年级的数学和语文,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""四年级""
+},
+{
+""field"": ""first_subject"",
+""values"": [""语文"", ""数学""],
+""operator"": ""or""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,高中三年级的物理,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""高三""
+},
+{
+""field"": ""first_subject"",
+""value"": ""物理""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,播放所有高一生物,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""高一""
+},
+{
+""field"": ""first_subject"",
+""value"": ""生物""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,4年级下册语文,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""四年级""
+},
+{
+""field"": ""semester"",
+""value"": ""下半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,3年级的语文,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""三年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,八年级的物理,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""八年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""物理""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,高中物理和数学,edu_keyword_search,edu_search,"{""query"":{""and"":[{""field"":""figures"",""value"":""高中""},{""or"":[{""field"":""first_subject"",""values"":[""物理"",""数学""],""operator"":""or""},{""field"":""k12_category"",""values"":[""同步课"",""同步拓展课""],""operator"":""or""}]}]}}",,,,,,,,,,,,,,,
+教育,二年级的语文,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""figures"",
+""value"": ""小学""
+},
+{
+""field"": ""grade"",
+""value"": ""二年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,8年级上册生物,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""八年级""
+},
+{
+""field"": ""semester"",
+""value"": ""上半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""生物""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,1年级下册语文,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""一年级""
+},
+{
+""field"": ""semester"",
+""value"": ""下半学期""
+},
+{
+""field"": ""first_subject"",
+""value"": ""语文""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",合理,阅读是否归一为语文,,,,,,,,,,,,,
+教育,9年级的数学,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""九年级""
+},
+{
+""field"": ""first_subject"",
+""value"": ""数学""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,适合高中二年级的政治课内容,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{
+""field"": ""grade"",
+""value"": ""高二""
+},
+{
+""field"": ""first_subject"",
+""value"": ""政治""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,三年级数学,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{ ""field"": ""grade"", ""value"": ""三年级"" },
+{ ""field"": ""first_subject"", ""value"": ""数学"" },
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,高一上半学期英语,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{ ""field"": ""grade"", ""value"": ""高一"" },
+{ ""field"": ""semester"", ""value"": ""上半学期"" },
+{ ""field"": ""first_subject"", ""value"": ""英语"" },
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,人教版初中七年级历史,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{ ""field"": ""grade"", ""value"": ""七年级"" },
+{ ""field"": ""first_subject"", ""value"": ""历史"" },
+{ ""field"": ""material_version"", ""value"": ""人教版"" },
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",合理,"{ ""field"": ""figures"", ""value"": ""初中"" }条件冗余应删除",,,,,,,,,,,,,
+教育,高中的化学或者物理,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{ ""field"": ""figures"", ""value"": ""高中"" },
+{
+""field"": ""first_subject"",
+""values"": [""化学"", ""物理""],
+""operator"": ""or""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,小学四年级和五年级的语文,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{ ""field"": ""grade"", ""values"": [""四年级"", ""五年级""] },
+{ ""field"": ""first_subject"", ""value"": ""语文"" },
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",合理,"{ ""field"": ""figures"", ""value"": ""小学"" }多余应删除",,,,,,,,,,,,,
+教育,免费的初二地理课,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{ ""field"": ""grade"", ""value"": ""八年级"" },
+{ ""field"": ""first_subject"", ""value"": ""地理"" },
+{ ""field"": ""is_fee"", ""value"": 0 },
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,高三下半学期，要数学或者物理,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{ ""field"": ""grade"", ""value"": ""高三"" },
+{ ""field"": ""semester"", ""value"": ""下半学期"" },
+{
+""field"": ""first_subject"",
+""values"": [""数学"", ""物理""],
+""operator"": ""or""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,北师大版初中八年级下册，免费的数学或物理,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{ ""field"": ""grade"", ""value"": ""八年级"" },
+{ ""field"": ""semester"", ""value"": ""下半学期"" },
+{ ""field"": ""material_version"", ""value"": ""北师大版"" },
+{ ""field"": ""is_fee"", ""value"": 0 },
+{
+""field"": ""first_subject"",
+""values"": [""数学"", ""物理""],
+""operator"": ""or""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",合理,"{ ""field"": ""figures"", ""value"": ""初中"" }多余应删除",,,,,,,,,,,,,
+教育,高三下半学期付费的英语课,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{ ""field"": ""grade"", ""value"": ""高三"" },
+{ ""field"": ""semester"", ""value"": ""下半学期"" },
+{ ""field"": ""first_subject"", ""value"": ""英语"" },
+{ ""field"": ""is_fee"", ""value"": 1 },
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,初中七年级语文，要苏教版或北师大版，但不要免费的,edu_keyword_search,edu_search,"{
+""query"": {
+""and"": [
+{ ""field"": ""is_fee"", ""value"": 1},
+{ ""field"": ""grade"", ""value"": ""七年级"" },
+{ ""field"": ""first_subject"", ""value"": ""语文"" },
+{
+""field"": ""material_version"",
+""values"": [""苏教版"", ""北师大版""],
+""operator"": ""or""
+},
+{
+""field"": ""k12_category"",
+""values"": [""同步课"", ""同步拓展课""],
+""operator"": ""or""
+}
+]
+}
+}",,,,,,,,,,,,,,,
+教育,初三化学下册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""化学""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,初一英语上册人教版,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,初三年级的数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,八年级的英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高中二年级的数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高二""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高2年级的英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高二""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,人民教育出版社六年级数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""六年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,六年级的英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""六年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,五年级数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""五年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,给我找四年级的语文,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""四年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高一的生物有哪些,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高一""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""生物""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,来点高二英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高二""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,三年级生物,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""三年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""生物""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,九年级地理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""地理""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,七年级地理下册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""地理""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,2年级语文上册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""二年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,五年级数学下册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""五年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,8年级英语上学期,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高二物理上学期,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高二""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""物理""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高三化学下学期,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高三""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""化学""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,放七年级数学上册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,播放九年级语文下册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,六年级上册英语课本,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""六年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,四年级下册科学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""四年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""科学""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,一年级语文上册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""一年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,三年级数学人教版,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""三年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,沪科版九年级物理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""物理""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""沪科版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,鄂教版八年级语文下册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""鄂教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,湘教版七年级地理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""地理""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""湘教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,苏教版五年级数学上册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""五年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""苏教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,北师大版高一数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高一""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""北师大版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,人教版九年级历史下册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""历史""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,我想看人教版高二物理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高二""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""物理""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,3年级英语外研版,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""三年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""外研版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,人教版四年级数学下册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""四年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,小学英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""小学""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,初中物理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""初中""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""物理""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高中化学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""高中""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""化学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,有小学数学的课吗,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""小学""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,播放初中的历史,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""初中""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""历史""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,给我找高中的生物,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""高中""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""生物""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,人教版初中物理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""初中""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""物理""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,免费的高中英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""高中""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,免费的七年级数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,不花钱的三年级语文,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""三年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,九年级英语不要钱,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高一数学免费的,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高一""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,收费的高二物理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高二""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""物理""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 1
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,付费的初二英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 1
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,我要看收费的六年级数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""六年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 1
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高三英语要收费的,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高三""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 1
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,免费的生物课,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""生物""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,付费的语文,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 1
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,五年级的语文和数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""五年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""语文"", ""数学""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,初一英语或者数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""英语"", ""数学""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高二物理和化学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高二""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""物理"", ""化学""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,八年级的生物或地理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""生物"", ""地理""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,小学四年级和五年级的数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""小学""
+  },
+  {
+  ""field"": ""grade"",
+  ""values"": [""四年级"", ""五年级""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,初二和初三的英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""values"": [""八年级"", ""九年级""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高一高二的历史,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""values"": [""高一"", ""高二""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""历史""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,三年级上册和下册的英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""三年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""values"": [""上半学期"", ""下半学期""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,六年级语文书上下册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""六年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""values"": [""上半学期"", ""下半学期""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,苏教版或者北师大版的七年级数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""material_version"",
+  ""values"": [""苏教版"", ""北师大版""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,人教版或湘教版八年级语文,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""material_version"",
+  ""values"": [""人教版"", ""湘教版""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,九年级的数学英语语文,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""数学"", ""英语"", ""语文""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,六年级的课,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""六年级""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,我要看八年级的教材,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高三的同步课,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高三""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,有没有化学课,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""化学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,我想学生物,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""生物""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,播放地理课,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""地理""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高一下半学期，要数学和英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高一""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""数学"", ""英语""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,沪科版九年级下册，免费的化学或物理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""沪科版""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""化学"", ""物理""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,初二上册人教版，付费的数学或英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 1
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""数学"", ""英语""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,小学三年级和四年级，免费的语文或英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""values"": [""三年级"", ""四年级""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""语文"", ""英语""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",合理,"  {
+  ""field"": ""figures"",
+  ""value"": ""小学""
+  }条件多余应删除",,,,,,,,,,,,,
+教育,人教版高中物理或化学，不要免费的,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""高中""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 1
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""物理"", ""化学""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,免费的初一下册湘教版语文,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""湘教版""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,来一份小学三年级的语文,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""三年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,免费的初中生物,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""初中""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""生物""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,付费的高中历史,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""高中""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""历史""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 1
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,初中和高中的化学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""values"": [""初中"", ""高中""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""化学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,帮我打开初二下册的物理书,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""物理""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,初三的化学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""化学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,有没有免费的初一英语上册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,初一的课本,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,放一下六年级的英语课本上册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""六年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,六年级下册数学北师大版,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""六年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""北师大版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,四年级科学上册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""四年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""科学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,七年级生物上册人教版,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""七年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""生物""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,八年级地理下册湘教版,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""地理""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""湘教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高一历史,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高一""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""历史""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,9年级下册化学免费看,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""化学""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,五年级语文和英语都要,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""五年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""语文"", ""英语""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,小学一二年级的数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""小学""
+  },
+  {
+  ""field"": ""grade"",
+  ""values"": [""一年级"", ""二年级""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,我要看高二高三的物理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""values"": [""高二"", ""高三""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""物理""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,三年级上册的数学或者英语,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""三年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""数学"", ""英语""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,初三物理或化学下册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""物理"", ""化学""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,沪科版或者人教版的九年级物理,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""九年级""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""物理""
+  },
+  {
+  ""field"": ""material_version"",
+  ""values"": [""沪科版"", ""人教版""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,人教版五年级下册英语免费的,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""五年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 0
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,播放苏教版初二语文下册,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""苏教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,四年级上册和五年级下册的数学,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""values"": [""四年级"", ""五年级""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""semester"",
+  ""values"": [""上半学期"", ""下半学期""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,高三数学或英语，要付费的,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""高三""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""values"": [""数学"", ""英语""],
+  ""operator"": ""or""
+  },
+  {
+  ""field"": ""is_fee"",
+  ""value"": 1
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,二年级下册的语文,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""二年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""下半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""语文""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",合理,阅读是否应归一化为语文,,,,,,,,,,,,,
+教育,四年级上册数学人教版,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""四年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""数学""
+  },
+  {
+  ""field"": ""material_version"",
+  ""value"": ""人教版""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",合理,无年份支持字段，应进慢链路,,,,,,,,,,,,,
+教育,找一下高中英语的课,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""figures"",
+  ""value"": ""高中""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""英语""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",,,,,,,,,,,,,,,
+教育,打开八年级上册生物,edu_keyword_search,edu_search,"{
+  ""query"": {
+  ""and"": [
+  {
+  ""field"": ""grade"",
+  ""value"": ""八年级""
+  },
+  {
+  ""field"": ""semester"",
+  ""value"": ""上半学期""
+  },
+  {
+  ""field"": ""first_subject"",
+  ""value"": ""生物""
+  },
+  {
+  ""field"": ""k12_category"",
+  ""values"": [""同步课"", ""同步拓展课""],
+  ""operator"": ""or""
+  }
+  ]
+  }
+ }",合理,无第2章支持字段，应进慢链路,,,,,,,,,,,,,
+教育,扇形统计图的备课视频,edu_extension_search,edu_slow_search_data_search,"{""query"": ""扇形统计图的备课视频""}",,,,,,,,,,,,,,,
+教育,播放万唯名师的教育视频,edu_extension_search,edu_fuzzy_search,"{""query"": ""播放万唯名师的教育视频""}",,,,,,,,,,,,,,,
+教育,我要学星火教育高中一对一辅导课程,edu_extension_search,edu_fuzzy_search,"{""query"": ""我要学星火教育高中一对一辅导课程""}",,,,,,,,,,,,,,,
+教育,有没有学而思的精讲课程,edu_extension_search,edu_fuzzy_search,"{""query"": ""有没有学而思的精讲课程""}",,,,,,,,,,,,,,,
+教育,我想看消防安全常识课,edu_holistic_search,edu_fuzzy_search,"{""query"": ""我想看消防安全常识课""}",,,,,,,,,,,,,,,
+教育,尤克里里零基础入门课,edu_holistic_search,edu_fuzzy_search,"{""query"": ""尤克里里零基础入门课""}",,,,,,,,,,,,,,,
+教育,我想学下围棋,edu_holistic_search,edu_fuzzy_search,"{""query"": ""我想学下围棋""}",,,,,,,,,,,,,,,
+教育,古筝名曲教学入门,edu_holistic_search,edu_fuzzy_search,"{""query"": ""古筝名曲教学入门""}",,,,,,,,,,,,,,,
+教育,讲座,edu_holistic_search,edu_fuzzy_search,"{""query"": ""讲座""}",,,,,,,,,,,,,,,
+教育,有没有瑜伽课,edu_holistic_search,edu_fuzzy_search,"{""query"": ""有没有瑜伽课""}",,,,,,,,,,,,,,,
+教育,打开儿童演讲训练教程,edu_holistic_search,edu_fuzzy_search,"{""query"": ""打开儿童演讲训练教程""}",,,,,,,,,,,,,,,
+教育,有没有零基础儿童画画入门教程,edu_holistic_search,edu_fuzzy_search,"{""query"": ""有没有零基础儿童画画入门教程""}",,,,,,,,,,,,,,,
+教育,我想学中国舞,edu_holistic_search,edu_fuzzy_search,"{""query"": ""我想学中国舞""}",,,,,,,,,,,,,,,
+教育,儿童彩铅绘画教学,edu_holistic_search,edu_fuzzy_search,"{""query"": ""儿童彩铅绘画教学""}",,,,,,,,,,,,,,,
+教育,播放儿童篮球课程,edu_holistic_search,edu_fuzzy_search,"{""query"": ""播放儿童篮球课程""}",,,,,,,,,,,,,,,
+教育,小学生自制手账的教程,edu_holistic_search,edu_fuzzy_search,"{""query"": ""小学生自制手账的教程""}",,,,,,,,,,,,,,,
+教育,吉他课程,edu_holistic_search,edu_fuzzy_search,"{""query"": ""吉他课程""}",,,,,,,,,,,,,,,
+教育,学习基本功形体训练,edu_holistic_search,edu_fuzzy_search,"{""query"": ""学习基本功形体训练""}",,,,,,,,,,,,,,,
+教育,少儿足球训练教程,edu_holistic_search,edu_fuzzy_search,"{""query"": ""少儿足球训练教程""}",,,,,,,,,,,,,,,
+教育,有没有非洲鼓入门课,edu_holistic_search,edu_fuzzy_search,"{""query"": ""有没有非洲鼓入门课""}",,,,,,,,,,,,,,,
+教育,免费的少儿硬笔书法,edu_holistic_search,edu_fuzzy_search,"{""query"": ""免费的少儿硬笔书法""}",,,,,,,,,,,,,,,
+教育,安全教育黑板报内容,edu_holistic_search,edu_fuzzy_search,"{""query"": ""安全教育黑板报内容""}",,,,,,,,,,,,,,,
+教育,打开免费的二胡,edu_holistic_search,edu_fuzzy_search,"{""query"": ""打开免费的二胡""}",,,,,,,,,,,,,,,
+教育,做贺卡教学视频,edu_holistic_search,edu_fuzzy_search,"{""query"": ""做贺卡教学视频""}",,,,,,,,,,,,,,,
+教育,我要看关于高一上册政治的复习视频,edu_extension_search,edu_fuzzy_search,"{""query"": ""我要看关于高一上册政治的复习视频""}",,,,,,,,,,,,,,,
+教育,八年级上政治期末复习,edu_extension_search,edu_fuzzy_search,"{""query"": ""八年级上政治期末复习""}",,,,,,,,,,,,,,,
+教育,人教版高一数学同步辅导精讲,edu_extension_search,edu_fuzzy_search,"{""query"": ""人教版高一数学同步辅导精讲""}",,,,,,,,,,,,,,,
+教育,9年级上册期末考试的考试范围,edu_extension_search,edu_fuzzy_search,"{""query"": ""9年级上册期末考试的考试范围""}",,,,,,,,,,,,,,,
+教育,帮我在B站里找到7年级上册历史全部期末考试复习集的视频,edu_extension_search,edu_fuzzy_search,"{""query"": ""帮我在B站里找到7年级上册历史全部期末考试复习集的视频""}",,,,,,,,,,,,,,,
+教育,7年级上册的地理期末检测,edu_extension_search,edu_fuzzy_search,"{""query"": ""7年级上册的地理期末检测""}",,,,,,,,,,,,,,,
+教育,请帮我写出九整个9年级的物理易错知识点,edu_extension_search,edu_fuzzy_search,"{""query"": ""请帮我写出九整个9年级的物理易错知识点""}",,,,,,,,,,,,,,,
+教育,总结七年级下册政治第1单元,edu_extension_search,edu_fuzzy_search,"{""query"": ""总结七年级下册政治第1单元""}",,,,,,,,,,,,,,,
+教育,高考语文冲刺,edu_extension_search,edu_fuzzy_search,"{""query"": ""高考语文冲刺""}",,,,,,,,,,,,,,,
+教育,播放七年级初一知识精讲内容,edu_extension_search,edu_fuzzy_search,"{""query"": ""播放七年级初一知识精讲内容""}",,,,,,,,,,,,,,,
+教育,搜索高三压轴题押题解析,edu_extension_search,edu_fuzzy_search,"{""query"": ""搜索高三压轴题押题解析""}",,,,,,,,,,,,,,,
+教育,我要看语文阅读专项提升视频,edu_extension_search,edu_fuzzy_search,"{""query"": ""我要看语文阅读专项提升视频""}",,,,,,,,,,,,,,,
+教育,有没有课前预习的课程？,edu_extension_search,edu_fuzzy_search,"{""query"": ""有没有课前预习的课程？""}",,,,,,,,,,,,,,,

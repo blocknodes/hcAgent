@@ -1,0 +1,182 @@
+{
+  "count": 7,
+  "diffs": [
+    {
+      "row": 36,
+      "domain": "教育",
+      "query": "不要钱的科学",
+      "gold": "edu_search",
+      "pred": "vod_search",
+      "gold_params": {
+        "query": {
+          "and": [
+            {
+              "field": "first_subject",
+              "value": "科学"
+            },
+            {
+              "field": "is_fee",
+              "value": 0
+            },
+            {
+              "field": "k12_category",
+              "values": [
+                "同步课",
+                "同步拓展课"
+              ],
+              "operator": "or"
+            }
+          ]
+        }
+      },
+      "pred_params": {
+        "action": "search",
+        "retext": "不要钱的科学",
+        "query": {
+          "and": [
+            {
+              "field": "tag",
+              "value": "科学"
+            },
+            {
+              "field": "is_fee",
+              "value": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "row": 85,
+      "domain": "教育",
+      "query": "高一的生物有哪些",
+      "gold": "edu_search",
+      "pred": "fan_knowledge_agent",
+      "gold_params": {
+        "query": {
+          "and": [
+            {
+              "field": "grade",
+              "value": "高一"
+            },
+            {
+              "field": "first_subject",
+              "value": "生物"
+            },
+            {
+              "field": "k12_category",
+              "values": [
+                "同步课",
+                "同步拓展课"
+              ],
+              "operator": "or"
+            }
+          ]
+        }
+      },
+      "pred_params": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "高一的生物有哪些"
+          }
+        ],
+        "riskRespStrategy": "all_replace",
+        "sceneType": "knowledge_qa",
+        "need_media": false
+      }
+    },
+    {
+      "row": 189,
+      "domain": "教育",
+      "query": "讲座",
+      "gold": "edu_fuzzy_search",
+      "pred": "execute",
+      "gold_params": {
+        "query": "讲座"
+      },
+      "pred_params": {
+        "query": "讲座"
+      }
+    },
+    {
+      "row": 203,
+      "domain": "教育",
+      "query": "打开免费的二胡",
+      "gold": "edu_fuzzy_search",
+      "pred": "music_song_search",
+      "gold_params": {
+        "query": "打开免费的二胡"
+      },
+      "pred_params": {
+        "retext": "打开免费的二胡",
+        "version": [
+          "免费版"
+        ]
+      }
+    },
+    {
+      "row": 185,
+      "domain": "教育",
+      "query": "我想看消防安全常识课",
+      "gold": "edu_fuzzy_search",
+      "pred": "fan_knowledge_agent",
+      "gold_params": {
+        "query": "我想看消防安全常识课"
+      },
+      "pred_params": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "我想看消防安全常识课"
+          }
+        ],
+        "riskRespStrategy": "all_replace",
+        "sceneType": "knowledge_qa",
+        "need_media": false
+      }
+    },
+    {
+      "row": 205,
+      "domain": "教育",
+      "query": "我要看关于高一上册政治的复习视频",
+      "gold": "edu_fuzzy_search",
+      "pred": "fan_knowledge_agent",
+      "gold_params": {
+        "query": "我要看关于高一上册政治的复习视频"
+      },
+      "pred_params": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "我要看关于高一上册政治的复习视频"
+          }
+        ],
+        "riskRespStrategy": "all_replace",
+        "sceneType": "knowledge_qa",
+        "need_media": false
+      }
+    },
+    {
+      "row": 202,
+      "domain": "教育",
+      "query": "安全教育黑板报内容",
+      "gold": "edu_fuzzy_search",
+      "pred": "fan_knowledge_agent",
+      "gold_params": {
+        "query": "安全教育黑板报内容"
+      },
+      "pred_params": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "安全教育黑板报内容"
+          }
+        ],
+        "riskRespStrategy": "all_replace",
+        "sceneType": "education_qa",
+        "need_media": false
+      }
+    }
+  ]
+}

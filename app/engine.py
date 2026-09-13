@@ -21,10 +21,181 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from . import config, detect, hctools, llm
-from .prompts import T0_PLAN_PROMPT, T1_STEP_PROMPT
+from .prompts import T0_PLAN_PROMPT, T1_STEP_PROMPT, MT_REWRITE_PROMPT
 
-# 域名闭合集（供 LLM 输出校验）。空串=未定，由 LLM 必须给出；为保鲁棒给一个中性默认。
+# 域名闭合集（供 LLM 输出校验）。空串=未配探索，为保证给出中性默认。
 _DOMAINS = {"vod", "children", "education", "music", "audio", "sports", "device", "qa"}
+
+
+# 多轮上下文缓存：按 device_id 存完整对话轮（每轮 query + answer）。
+# 每轮用 LLM(MT_REWRITE_PROMPT) 把本轮请求合并整个对话历史 → 自包含 query。
+# TTL 2 分钟防内存无限膨胀；同一 device 追加/刷新最新轮。
+_MT_TTL = 120.0
+_MT_MAX_TURNS = 20          # 每设备最多保留的对话轮数，防超长 prompt
+_MT_CONTEXT: dict[str, dict[str, Any]] = {}
+_MT_LOCK = threading.Lock()
+
+
+def _mt_get(device_id: str) -> list[dict[str, str]]:
+    """返回该 device 的有效对话历史（每轮 {"q":…,"a":…}），空或超时返回 []。"""
+    if not device_id:
+        return []
+    now = time.time()
+    with _MT_LOCK:
+        ent = _MT_CONTEXT.get(device_id)
+        if ent is not None and now - ent["ts"] > _MT_TTL:
+            _MT_CONTEXT.pop(device_id, None)
+            return []
+        # 返回副本，避免调用方持锁外突变（q/a 都是不可变 str）
+        return [dict(t) for t in ent["turns"]] if ent else []
+
+
+def _mt_add(device_id: str, turn: dict[str, str]) -> None:
+    """把一轮已完成对话 (q, answer) 追加进 device 历史；answer 为空则不追加。"""
+    if not device_id:
+        return
+    with _MT_LOCK:
+        ent = _MT_CONTEXT.get(device_id)
+        if ent is None:
+            ent = {"turns": [], "ts": time.time()}
+            _MT_CONTEXT[device_id] = ent
+        turns = ent["turns"]
+        # 若末轮 query 与当前 q 相同（改写结果是原句直通）则视为继续同轮，避免重复累积
+        if turns and turns[-1]["q"] == turn.get("q"):
+            turns[-1]["answer"] = turn.get("answer", "")
+        else:
+            turns.append({"q": turn.get("q", ""), "answer": turn.get("answer", "")})
+            if len(turns) > _MT_MAX_TURNS:
+                del turns[0]
+        ent["ts"] = time.time()
+
+
+def _mt_serialize(history: list[dict[str, str]]) -> str:
+    lines = []
+    for idx, t in enumerate(history, 1):
+        lines.append(f"{idx}. 用户：{t['q']} → 助手：{t['answer'] or '（应答为空）'}")
+    return "\n".join(lines)
+
+
+def _short_turns(short_memory: list[dict[str, Any]] | None) -> list[dict[str, str]]:
+    """把请求里的 shortMemory 解析成『已完成轮次』的 (q, a) 序列。
+
+    shortMemory 由上游多轮记忆携带：每一轮形如
+      {"dialogData": {"query": "原用户query", "answer": "最新应答"},
+       "businessData": {"serviceData": [{"data":[{mediaTitle,director,...}...]}]}}
+    其中 dialogData.query 存的是【用户原始 query】(未改写)，dialogData.answer 才是该轮
+    真正的应答；businessData.serviceData[].data[] 是该轮命中的候选媒资实体(片名/导演/主演)。
+    ---
+    设计要点：
+    - a_i(应答) 以 shortMemory 为准：取 answer 文本，并把候选媒资实体铺成可读列表，
+      供 LLM 把『第一位/刚才那部/该导演』等指代还原成具体内容名。
+    - 只收录已完成轮：无应答也无候选(仅回显当前 query 的空 stub)的直接丢弃。
+    - 该轮真实 query 不取 shortMemory.dialogData.query(那是不准确的原始句)，
+      由调用方用 _MT_CONTEXT 里真正改写执行的 query 兜底/对齐。
+    """
+    out: list[dict[str, str]] = []
+    for ent in short_memory or []:
+        if not isinstance(ent, dict):
+            continue
+        dialog = ent.get("dialogData") or {}
+        if not isinstance(dialog, dict):
+            continue
+        a = str(dialog.get("answer") or "").strip() or ""
+        candidates: list[dict] = []
+        biz = ent.get("businessData") or {}
+        if isinstance(biz, dict):
+            for svc in biz.get("serviceData") or []:
+                if isinstance(svc, dict):
+                    for m in svc.get("data") or []:
+                        if _candidate_key(m):
+                            candidates.append(m)
+        pieces = []
+        if candidates:
+            # 候选按原始排位标序号(第1部/第2部…)，让 LLM 能把“第二部/第一位”这类
+            # 指代精确对应到候选名单，而非被片名里的数字(如“疯狂动物城2”)带偏。
+            _cap = config.CANDIDATE_CONTEXT_LIMIT
+            ranked = [f"第{i+1}部: {_candidate_key(m)}"
+                      for i, m in enumerate(candidates[: _cap]) if _candidate_key(m)]
+            pieces.append("候选媒资:" + "；".join(ranked))
+        if a:
+            pieces.append(a)
+        if not pieces:
+            continue                      # 无应答也无候选 → 未完成/空位，跳过
+        out.append({
+            "q": str(dialog.get("query") or "").strip(),
+            "answer": "；".join(pieces),
+        })
+    return out
+
+
+def _mt_merge(real_q: list[dict[str, str]], short_a: list[dict[str, str]]) -> list[dict[str, str]]:
+    """把真实改写链路(real_q.q) 和 shortMemory 应答(short_a.a) 按轮对齐成 q1-a1/q2-a2。
+
+    以轮次多的为准；同一轮优先取真实执行 query(改写链路)，应答取 shortMemory 的应答。
+    只有询问无应答的孤立轮(如某遥控指令轮无候选/无文本)可余留为纯 query。
+    """
+    n = max(len(real_q), len(short_a))
+    merged: list[dict[str, str]] = []
+    for i in range(n):
+        q = ""
+        if i < len(real_q):
+            q = real_q[i].get("q") or ""
+        if not q and i < len(short_a):
+            q = short_a[i].get("q") or ""
+        a = ""
+        if i < len(short_a):
+            a = short_a[i].get("answer") or ""
+        if not a and i < len(real_q):
+            a = real_q[i].get("answer") or real_q[i].get("a") or ""
+        if q or a:
+            merged.append({"q": q, "answer": a})
+    return merged
+
+
+async def _mt_rewrite(cur_query: str, device_id: str, short_memory: list[dict[str, Any]] | None = None) -> str:
+    """把本轮合并历史改写成自包含 query。
+
+    历史 = real_q (本进程 _MT_CONTEXT 的『真正改写/执行』query 链)  +  short_a
+    (请求 shortMemory 携带的应答 & 候选媒资)。两者按轮对齐成 q1-a1/q2-a2 序列，
+    key 为用户设计：real query 取改写链路、应答取 shortMemory，缺一用另一侧补齐。
+    仅改写、不写回。无有效历史直接用原句。
+    """
+    real_q = _mt_get(device_id)
+    short_a = _short_turns(short_memory)
+    merged = _mt_merge(real_q, short_a)
+    if not merged:
+        return cur_query
+    dialog = _mt_serialize(merged)
+    user = MT_REWRITE_PROMPT.format(dialog=dialog, cur_query=cur_query)
+    message = await llm.chat([{"role": "user", "content": user}], model=config.MODEL)
+    if "__error__" in message:
+        return cur_query
+    out = (llm.text_of(message) or "").strip()
+    return out if out else cur_query
+
+
+def _has_mt_history(device_id: str, short_memory: list[dict[str, Any]] | None) -> bool:
+    """是否具备需要做多轮改写的上下文。
+
+    语义对齐：只有当【没有任何跨轮上下文】时才是“首轮单 query”，该场景强制原句直通、
+    不做任何改写；只要存在任一上下文(进程内 _MT_CONTEXT 或请求 shortMemory 或
+    toolHistory 由调用方保证)，就仍需改写(含只有 shortMemory 无应答/仅 stub 的情形也
+    视为有上下文，交给 LLM 判断是首轮还是续接)。
+    """
+    if _mt_get(device_id):
+        return True
+    return bool(short_memory)
+
+
+def _mt_append_answer(device_id: str, query: str, answer: str) -> None:
+    """把已完成的一轮 (query, answer) 追加进 device 对话历史。
+
+    出现在 build_response 末尾，answer 取本轮 steps 的检索/执行 retext 摘要，
+    供下一轮 LLM 改写时还原“第2首/刚才那部”等历史引用。
+    """
+    if not device_id or not answer.strip():
+        return
+    _mt_add(device_id, {"q": query or "", "answer": answer.strip()})
 
 
 @dataclass
@@ -191,25 +362,111 @@ def next_batch(plan: Plan, executed: set[int]) -> list[Intent]:
     return out
 
 
+def _load_maybe_str(v: Any) -> Any:
+    """dict/list 原样返回；字符串尝试 JSON 反解（上游 result 可能是 JSON 文本）。"""
+    if not isinstance(v, str):
+        return v
+    s = v.strip()
+    if s[:1] in ("{", "["):
+        try:
+            import json as _json
+            return _json.loads(s)
+        except (ValueError, TypeError):
+            return v
+    return v
+
+
+def _candidate_key(m: Any) -> str:
+    """从一条候选媒资里抽『指代改写』所需的关键字段，control 为平文本。"""
+    if not isinstance(m, dict):
+        return ""
+    title = str(m.get("mediaTitle") or m.get("title") or "").strip() or ""
+    title = title.strip("《》 　")
+    if not title:
+        return ""
+    direc = (m.get("director") or [])
+    direc = "/".join(str(x) for x in direc if isinstance(x, str) and x) or "未知"
+    rate = m.get("doubanRate") or m.get("rate") or ""
+    rate = "" if rate in (None, "", 0, "0", 0.0) else str(rate)
+    actor = (m.get("actor") or [])
+    actor = "/".join(str(x) for x in actor[:3] if isinstance(x, str) and x)
+    year = str(m.get("pubdate") or "")[:4]
+    parts = [f"《{title}》", f"导演:{direc}"]
+    if rate:
+        parts.append(f"评分:{rate}")
+    if actor:
+        parts.append(f"主演:{actor}")
+    if year:
+        parts.append(year)
+    return " ".join(parts)
+
+
+def _buckets_medias(raw: Any) -> list[dict]:
+    """从工具结果里取 memoryData[].data[] 候选媒资(可能嵌套，跨 bucket 平铺)。"""
+    if not isinstance(raw, dict):
+        return []
+    data = raw.get("data")
+    if not isinstance(data, dict):
+        return []
+    out: list[dict] = []
+    for bucket in data.get("memoryData") or []:
+        if not isinstance(bucket, dict):
+            continue
+        medias = bucket.get("data")
+        if isinstance(medias, list):
+            out.extend(m for m in medias if isinstance(m, dict))
+    return out
+
+
+def _first_text(raw: Any, keys: tuple[str, ...]) -> str:
+    if not isinstance(raw, dict):
+        return ""
+    for k in keys:
+        v = raw.get(k)
+        if isinstance(v, str) and v.strip():
+            return v.strip()
+    return ""
+
+
 def _tool_result_text(history: list[dict[str, Any]] | None) -> str:
-    """把上一步工具结果压缩成给 T1 的参考文本（保留实体）。仅 text bookkeeping。"""
-    texts: list[str] = []
+    """把『最近一步』的工具结果压缩成给 T1 的参考文本（保留实体），作为指代依据。
+
+    step3 的『该导演』指代的是 step2 刚执行的结果，而非 step1 的候选。故：
+    - 按倒序(最新在前)遍历；对每个 item 独立决定返回什么，绝不越过最新 item 去取更早候选，
+      否则问答步(fan: "该片导演是刘镇伟")会被旧的搜索候选(主演周星驰)覆盖。
+    - 最新 item 若是 vod 类(dict + memoryData)→ 提候选(片名/导演/评分/主演/年份)，保序。
+    - 若是问答/文本类(result 为纯文本，如 "…导演是刘镇伟…")→ 直接返回该文本。
+    - 仅当某 item 完全无内容时才回退到更早 item。
+    """
     for item in reversed(history or []):
         if not isinstance(item, dict):
             continue
         for k in ("result", "answer", "tts"):
             v = item.get(k)
-            if isinstance(v, str) and v.strip():
-                texts.append(v.strip())
-            elif isinstance(v, (list, dict)):
-                texts.append(str(v))
-    # 简化为一份，避免超长
-    return texts[0] if texts else ""
+            if v is None:
+                continue
+            raw = _load_maybe_str(v)
+            # 1) 结构化候选(dict 且含 memoryData) —— vod 搜索类
+            cands = [_candidate_key(m) for m in _buckets_medias(raw)]
+            cands = [c for c in cands if c]
+            if cands:
+                # 序号前缀，让 rewrite LLM 能把“第二部/第2位”准确落到排位号，
+                # 而不是被片名里的数字(如“疯狂动物城2”)带偏。
+                ranked = "\n".join(
+                    f"第{i+1}部: {c}"
+                    for i, c in enumerate(cands[: config.CANDIDATE_CONTEXT_LIMIT])
+                )
+                return "候选媒资(按搜索排位):\n" + ranked
+            # 2) 纯文本结果(问答/摘要类)
+            text = raw if isinstance(raw, str) else _first_text(raw, ("ttscontent", "answer", "tts"))
+            if isinstance(raw, str) and raw.strip() and not raw.startswith(("{", "[")):
+                text = raw.strip()
+            if text:
+                return text.strip()
+        # 该 item 无内容，回溯到更早 item
+    return ""
 
 
-# ---------------------------------------------------------------------------
-# TraceStateMachine：T0 / T1+（纯 LLM）
-# ---------------------------------------------------------------------------
 class TraceStateMachine:
     def __init__(self, ttl: float = config.PLAN_TRACE_TTL):
         self._lock = threading.Lock()
@@ -226,6 +483,7 @@ class TraceStateMachine:
     # ---- 首轮：T0（一次 LLM）----
     async def _first(self, trace_id: str, query: str, history,
                      tv_mode: str | int = "0") -> tuple[list[Intent], bool]:
+        # 纯 LLM(T0) 分解：拆步、依赖、落域、选工均一次 LLM 决策，编排层零规则。
         plan = await self._plan(query)
         if not plan.intents:
             # LLM 没出方案（空/纯聊天/失败）→ 兜底：单一自包含意图（非语言规则），
@@ -236,6 +494,14 @@ class TraceStateMachine:
                 dom = ""
             return [Intent(query=query, domain=dom, tool="execute", index=1, src=query)], True
         plan = _with_source(plan, query, tv_mode=tv_mode)
+        # 首轮【单意图】计划：T0 常给原子 query 加动作/语序前缀(如“老版上海滩”→“播放老版上海滩”),
+        # 这类改写会误导 hcTools 判 action(search↔play)。对原子单意图强制恢复为原句(query)，
+        # 让 hcTools 以用户原话解析(工具选型以原文为准)。多意图/多步(内部依赖改写)不受影响。
+        if plan.total() == 1:
+            only = plan.intents[0]
+            plan = Plan(intents=[Intent(query=query, domain=only.domain, tool=only.tool,
+                                        index=only.index, depends=only.depends, dep_on=only.dep_on,
+                                        src=only.src)])
         executed = _executed_indexes(history)
         batch = next_batch(plan, executed)
         if not batch:
@@ -339,21 +605,29 @@ _HCTOOLS_DOMAINS = {
 }
 
 
-async def _hctools_params(it: Intent) -> tuple[str, dict[str, Any]]:
-    """对启用域调用 hcTools 拿最终参数；未启用/失败返回 ("", {})，沿用 mock 参数。
+async def _hctools_params(it: Intent) -> tuple[str, dict[str, Any], str]:
+    """对启用域调用 hcTools 拿最终参数；未启用/失败返回 ("", {}, "")，沿用 mock 参数。
 
     用 src=原文 让 hcTools 做权威 select+fill（它对这些域确定性/示例已达 97-100%）。
-    改写 q 仅用于显示/指代解析；非依赖步的改写会丢掉唱/队/可爱 等判别信号，
+    改写 q 仅用于显示/指代解析；非依赖步的改写会丢失唱/队/可爱 等判别信号，
     故工具选型必须以用户原话为准。
+
+    第 3 项是 hcTools 返回的 hit_source（审计，如 general_rule:audio_history_explicit）。
     """
     domain_key = _HCTOOLS_DOMAINS.get(it.domain)
     if not domain_key:
-        return "", {}
+        return "", {}, ""
     try:
-        src = it.src or it.query
-        return await hctools.predict(src, domain_key)
+        # 用原子/自包含意图 it.query 调 hcTools：串行多意图里 src 是整句，
+        # 直接用整句会让 hcTools 把"然后再问…评分最高"等后续意图当成本步搜索条件，
+        # 污染 s1 实体(actor"一下胡歌")、且 s2 fan_knowledge 的 messages 落不到具体片名。
+        # it.query 是 T1 改写后的自包含意图(如 s2:"攀登者的导演是谁")或 T0 的原子子意图
+        # (如 s1:"搜索胡歌演的电影")，交给 hcTools 解析才干净、对齐 gold。
+        q = it.query or it.src or ""
+        # 空意图直接让 hcTools 单步兜底，避免查全部域空转
+        return await hctools.predict(q, domain_key)
     except Exception:  # noqa: BLE001 hcTools 不可用不阻断编排
-        return "", {}
+        return "", {}, ""
 
 
 # ---------------------------------------------------------------------------
@@ -363,15 +637,27 @@ async def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
     # 批内各 step 的 hcTools 调用相互独立，并发执行
     results = await asyncio.gather(*[_hctools_params(it) for it in batch])
     steps: list[dict[str, Any]] = []
-    for it, (tool, params) in zip(batch, results):
-        steps.append({
+    for it, (tool, params, hit_source) in zip(batch, results):
+        # hcTools 返回的 params.retext 是其规范化回显句(如"播放哑巴新娘第1集")，
+        # 而评测 golden.retext=用户原始 query("放第1集哑巴新娘")。为对齐评测，
+        # 把参数里的 retext 回显为【用户原句】(it.src)，action/query/sort 等结构化
+        # 字段保持 hcTools 权威结果不变。
+        if isinstance(params, dict) and "retext" in params:
+            params = {**params, "retext": it.src or params["retext"]}
+        if params is None:
+            params = {"query": it.src or it.query}
+        step: dict[str, Any] = {
             "id": f"s{it.index}",
             "toolName": tool or it.tool or "execute",
-            "parameters": params or {"query": it.query},
+            "parameters": params,
             "plan": None,
             "dependsOn": [f"s{it.dep_on}"] if it.depends else [],
-            "retext": it.query,
-        })
+            # step 级 retext 亦回显用户原句(与 parameters.retext 一致)。
+            "retext": it.src or it.query,
+        }
+        if hit_source:
+            step["hitSource"] = hit_source
+        steps.append(step)
     return steps
 
 
@@ -388,9 +674,30 @@ async def build_response(req) -> dict[str, Any]:
     device_id = req.deviceId or ""
     history = req.data.toolHistory or []
     tv_mode = req.data.tvMode if req.data.tvMode is not None else "0"
+    short_memory = (req.data.memory.shortMemory if req.data.memory else None) or []
 
-    batch, stop = await _SM.tick(trace_id, query, history, tv_mode=tv_mode)
+    # 多轮改写分界：只有【真正无任何跨轮上下文】的首轮单 query 才原句直通、强制不改写；
+# 否则(有 toolHistory / 有 shortMemory / 有该 device 进程内多轮记忆)仍需改写。
+#  - history 非空 = 续跑(串行多步的第 2..N 步/runs)：query 交给 _SM/_continue 用
+#    toolHistory 改写依赖步，不能在这里做多轮 merge——避免把整句误并入上轮检索条件。
+#  - 无 history 且 无任何上下文(_has_mt_history 假)：纯首轮单 query → 原句执行，强制
+#    不交给 LLM，避免“想看悬疑的→推荐悬疑”这类改写噪声；只有有上下文才走 _mt_rewrite。
+    if history:
+        mt_query = query            # 续跑轮：原 query 交给 _SM/_continue 用 toolHistory 改写
+    elif not _has_mt_history(device_id, short_memory):
+        mt_query = query             # 首轮无任何上下文：原句直通，不交给多轮 LLM 改写
+    else:
+        mt_query = await _mt_rewrite(query, device_id, short_memory)
+
+    # 串行续跑状态按 device_id 存（换 request 用 device_id 识别会话），而非 trace_id——
+    # 串行 N 步 = N 个 SSE 请求 = N 个不同 trace_id，只有 device 稳定才能跨轮推进依赖链。
+    batch, stop = await _SM.tick(device_id, mt_query, history, tv_mode=tv_mode)
     steps = await _build_steps(batch)
+    # 本轮 answer 摘要：取各 step 的 retext，供下一轮多轮改写引用具体内容/序号。
+    turn_answer = "；".join(s.get("retext") or "" for s in steps if s.get("retext"))
+    # 写入 _MT_CONTEXT 的 q 用【真正改写/执行】的 mt_query，而非用户原始 query——
+    # _MT_CONTEXT 语义即“真实 query 链”，供跨轮合并时还原真实执行语境。
+    _mt_append_answer(device_id, mt_query, turn_answer)
     body = {
         "code": 200, "message": "success", "traceId": trace_id, "deviceId": device_id,
         "data": {

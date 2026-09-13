@@ -84,13 +84,16 @@ def run_one(case, tv_mode="0"):
     latency = round((time.perf_counter() - started) * 1000.0, 1)
     steps = [
         {"tool": s.get("toolName") or "", "retext": s.get("retext", ""),
-         "params": s.get("parameters") or {}}
+         "params": s.get("parameters") or {},
+         "hit_source": s.get("hitSource") or s.get("hit_source") or ""}
         for p in r["plans"] for s in (p.get("steps") or [])
         if isinstance(s, dict) and s.get("toolName")
     ]
     if not steps:
         steps = [{"tool": t.get("tool") or "", "retext": t.get("retext", ""),
-                  "params": t.get("params") or {}} for t in r["tools"]]
+                  "params": t.get("params") or {},
+                  "hit_source": t.get("hitSource") or t.get("hit_source") or ""}
+                 for t in r["tools"]]
     return {
         "row": case["row"], "domain": case["domain"], "domain_cn": case.get("domain_cn", ""),
         "query": q, "latency_ms": latency, "steps": steps, "stop": r["stop"],
@@ -102,13 +105,17 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("-n", type=int, default=None, help="只跑前 N 条")
     ap.add_argument("-d", "--domains", default=None, help="逗号分隔域: device,vod,music")
+    ap.add_argument("--caseset", default=str(CASESET), help="caseset json 路径(覆盖默认)")
     ap.add_argument("--w", "--workers", dest="workers", type=int, default=8)
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--rules", action="store_true",
+                    help="打印每条 query 命中 hcTools 的哪个 rule(steps 里的 hitSource)")
     args = ap.parse_args()
 
-    if not CASESET.exists():
-        raise SystemExit(f"评测集不存在: {CASESET}")
-    cases = json.loads(CASESET.read_text(encoding="utf-8"))["records"]
+    caseset_path = Path(args.caseset)
+    if not caseset_path.exists():
+        raise SystemExit(f"评测集不存在: {caseset_path}")
+    cases = json.loads(caseset_path.read_text(encoding="utf-8"))["records"]
     if args.domains:
         want = {x.strip() for x in args.domains.split(",") if x.strip()}
         cases = [c for c in cases if c["domain"] in want]
@@ -231,6 +238,15 @@ def main():
         print("\n=== errors ===")
         for e in errs[:20]:
             print(f"  [{e.get('row')}] ({e.get('domain')}) {e.get('query')!r}: {e.get('error')}")
+
+    if args.rules:
+        print("\n=== 每条 query 命中规则 (hitSource) ===")
+        for r in sorted(results, key=lambda x: (cn_of.get(x.get('domain'), x.get('domain')), x.get('row', 0))):
+            if r["status"] != "ok" or not r.get("steps"):
+                continue
+            src = r["steps"][0].get("hit_source") or ""
+            print(f"  [{r.get('row')}] ({cn_of.get(r.get('domain'), r.get('domain'))}) "
+                  f"{r.get('query')!r}\n      tool={r['steps'][0].get('tool')}  hitSource={src or '(空:非规则命中,走LLM/兜底)'}")
 
 
 if __name__ == "__main__":
