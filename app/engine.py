@@ -14,14 +14,15 @@
 from __future__ import annotations
 
 import asyncio
+import re
 import threading
 import time
 import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from . import config, detect, hctools, llm
-from .prompts import T0_PLAN_PROMPT, T1_STEP_PROMPT, MT_REWRITE_PROMPT
+from . import config, detect, hctools, llm, multiintent
+from .prompts import T0_PLAN_PROMPT, T1_STEP_PROMPT, MT_REWRITE_PROMPT, CONTENT_DOMAIN_PROMPT
 
 # 域名闭合集（供 LLM 输出校验）。空串=未配探索，为保证给出中性默认。
 _DOMAINS = {"vod", "children", "education", "music", "audio", "sports", "device", "qa"}
@@ -467,6 +468,27 @@ def _tool_result_text(history: list[dict[str, Any]] | None) -> str:
     return ""
 
 
+# 多意图内容子句域路由：规则优先于 LLM。这些格式信号可靠(裸实体 detect 判空的兜底)。
+_CONTENT_DOMAIN_RULES = [
+    (r"动画|卡通|动漫|少儿|儿童|宝宝|幼儿|佩奇|汪汪队|熊出没|奥特曼|海绵宝宝|小恐龙|弹珠轨道|大货车|机器人", "children"),
+    (r"有声|广播剧|评书|听书|音频|收听|(?:听|想听|要听|听听).{0,10}(?:书|剧|集|故事)", "audio"),
+    (r"歌曲|专辑|单曲|MV|唱歌|点歌|歌单|音乐", "music"),
+    (r"台词|片段|片单|剧|电影|电视剧|影片|纪录片|影视|影院|哪部|那个片段|这部|看剧", "vod"),
+    (r"比赛|赛事|比分|球队|队|联赛|对战|世界杯|球|预约.{0,6}(比赛|球队)", "sports"),
+    (r"年级|课本|上册|下册|语文|数学|英语|物理|化学|生物|作文|课文|课程|启蒙", "education"),
+]
+
+
+def _content_domain_rule(query: str) -> str:
+    for pat, dom in _CONTENT_DOMAIN_RULES:
+        if re.search(pat, query):
+            return dom
+    return ""
+
+
+# ---------------------------------------------------------------------------
+# 多意图并行(多状态机)
+# ---------------------------------------------------------------------------
 class TraceStateMachine:
     def __init__(self, ttl: float = config.PLAN_TRACE_TTL):
         self._lock = threading.Lock()
@@ -483,7 +505,24 @@ class TraceStateMachine:
     # ---- 首轮：T0（一次 LLM）----
     async def _first(self, trace_id: str, query: str, history,
                      tv_mode: str | int = "0") -> tuple[list[Intent], bool]:
-        # 纯 LLM(T0) 分解：拆步、依赖、落域、选工均一次 LLM 决策，编排层零规则。
+        # 多意图确定性拆分（规则优先）：命中断言“内容+设备”双目标 → 直接拆成两条
+        # 并行、无依赖意图(dep=[], stop=true)，两条独立交给 hcTools 权威解析最终 tool+params。
+        mi = multiintent.split_multiintent(query)
+        if mi.hit and mi.device and mi.content:
+            # 规则已断言 mi.device 是设备子句，故域强置 device(最多让 detect 细化，不降级到 qa)。
+            dev_dom = detect.detect_domain(mi.device, "device", tv_mode=tv_mode)
+            dev_dom = dev_dom if dev_dom == "device" else "device"
+            # 内容子句：先规则判域；判空则用 LLM 从用户原话选域(裸实体依赖此兜底)。
+            cont_dom = detect.detect_domain(mi.content, "", tv_mode=tv_mode)
+            if not cont_dom or cont_dom == "qa":
+                cont_dom = await self._content_domain(mi.content)
+                cont_dom = cont_dom or detect.detect_domain(mi.content, "", tv_mode=tv_mode) or ""
+            content_int = Intent(query=mi.content, domain=cont_dom, tool="execute",
+                                 index=2, depends=False, dep_on=0, src=mi.content)
+            device_int = Intent(query=mi.device, domain=dev_dom, tool="execute",
+                                index=1, depends=False, dep_on=0, src=mi.device)
+            return [device_int, content_int], True
+        # 纯 LLM(T0) 分解：拆步、依赖、落库、选工均一次 LLM 决策，编排层零规则。
         plan = await self._plan(query)
         if not plan.intents:
             # LLM 没出方案（空/纯聊天/失败）→ 兜底：单一自包含意图（非语言规则），
@@ -510,6 +549,25 @@ class TraceStateMachine:
         if not stop:
             self._store(trace_id, plan)
         return batch, stop
+
+    async def _content_domain(self, query: str) -> str:
+        """内容子句域路由：规则 detect 对裸实体(队名/歌名/剧名)判空时，
+        先用确定性内容域规则，再未命中才让 LLM 从用户原词选域；仅用于内容意向、不改设备条域。"""
+        rule = _content_domain_rule(query)
+        if rule:
+            return rule
+        try:
+            msg = await llm.chat([{"role": "system", "content": CONTENT_DOMAIN_PROMPT},
+                                  {"role": "user", "content": query}], model=config.MODEL)
+            if "__error__" in msg:
+                return ""
+            out = llm.text_of(msg).strip().lower()
+            for d in ("vod", "music", "audio", "sports", "education", "children", "qa"):
+                if d in out:
+                    return d if d != "qa" else ""
+        except Exception:  # noqa: BLE001
+            return ""
+        return ""
 
     async def _plan(self, query: str) -> Plan:
         message = await llm.chat([{"role": "system", "content": T0_PLAN_PROMPT},

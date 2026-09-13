@@ -1,0 +1,4 @@
+﻿metric,ok,total,pct
+device_ok,196,200,98.00
+content_ok,190,200,95.00
+both_ok,186,200,93.00

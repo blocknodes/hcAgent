@@ -1,0 +1,427 @@
+﻿业务域,query,意图,亮屏期望工具,亮屏期望参数,息屏期望工具,息屏期望参数,源行号
+影视,辛芷蕾凭借哪部影片获得了威尼斯影后,影视问答,fan_knowledge_agent,,fan_knowledge_agent,,2
+影视,中国香港票房最高的影片是哪部,影视问答,fan_knowledge_agent,,fan_knowledge_agent,,3
+影视,甄嬛传沈眉庄扮演者是谁,影视问答,fan_knowledge_agent,,fan_knowledge_agent,,4
+影视,根据张桂梅真实事迹改编的电视剧,影视问答,fan_knowledge_agent,,fan_knowledge_agent,,5
+影视,《甄嬛传》演员表,影视问答,fan_knowledge_agent,,fan_knowledge_agent,,6
+影视,《再见爱人第五季》有哪些值得关注的短评？,影视问答,fan_knowledge_agent,,fan_knowledge_agent,,7
+影视,《我是歌手》最新一期什么时候播？,影视问答,fan_knowledge_agent,,fan_knowledge_agent,,8
+影视,《漫长的季节》讲了什么？,影视问答,fan_knowledge_agent,,fan_knowledge_agent,,9
+影视,获得金鸡奖最佳女主角的是谁？,影视问答,fan_knowledge_agent,,fan_knowledge_agent,,10
+影视,我要看高启强认干爹那个片段,搜索影视切片,vod_fuzzy_search,"{""query"": ""我要看高启强认干爹那个片段""}",fan_knowledge_agent,,11
+影视,甄嬛在倚梅园许愿那个片段,搜索影视切片,vod_fuzzy_search,"{""query"": ""甄嬛在倚梅园许愿那个片段""}",fan_knowledge_agent,,12
+影视,播放张东升带岳父岳母爬山那个片段,搜索影视切片,vod_fuzzy_search,"{""query"": ""播放张东升带岳父岳母爬山那个片段""}",fan_knowledge_agent,,13
+影视,祁同伟吞枪自尽那个片段,搜索影视切片,vod_fuzzy_search,"{""query"": ""祁同伟吞枪自尽那个片段""}",fan_knowledge_agent,,14
+影视,我要看安陵容在冰上跳舞那个片段,搜索影视切片,vod_fuzzy_search,"{""query"": ""我要看安陵容在冰上跳舞那个片段""}",fan_knowledge_agent,,15
+影视,我要看田曦薇说我要杀猪养你那个片段,搜索影视切片,vod_fuzzy_search,"{""query"": ""我要看田曦薇说我要杀猪养你那个片段""}",fan_knowledge_agent,,16
+影视,无间道天台对决的片段,搜索影视切片,vod_fuzzy_search,"{""query"": ""无间道天台对决的片段""}",fan_knowledge_agent,,17
+影视,泰坦尼克号最经典的cut,搜索影视切片,vod_fuzzy_search,"{""query"": ""泰坦尼克号最经典的cut""}",fan_knowledge_agent,,18
+少儿,小猪佩奇今年多大了？,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,19
+少儿,海底小纵队里谁是队长,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,20
+少儿,米奇妙妙屋里住了多少小动物,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,21
+少儿,哪吒为什么要用莲花给自己做新的身体呀？,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,22
+少儿,樱桃小丸子的好朋友是谁,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,23
+少儿,汪汪队立大功里有几只狗狗？,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,24
+少儿,超级飞侠的总部在哪里？,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,25
+少儿,熊出没主要讲了什么故事,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,26
+少儿,长安三万里通过哪些诗句串联起了李白的一生？,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,27
+少儿,小猪佩奇里佩奇的班级里有多少个同学？,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,28
+少儿,疯狂元素城二上映了吗,少儿问答,fan_knowledge_agent,,fan_knowledge_agent,,29
+少儿,巴士儿歌,儿歌搜索,educ_search,"{
+    ""retext"": ""巴士儿歌"",
+    ""query"": {
+        ""and"": [
+            {
+                ""field"": ""title"",
+                ""value"": ""巴士""
+            },
+            {
+                ""field"": ""children_second_genre"",
+                ""value"": ""儿歌""
+            }
+        ]
+    }
+}",music_song_search,"{""retext"":""巴士儿歌"",""song"":[""巴士""],""tag"":[""儿歌""]}",30
+少儿,拔萝卜儿歌,儿歌搜索,educ_search,"{
+    ""retext"": ""拔萝卜儿歌"",
+    ""query"": {
+        ""and"": [
+            {
+                ""field"": ""title"",
+                ""value"": ""拔萝卜""
+            },
+            {
+                ""field"": ""children_second_genre"",
+                ""value"": ""儿歌""
+            }
+        ]
+    }
+}",music_song_search,"{""retext"":""拔萝卜儿歌"",""song"":[""拔萝卜""],""tag"":[""儿歌""]}",31
+少儿,白龙马儿歌,儿歌搜索,educ_search,"{
+    ""retext"": ""白龙马儿歌"",
+    ""query"": {
+        ""and"": [
+            {
+                ""field"": ""title"",
+                ""value"": ""白龙马""
+            },
+            {
+                ""field"": ""children_second_genre"",
+                ""value"": ""儿歌""
+            }
+        ]
+    }
+}",music_song_search,"{""retext"":""白龙马儿歌"",""tag"":[""儿歌"",""白龙马""]}",32
+少儿,宝宝巴士儿歌免费,儿歌搜索,educ_search,"{
+    ""retext"": ""宝宝巴士儿歌免费"",
+    ""query"": {
+        ""and"": [
+            {
+                ""field"": ""title"",
+                ""value"": ""宝宝巴士儿歌""
+            },
+            {
+                ""field"": ""is_fee"",
+                ""value"": 0
+            }
+        ]
+    }
+}",music_song_search,"{""retext"":""宝宝巴士儿歌免费"",""version"":[""免费版""],""tag"":[宝宝巴士儿歌]}",33
+少儿,播放1岁半宝宝听的歌曲,儿歌搜索,educ_search,"{
+    ""retext"": ""播放1岁半宝宝听的歌曲"",
+    ""query"": {
+        ""and"": [
+            {
+                ""field"": ""age_range"",
+                ""from"": 1,
+                ""to"": 1
+            },
+            {
+                ""field"": ""children_second_genre"",
+                ""value"": ""儿歌""
+            }
+        ]
+    }
+}",music_song_search,"{""retext"":""播放1岁半宝宝听的歌曲"",""tag"":[""儿歌""]}",34
+少儿,播放不花钱的儿歌,儿歌搜索,educ_search,"{
+    ""retext"": ""播放不花钱的儿歌"",
+    ""query"": {
+        ""and"": [
+            {
+                ""field"": ""children_second_genre"",
+                ""value"": ""儿歌""
+            },
+            {
+                ""field"": ""is_fee"",
+                ""value"": 0
+            }
+        ]
+    }
+}",music_song_search,"{""retext"":""播放不花钱的儿歌"",""version"":[""免费的""],""tag"":[""儿歌""]}",35
+少儿,播放儿歌爸爸妈妈去上班,儿歌搜索,educ_search,"{
+    ""retext"": ""播放儿歌爸爸妈妈去上班"",
+    ""query"": {
+        ""and"": [
+            {
+                ""field"": ""title"",
+                ""value"": ""爸爸妈妈去上班""""
+            },
+            {
+                ""field"": ""children_second_genre"",
+                ""value"": ""儿歌""
+            }
+        ]
+    }
+}",music_song_search,"{""retext"":""播放儿歌爸爸妈妈去上班"",""song"":[""爸爸妈妈去上班""],""tag"":[""儿歌""]}",36
+少儿,我要听虫儿飞,儿歌搜索,educ_search,"{
+    ""retext"": ""我要听虫儿飞"",
+    ""query"": {
+                ""field"": ""title"",
+                ""value"": ""虫儿飞""
+    }
+}",music_song_search,"{""retext"":""我要听虫儿飞"",""song"":[""虫儿飞""]}",37
+少儿,怎么给3岁的小朋友选适合听的儿歌,儿歌搜索,educ_search,"{
+    ""retext"": ""怎么给3岁的小朋友选适合听的儿歌"",
+    ""query"": {
+        ""and"": [
+            {
+                ""field"": ""age_range"",
+                ""from"": 3,
+                ""to"": 3
+            },
+            {
+                ""field"": ""children_second_genre"",
+                ""value"": ""儿歌""
+            }
+        ]
+    }
+}",music_song_search,"{""retext"":""怎么给3岁的小朋友选适合听的儿歌"",""tag"":[""儿歌""]}",38
+教育,小学数学内容,学科查询,edu_search,"{
+  ""retext"": ""小学数学内容""
+  ""query"": {
+    ""and"": [
+      {
+        ""field"": ""figures"",
+        ""value"": ""小学""
+      },
+      {
+        ""field"": ""first_subject"",
+        ""value"": ""数学""
+      },
+    {
+      ""field"": ""k12_category"",
+      ""values"": [""同步课"", ""同步拓展课""],
+      ""operator"": ""or""
+    }
+    ]
+  }
+}",fan_knowledge_agent,,39
+教育,高中语文课外内容,学科查询,edu_slow_search_data_search,"{""query"": ""高中语文课外内容""}",fan_knowledge_agent,,40
+教育,小学素质课,学科查询,edu_slow_search_data_search,"{""query"": ""小学素质课""}",fan_knowledge_agent,,41
+教育,给初中生推荐的全科考点冲刺课程,学科查询,edu_slow_search_data_search,"{""query"": ""给初中生推荐的全科考点冲刺课程""}",fan_knowledge_agent,,42
+教育,免费初中生物课程,学科查询,edu_search,"{
+  ""retext"": ""免费初中生物课程""
+  ""query"": {
+    ""and"": [
+      {
+        ""field"": ""figures"",
+        ""value"": ""高中""
+      },
+      {
+        ""field"": ""first_subject"",
+        ""value"": ""生物""
+      },
+      {
+        ""field"": ""is_fee"",
+        ""value"": 0
+      },
+     {
+      ""field"": ""k12_category"",
+      ""values"": [""同步课"", ""同步拓展课""],
+      ""operator"": ""or""
+    }
+    ]
+  }
+}",fan_knowledge_agent,,43
+教育,小升初英语辅导课,学科查询,edu_slow_search_data_search,"{""query"": ""小升初英语辅导课t""}",fan_knowledge_agent,,44
+教育,高中生物理考点精讲,学科查询,edu_slow_search_data_search,"{""query"": ""高中生物理考点精讲""}",fan_knowledge_agent,,45
+教育,我要看化学质量守恒定律,按知识点查询,edu_slow_search_data_search,"{""query"": ""我要看化学质量守恒定律""}",fan_knowledge_agent,,46
+教育,游泳安全知识,按知识点查询,edu_slow_search_data_search,"{""query"": ""游泳安全知识""}",fan_knowledge_agent,,47
+教育,关于‘三角形内角和’的知识课程有哪些？,按知识点查询,edu_slow_search_data_search,"{""query"": ""关于‘三角形内角和’的知识课程有哪些？""}",fan_knowledge_agent,,48
+教育,小学语文作文辅导的课程？,按知识点查询,edu_slow_search_data_search,"{""query"": ""小学语文作文辅导的课程？""}",fan_knowledge_agent,,49
+教育,我要看第一次鸦片战争相关的课程,按知识点查询,edu_slow_search_data_search,"{""query"": ""我要看第一次鸦片战争相关的课程""}",fan_knowledge_agent,,50
+教育,直角三角形的面积,按知识点查询,edu_slow_search_data_search,"{""query"": ""直角三角形的面积""}",fan_knowledge_agent,,51
+有声,给我放庆余年,播放影视内容,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""给我放庆余年"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""庆余年""
+  }
+}",audio_search,"(当前息屏进入影视智能体，如果进入有声参数如下)
+{""action"":""play"",""query"":""给我放庆余年""}",52
+有声,播放三体,播放影视内容,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""播放三体"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""三体""
+  }
+}",audio_search,"{""action"":""play"",""query"":""播放三体""}",53
+有声,播放偷偷藏不住,播放影视内容,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""播放偷偷藏不住"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""偷偷藏不住""
+  }
+}",audio_search,"{""action"":""play"",""query"":""播放偷偷藏不住""}",54
+有声,帮我播放风起洛阳,播放影视内容,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""帮我播放风起洛阳"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""风起洛阳""
+  }
+}",audio_search,"(当前息屏进入影视智能体，如果进入有声参数如下)
+{""action"":""play"",""query"":""播放偷偷藏不住""}",55
+有声,打开斗罗大陆大结局那一集,播放影视内容,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""打开斗罗大陆大结局那一集"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""斗罗大陆""
+  }
+}",audio_search,"{""action"":""play"",""query"":""打开斗罗大陆大结局那一集""}",56
+有声,给我放西游记第六集,播放影视内容,vod_search,"
+
+(当前息屏进入多tab智能体，影视参数如下)
+{
+  ""action"": ""play"",
+  ""retext"": ""给我放西游记第六集"",
+  ""query"": {
+    ""and"": [
+      {
+        ""field"": ""title"",
+        ""value"": ""西游记""
+      },
+      {
+        ""field"": ""video_index"",
+        ""value"": 6
+      }
+    ]
+  }
+}
+
+（少儿参数如下）
+{
+  ""retext"": ""给我放西游记第六集"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""西游记""
+  }
+}
+",audio_search,"(当前息屏进入多tab智能体，如果进入有声参数如下)
+{""action"":""play"",""query"":""给我放西游记第六集""}",57
+有声,播放觉醒年代,播放影视内容,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""播放觉醒年代"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""觉醒年代""
+  }
+}",audio_search,"{""action"":""play"",""query"":""播放觉醒年代""}",58
+有声,播放三国演义火烧赤壁,播放影视内容,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""播放三国演义火烧赤壁"",
+  ""query"": {
+        ""field"": ""title"",
+        ""values"": [
+          ""三国演义"",
+          ""火烧赤壁""
+        ],
+        ""operator"": ""or""
+  }
+}",audio_search,"(当前息屏进入影视智能体，如果进入有声参数如下)
+{""action"":""play"",""query"":""播放三国演义火烧赤壁""}",59
+有声,给我放雪中悍刀行,播放影视内容,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""给我放雪中悍刀行"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""雪中悍刀行""
+  }
+}",audio_search,"{""action"":""play"",""query"":""给我放雪中悍刀行""}",60
+有声,直接播三体第二部,播放影视内容,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""直接播三体第二部"",
+  ""query"": {
+    ""and"": [
+      {
+        ""field"": ""title"",
+        ""value"": ""三体""
+      },
+      {
+        ""field"": ""series"",
+        ""value"": 2
+      }
+    ]
+  }
+}",audio_search,"{""action"":""play"",""query"":""直接播三体第二部""}",61
+音乐,找自己这首歌是谁唱的,歌曲基础信息查询,fan_knowledge_agent,,fan_knowledge_agent,,62
+音乐,有哪些周杰伦作曲的歌？,歌曲基础信息查询,fan_knowledge_agent,,fan_knowledge_agent,,63
+音乐,兰亭序是谁写的词,歌曲基础信息查询,fan_knowledge_agent,,fan_knowledge_agent,,64
+音乐,邓紫棋的简介,歌手/乐队信息查询,fan_knowledge_agent,,fan_knowledge_agent,,65
+音乐,Beyond（乐队）是哪年成立的,歌手/乐队信息查询,fan_knowledge_agent,,fan_knowledge_agent,,66
+音乐,这首歌演唱者的简介,歌手/乐队信息查询,fan_knowledge_agent,,fan_knowledge_agent,,67
+音乐,播放虫儿飞,歌曲检索-影视音乐同名,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""播放虫儿飞"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""虫儿飞""
+  }
+}",music_song_search,"{""retext"":""播放虫儿飞"",""song"":[""虫儿飞""]}",68
+音乐,送你一朵小红花,歌曲检索-影视音乐同名,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""送你一朵小红花"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""送你一朵小红花""
+  }
+}",music_song_search,"{""retext"":""送你一朵小红花"",""song"":[""送你一朵小红花""]}",69
+音乐,播放情深深雨濛濛,歌曲检索-影视音乐同名,vod_search,"{
+  ""action"": ""play"",
+  ""retext"": ""播放觉醒年代"",
+  ""query"": {
+        ""field"": ""title"",
+        ""value"": ""觉醒年代""
+  }
+}",music_song_search,"{""retext"":""播放情深深雨濛濛"",""song"":[""情深深雨濛濛""]}",70
+音乐,2026年春晚周深唱的歌,歌曲模糊检索,fan_knowledge_agent,,fan_knowledge_agent,,71
+音乐,适合睡前听的歌,歌曲模糊检索,fan_knowledge_agent,,fan_knowledge_agent,,72
+音乐,天赐的声音里面比较好听的歌曲,歌曲模糊检索,fan_knowledge_agent,,fan_knowledge_agent,,73
+音乐,放首孙燕姿治愈系的歌,歌曲模糊检索,fan_knowledge_agent,,fan_knowledge_agent,,74
+音乐,周杰伦的告白气球,歌曲检索,music_song_search,"{""retext"":""周杰伦的告白气球"",""singer"":[""周杰伦""],""song"":[""告白气球""]}",music_song_search,"{""retext"":""周杰伦的告白气球"",""singer"":[""周杰伦""],""song"":[""告白气球""]}",75
+音乐,播放大鱼,歌曲检索,music_song_search,"{""retext"":""播放大鱼"",""song"":[""大鱼""]}",music_song_search,"{""retext"":""播放大鱼"",""song"":[""大鱼""]}",76
+音乐,放一首New jeans的歌,歌曲检索,music_song_search,"{""retext"":""放一首New jeans的歌"",""singer"":[""New jeans""]}",music_song_search,"{""retext"":""放一首New jeans的歌"",""singer"":[""New jeans""]}",77
+音乐,Taylor Swift的《1989》专辑里有哪些歌,专辑信息查询,fan_knowledge_agent,,fan_knowledge_agent,,78
+音乐,周杰伦的《七里香》专辑是哪年出的？,专辑信息查询,fan_knowledge_agent,,fan_knowledge_agent,,79
+音乐,《黑色风暴》这首歌所在专辑是什么,专辑信息查询,fan_knowledge_agent,,fan_knowledge_agent,,80
+音乐,贝乐虎儿歌,儿歌检索,educ_search,"
+{
+ ""retext"": ""贝乐虎儿歌"",
+ ""query"": {
+ ""and"": [
+ {
+ ""field"": ""title"",
+ ""value"": ""贝乐虎""
+ },
+ {
+ ""field"": ""children_second_genre"",
+ ""value"": ""儿歌""
+ }
+ ]
+ }
+}",music_song_search,"{""retext"":""贝乐虎儿歌"",""ip"":[""贝乐虎""],""tag"":[""儿歌""]}",81
+音乐,小兔子乖乖儿歌,儿歌检索,educ_search,"
+{
+ ""retext"": ""小兔子乖乖儿歌"",
+ ""query"": {
+ ""and"": [
+ {
+ ""field"": ""title"",
+ ""value"": ""小兔子乖乖""
+ },
+ {
+ ""field"": ""children_second_genre"",
+ ""value"": ""儿歌""
+ }
+ ]
+ }
+}",music_song_search,"{""retext"":""小兔子乖乖儿歌"",""song"":[""小兔子乖乖""],""tag"":[""儿歌""]}",82
+音乐,英语启蒙儿歌,儿歌检索,educ_search,"
+{
+ ""retext"": ""英语启蒙儿歌"",
+ ""query"": {
+ ""field"": ""title"",
+ ""value"": ""英语启蒙儿歌""
+ }
+}",music_song_search,"{""retext"":""英语启蒙儿歌"",""song"":[""启蒙儿歌""],""tag"":[""英语""]}",83
+设备控制,暂停播放,音乐息屏播控,playback_control," {""operation"": ""停止"", ""object"": ""播放控制"", ""value"": """", ""device"": """", ""location"": """"}",playback_control," {""operation"": ""停止"", ""object"": ""播放控制"", ""value"": """", ""device"": """", ""location"": """"}",84
+设备控制,播放下一首,音乐息屏播控,playback_control,"{""operation"":""下"",""object"":""播放控制"",""value"":""首"",""device"":"""",""location"":""""}",playback_control,"{""operation"":""下"",""object"":""播放控制"",""value"":""首"",""device"":"""",""location"":""""}",85
+设备控制,快进30s,音乐息屏播控,playback_control,":{""operation"":""快进"",""object"":"""",""value"":""30秒"",""device"":"""",""location"":""""}",playback_control,":{""operation"":""快进"",""object"":"""",""value"":""30秒"",""device"":"""",""location"":""""}",86
+设备控制,继续放音乐,音乐息屏播控,playback_control,"{""operation"":""播放"",""object"":""播放控制"",""value"":"""",""device"":"""",""location"":""""}",playback_control,"{""operation"":""播放"",""object"":""播放控制"",""value"":"""",""device"":"""",""location"":""""}",87
+设备控制,切到上一首,音乐息屏播控,playback_control,"{""operation"":""上"",""object"":""播放控制"",""value"":""首"",""device"":"""",""location"":""""}",playback_control,"{""operation"":""上"",""object"":""播放控制"",""value"":""首"",""device"":"""",""location"":""""}",88
+设备控制,不好听换一首,音乐息屏播控,playback_control,"{""operation"":""切换"",""object"":""播放控制"",""value"":""首"",""device"":"""",""location"":""""}",playback_control,"{""operation"":""切换"",""object"":""播放控制"",""value"":""首"",""device"":"""",""location"":""""}",89
+设备控制,切换成单曲循环,音乐息屏播控,playback_control,"{""operation"":""单曲循环"",""object"":"""",""value"":"""",""device"":"""",""location"":""""}",playback_control,"{""operation"":""单曲循环"",""object"":"""",""value"":"""",""device"":"""",""location"":""""}",90
+设备控制,继续播刚才没听完那个,有声息屏播控,playback_control,"{""operation"":""播放"",""object"":"""",""value"":"""",""device"":"""",""location"":""""}",playback_control,"{""operation"":""播放"",""object"":"""",""value"":"""",""device"":"""",""location"":""""}",91
+设备控制,帮我快进到15分15秒,有声息屏播控,playback_control,"{""operation"":""快进到"",""object"":"""",""value"":""15分15秒"",""device"":"""",""location"":""""}",playback_control,"{""operation"":""快进到"",""object"":"""",""value"":""15分15秒"",""device"":"""",""location"":""""}",92
+设备控制,切到下一集,有声息屏播控,playback_control,"{""operation"":""下"",""object"":""播放控制"",""value"":""集"",""device"":"""",""location"":""""}",playback_control,"{""operation"":""下"",""object"":""播放控制"",""value"":""集"",""device"":"""",""location"":""""}",93
+设备控制,这集重新放一遍,有声息屏播控,playback_control,"{""operation"":""重播"",""object"":"""",""value"":"""",""device"":"""",""location"":""""}",playback_control,"{""operation"":""重播"",""object"":"""",""value"":"""",""device"":"""",""location"":""""}",94
+设备控制,往后退1分钟,有声息屏播控,playback_control,"{""operation"":""快退"",""object"":"""",""value"":""1分钟"",""device"":"""",""location"":""""}",playback_control,"{""operation"":""快退"",""object"":"""",""value"":""1分钟"",""device"":"""",""location"":""""}",95
+设备控制,暂停播放,有声息屏播控,playback_control,"{""operation"":""暂停"",""object"":""播放控制"",""value"":"""",""device"":"""",""location"":""""}",playback_control,"{""operation"":""暂停"",""object"":""播放控制"",""value"":"""",""device"":"""",""location"":""""}",96
+设备控制,声音太大了，音量调低一点,息屏音量控制,numeric_adjust,"{""operation"":""降低"",""object"":""音量"",""value"":"""",""device"":"""",""location"":""""}",numeric_adjust,"{""operation"":""降低"",""object"":""音量"",""value"":"""",""device"":"""",""location"":""""}",97
+设备控制,调成静音,息屏音量控制,numeric_adjust,"{""operation"":""打开"",""object"":""静音"",""value"":"""",""device"":"""",""location"":""""}",numeric_adjust,"{""operation"":""打开"",""object"":""静音"",""value"":"""",""device"":"""",""location"":""""}",98
+设备控制,1h后关机,息屏开关机控制,timer_control,"{""operation"":""打开"",""object"":""关机"",""device"":"""",""location"":"""",""date_time"":""1小时""}",timer_control,"{""operation"":""打开"",""object"":""关机"",""device"":"""",""location"":"""",""date_time"":""1小时""}",99
+设备控制,取消30分钟后关机,息屏开关机控制,timer_control,"{""operation"":""关闭"",""object"":""关机"",""value"":"""",""device"":"""",""location"":""""}",timer_control,"{""operation"":""关闭"",""object"":""关机"",""value"":"""",""device"":"""",""location"":""""}",100
