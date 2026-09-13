@@ -1,19 +1,19 @@
 {
-  "total": 445,
+  "total": 1140,
   "err": 0,
   "ok_only": false,
-  "tool_acc": 94.8315,
-  "param_acc": 93.2584,
-  "joint_acc": 92.809,
+  "tool_acc": 95.614,
+  "param_acc": 95.614,
+  "joint_acc": 95.614,
   "by_domain": {
-    "影视": {
-      "total": 445,
-      "tool_ok": 422,
-      "param_ok": 415,
-      "both_ok": 413,
-      "tool_acc": 94.83,
-      "param_acc": 93.26,
-      "joint_acc": 92.81
+    "设备": {
+      "total": 1140,
+      "tool_ok": 1090,
+      "param_ok": 1090,
+      "both_ok": 1090,
+      "tool_acc": 95.61,
+      "param_acc": 95.61,
+      "joint_acc": 95.61
     }
   }
 }

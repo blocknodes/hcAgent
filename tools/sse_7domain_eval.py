@@ -23,6 +23,8 @@ import json
 import re
 import sys
 import time
+import unicodedata
+import unicodedata
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -59,7 +61,9 @@ def canonical(x):
             key=lambda e: json.dumps(e, ensure_ascii=False, sort_keys=True),
         )
     if isinstance(x, str):
-        return x.strip()
+        # 剥不可见控制字符(如 ‌ 零宽连接/零宽非连接)。评测数据从飞书复制常带入
+        # 这类字符，导致 gold(已净化) 与 pred(原样回显) 在 retext 上判负。
+        return "".join(c for c in x if unicodedata.category(c) != "Cf").strip()
     return x
 
 
