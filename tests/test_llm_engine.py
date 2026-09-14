@@ -49,9 +49,9 @@ class FakeLLM:
 def fllm(monkeypatch):
     fake = FakeLLM()
     monkeypatch.setattr(engine.llm, "chat", fake.chat)
-    # 测试不连网：mock hcTools，域 vod 直接返回占位 (tool, params)
+    # 测试不连网：mock hcTools，域 vod 直接返回占位 (tool, params, hit_source)
     async def fake_hctools(query, domain, metadata=None):
-        return "vod_search", {"query": query}
+        return "vod_search", {"query": query}, ""
     monkeypatch.setattr(engine.hctools, "predict", fake_hctools)
     return fake
 
