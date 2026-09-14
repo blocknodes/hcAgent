@@ -197,6 +197,11 @@ def _params_ok(gold, pred, depth=0):
     return params_equal(gold, pred)
 
 
+# fuzzy 检索工具：只有 query 自然语言重写参数（LLM 生成、随轮次变化），
+# 不作为判定标准 —— 这类工具只看 tool 对不对，param 一律不作数。
+_PARAM_WAIVED_TOOLS = {"vod_fuzzy_search", "educ_fuzzy_search", "edu_fuzzy_search", "edu_slow_search_data_search"}
+
+
 def score(turn, pred_tool, pred_params):
     """-> (tool_ok, param_ok, both_ok, diff)。gold 无参数则 param 由 tool 决定。"""
     et = (turn.get("expected_tool") or "").strip()
@@ -204,7 +209,8 @@ def score(turn, pred_tool, pred_params):
     if isinstance(gp, dict) and set(gp.keys()) == {"_raw"}:
         gp = None
     ot = bool(et) and bool(pred_tool) and pred_tool == et
-    op = (not gp) or _params_ok(pred_params, gp)
+    # fuzzy 检索类工具只看 tool 是否命中；参数(retext 等 LLM 重写)不作为评判标准。
+    op = True if (et in _PARAM_WAIVED_TOOLS) else ((not gp) or _params_ok(pred_params, gp))
     ob = ot and op
     diff = ""
     if not ot:

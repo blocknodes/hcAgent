@@ -2,45 +2,45 @@
   "total": 2912,
   "err": 0,
   "ok_only": false,
-  "tool_acc": 95.5014,
-  "param_acc": 94.0591,
-  "joint_acc": 93.956,
+  "tool_acc": 95.1236,
+  "param_acc": 93.7157,
+  "joint_acc": 93.647,
   "by_domain": {
     "设备": {
       "total": 1140,
-      "tool_ok": 1090,
-      "param_ok": 1086,
-      "both_ok": 1086,
-      "tool_acc": 95.61,
-      "param_acc": 95.26,
-      "joint_acc": 95.26
+      "tool_ok": 1089,
+      "param_ok": 1085,
+      "both_ok": 1085,
+      "tool_acc": 95.53,
+      "param_acc": 95.18,
+      "joint_acc": 95.18
     },
     "影视": {
       "total": 445,
-      "tool_ok": 425,
-      "param_ok": 418,
-      "both_ok": 416,
-      "tool_acc": 95.51,
-      "param_acc": 93.93,
-      "joint_acc": 93.48
+      "tool_ok": 424,
+      "param_ok": 417,
+      "both_ok": 415,
+      "tool_acc": 95.28,
+      "param_acc": 93.71,
+      "joint_acc": 93.26
     },
     "有声": {
       "total": 369,
-      "tool_ok": 342,
-      "param_ok": 338,
-      "both_ok": 338,
-      "tool_acc": 92.68,
-      "param_acc": 91.6,
-      "joint_acc": 91.6
+      "tool_ok": 343,
+      "param_ok": 339,
+      "both_ok": 339,
+      "tool_acc": 92.95,
+      "param_acc": 91.87,
+      "joint_acc": 91.87
     },
     "音乐": {
       "total": 208,
-      "tool_ok": 198,
-      "param_ok": 195,
-      "both_ok": 195,
-      "tool_acc": 95.19,
-      "param_acc": 93.75,
-      "joint_acc": 93.75
+      "tool_ok": 196,
+      "param_ok": 193,
+      "both_ok": 193,
+      "tool_acc": 94.23,
+      "param_acc": 92.79,
+      "joint_acc": 92.79
     },
     "体育": {
       "total": 207,
@@ -53,21 +53,21 @@
     },
     "少儿": {
       "total": 327,
-      "tool_ok": 314,
-      "param_ok": 303,
-      "both_ok": 302,
-      "tool_acc": 96.02,
-      "param_acc": 92.66,
-      "joint_acc": 92.35
+      "tool_ok": 307,
+      "param_ok": 297,
+      "both_ok": 297,
+      "tool_acc": 93.88,
+      "param_acc": 90.83,
+      "joint_acc": 90.83
     },
     "教育": {
       "total": 216,
-      "tool_ok": 211,
-      "param_ok": 211,
-      "both_ok": 211,
-      "tool_acc": 97.69,
-      "param_acc": 97.69,
-      "joint_acc": 97.69
+      "tool_ok": 210,
+      "param_ok": 210,
+      "both_ok": 210,
+      "tool_acc": 97.22,
+      "param_acc": 97.22,
+      "joint_acc": 97.22
     }
   }
 }

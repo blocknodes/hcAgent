@@ -52,6 +52,9 @@ _RULES: list[tuple[str, str]] = [
     ("device", r"(快进|快退|往后退|倒回|退回|暂停|停止播放|倍速|静音|音量|调大声|调小声|音质|清晰度|分辨率|对比度|护眼|倒看|倒进|下一首|上一首|下一集|上一集|循环|切换)"),
     ("device", r"(演示|杜比|全景声|云健身|云关爱|AI映画|控光|声学设计|数字艺术|疾速|暗夜精灵|火箭炮|超广视角|画面增强)"),
     
+    # children 内容型 + 有声/朗读 载体 —— 两者齐备时是"儿童有声内容"，归 children 而非 audio。
+    # 置于 audio 强信号前，避免「有声朗读绘本/想看有声音朗读的双语绘本/睡前听有声故事」被 audio 劫持。
+    ("children", r"(?:绘本|儿歌|动画|动漫|卡通|亲子|启蒙|童话|睡前故事).{0,10}(?:有声|朗读|音频|广播|收听)|(?:有声|朗读|有声音).{0,8}(?:绘本|儿歌|动画|动漫|卡通|亲子|启蒙|童话|睡前故事)"),
     # audio 强信号：收听 / 广播 / 有声 / 评书 —— 命中即 audio（含儿童IP场景），放最前
     ("audio", r"(广播剧|广播|有声书|小说|听书|评书|收听|音频|听录音|有声|听音频|有声故事|有声剧|的FM|电台|广播)"),
     # audio 听剧/小说分集：我要听X第N集/趁X第二部 —— 「我要听」明确 audio，放 vod 具名前
@@ -76,7 +79,10 @@ _RULES: list[tuple[str, str]] = [
     # vod 影视具名片名（无播放动词，亮屏 golden 也视作 vod_search）：裸剧/片名词
     ("vod", r"^(?:播放)?(?:庆余年|三体|偷偷藏不住|风起洛阳|斗罗大陆|觉醒年代|三国演义|雪中悍刀行|送你一朵小红花)$"),
 
-    # audio 睡前/助眠/听单 —— 强信号（不含「适合..听」，避免误伤 music「适合听的歌」）
+    # children 睡前内容 —— 睡前+儿童内容词（绘本/儿歌/动画/亲子/启蒙/故事）→ 少儿，
+    # 须在裸「睡前」audio 强信号之前：纯「睡前听书」仍归 audio，带儿童内容词则归 children。
+    ("children", r"(睡前|晚安|助眠).{0,12}(绘本|儿歌|动画|动漫|卡通|亲子|启蒙|童话|故事|幼儿|宝宝|孩子|儿童|小朋[友]|婴幼儿|托儿)"),
+    # audio 睡前/助眠/听单 —— 弱信号（不含「适合..听」，避免误伤 music「适合听的歌」）
     ("audio", r"(睡前|晚安|助眠|听单|我昨晚听)"),
 
     # music 歌曲词（.的歌/歌单/主题曲…）——全 music 专属，放 children IP 前
@@ -84,8 +90,7 @@ _RULES: list[tuple[str, str]] = [
     ("music", r"(历史播放|听歌历史|历史的歌|历史里的|播放历史)"),
 
     # children 专属 IP / 剧名 —— 明确角色，最不易误伤
-    ("children", r"(汪汪队|海绵宝宝|小羊肖恩|佩[琪奇]|光头强|熊出没|熊大|熊二|开心锤锤|喜羊羊|灰太狼|彼得兔|海底小纵队|小马宝[莉丽]|爆笑虫子|罗小黑|龙猫|小公主|聪明一休|白雪公主|丑小鸭|大耳朵图图|超级宝贝|JOJO|jojo|汽车世界|米小圈|萌鸡|托马斯|挖土机|消防车|螺丝钉|鬼灭之刃|忍者|奥特曼|迪迦|奈克瑟斯|迷你特工队|熊猫姐姐|沃克|细胞|动物神探队|恐龙世界|植物大战僵尸|愤怒的小鸟|胡巴|超级土豆|坏蛋联盟|猪屁登|超人兽战|宇宙护卫队|道奇|尼克狐尼克|小女警|妈妈咪鸭|波妞|狮子王|大鱼海棠|麦兜|非人哉|苏菲亚|恐龙宝贝|舒克贝塔|托马斯小火车|小砾工程队|小砾与工程家族|土豆逗|磁力拼搭|星卡梦少女|捕鼠器|兔子警官|小兔子|小狐狸|诸葛|大神侦探|吞噬星空|鲨鱼一家|神奇宝物|娜斯佳|赛车总动员|怪兽电力)"),
-    # children：卡通/动画主角或特摄 IP（儿童向，非车企/球队歧义场景）。承上层顺序：
+    ("children", r"(汪汪队|海绵宝宝|小羊肖恩|佩[琪奇]|光头强|熊出没|熊大|熊二|开心锤锤|喜羊羊|灰太狼|彼得兔|海底小纵队|小马宝[莉丽]|爆笑虫子|罗小黑|龙猫|小公主|聪明一休|白雪公主|丑小鸭|大耳朵图图|超级宝贝|JOJO|jojo|汽车世界|米小圈|萌鸡|挖掘机|消防车|托马斯|螺丝钉|鬼灭之刃|忍者|迷你特工队|熊猫姐姐|沃克|细胞|动物神探队|恐龙世界|植物大战僵尸|愤怒的小鸟|胡巴|超级土豆|万达坏蛋联盟|坏蛋联盟|猪屁登|超人兽战|宇宙护卫队|奶龙|快乐星猫|小魔仙|钶龙战记|爆裂飞车|弹珠轨道|猪猪侠|超级飞侠|汽车星球|巴巴爸爸|开心飞车|飞天小女警|娜斯佳|妈妈咪鸭|波妞|磁力拼搭|阿拉丁|小猴子|长征先锋|趣趣知知鸟|鲨鱼一家|非人哉|苏菲亚|吞噬星空|兔子警官|土豆逗|星卡梦少女|大神侦探|神奇宝物|小砾工程队|磁力小车|布鲁伊|阿巳|小铃铛|沃福|依娜|恰恰|小伶玩具|监狱兔|小品一家)"),
     # 道奇=汪汪队角色、尼克狐尼克=疯狂动物城主角、奥特曼/迪迦=特摄、芭比=玩偶 IP → children。
     # 注意只加儿童向「角色词」，勿加 影视剧名/音乐剧 等宽泛词（如冰雪奇缘会误伤 vod 检索）。
     ("children", r"(道奇|尼克狐尼克|奥特曼|迪迦|奈克瑟斯|芭比)"),
@@ -110,7 +115,10 @@ _RULES: list[tuple[str, str]] = [
     ("music", r"(K歌|k歌|点歌|唱歌|要唱|想唱|歌曲|歌词|歌单|歌曲|MV|mv|主题曲|片头曲|插曲|曲子|音乐|的?歌|打动人)"),
 
     # education 课程/技能词（教程/教学/训练/书法/绘画…）——education 专属标志，放 children 前
-    ("education", r"(教程|教学|训练|书法|绘画|彩铅|画画|手账|预习|辅导|培训)"),
+    # education 课程/技能词（教程/教学/训练/书法/绘画…）——education 专属标志，放 children 前
+    # 含 编程/编程课/少儿编程/口语/零基础/试听/实战：课程型用语优先于 children 的泛「少儿」，
+    # 否则「少儿编程课」会被 detect.py:125 的 children 泛词抢判成 children（golden 实为 education）。
+    ("education", r"(教程|教学|训练|书法|绘画|彩铅|画画|手账|预习|辅导|培训|编程|编程课|口语训练|英语口语|零基础|试听课|少儿编程)"),
 
     # audio 听力语料：想听/要听 + 内容名词
     ("audio", r"((?:我想|我要|想|要)听.{0,18}(?:直播|小说|书|故事|节目|评书|音频|历史|篮球|课|英语|童话|评书))"),
@@ -216,10 +224,11 @@ def _is_qa(query: str) -> bool:
     q = (query or "").strip()
     if not q:
         return False
-    # 明确非 QA：片段/名场面 → vod_fuzzy；学科/课程检索；点播设备词
+    # 明确非 QA：片段/名场面 → vod_fuzzy；课程检索（含 古诗/课文 等学科内容）；点播设备词
     if re.search(
         r"片段|cut|那段|桥段|名场面|那场戏|儿歌|"
         r"课程|辅导|考点|刷题|真题|知识点|讲义|备课|作业|期末|测试|质检|精讲|推荐课程|"
+        r"古诗|唐诗|宋词|诗词|课文|朗读|按年级|"
         r"切换|快进|音量|关机|静音|暂停|循环", q
     ):
         return False
@@ -231,7 +240,32 @@ def _is_qa(query: str) -> bool:
     return bool(_QA_HIT.search(q))
 
 
-# 教育「事实知识问答」判据：无 学段/教材/课程 锚点 → 泛知识 qa（非课程检索）。
+# 纯问候/闲聊：只命中礼貌招呼语，且句子不含任何内容/播放/检索意向。
+# 用作 qa 兜底前的最后一道空域收口 —— 前面所有内容型规则都没命中时，"hello/你好/在吗"
+# 这类无实质内容的话才落到泛知识 qa（而非随 LLM 抖动返回空域）。带具体内容则自然被上方
+# 各内容规则拦截，不会误伤。刻意不含"谢谢/再见"等结束语（非咨询问句）。
+_GREETING = re.compile(
+    r"^(?:\s*)(?:(?:hello|hi|hey|嗨|哈喽|哈啰|哈鲁|你好呀|您好呀|你好|您好|"
+    r"早上好|中午好|下午好|晚上好|早安|在吗|在不|在么|在嘛|在不在|"
+    r"你好啊|您好啊|在吗啊|在不在啊|"
+    r"喂|哥们|朋友|请问|请问一下|打扰一下|有在吗|在不在啊)[\s,，!?。~～]*){1,3}"
+    r"[\s!?。~～]*$",
+    re.IGNORECASE,
+)
+
+
+def _is_greeting(query: str) -> bool:
+    q = (query or "").strip()
+    if not q:
+        return False
+    # 带实质内容一律不当作纯问候
+    if re.search(r"播放|点|听|唱|搜|查|介绍|推荐|哪个|哪些|是什|怎么样|来自|出自|看|讲|读",
+                 q) and not re.fullmatch(_GREETING, q):
+        return False
+    return bool(_GREETING.fullmatch(q))
+
+
+# 教育「事实定义」判据：无 学段/教材/课程 锚点 → 泛知识 qa（非课程检索）。
 # 如 游泳安全知识 / 直角三角形的面积；有锚点（如 小学数学内容/免费初中生物课程）则是教育课程搜索。
 _EDU_NO_ANCHOR_QA = re.compile(
     r"(安全知识|面积|定律|原理|常识|是怎么回事|是什么|为什么|关于.{0,6}(?:的)?(?:知识|作用|联系))"
@@ -416,8 +450,30 @@ def _media_query_decide(q, llm, tv):
 
 
 def _audio_discovery(q):
-    return bool(re.search(r"(有声书|有声剧|广播剧|音频|评书|听书|有声读物|故事|电台|节目)", q) and
+    return bool(re.search(r"(有声书|有声剧|广播剧|音频|评书|听书|有声读物|故事|电台|音频|听书|故事)", q) and
                 re.search(r"(哪些|有哪些|是什么|有什么|推荐|推荐。|哪本|哪些本|最火|口碑|在吗|在哪|有没有|搜索|查|找|唱下|听一下)", q))
+
+
+# audio 听书补丁：用户「听/播放 + 有声内容载体」→ audio。优先级高于 children。
+# 解决 golden 把儿童有声(睡前故事/童话/国学启蒙/绘本音频/广播剧)归 audio，而 prompt/children
+# 规则误归 children/education 的漏判。guard：必须同时有「收听/播放」动作 + 有声载体词，
+# 且出现「看视频/剧」语境仍回 vod，避免误伤真 vod 播放。
+_AUDIO_LISTEN_VERB = re.compile(r"听|收听|播放|放|点|播|读")
+_AUDIO_CARRY = re.compile(
+    r"有声书|有声剧|有声故事|有声读物|有声小说|有声版|广播剧|评书|听书|睡前故事|睡前|听故事|讲故事|音频|朗读|录音|原著|连载|完结|追到"
+)
+_AUDIO_VIDEO_BLOCK = re.compile(r"电影|电视剧|剧场|一部.{0,6}影片|看视频|影院|剧(?:集|场|片|版|影|乐)|影视")
+def _audio_listen_carry_patch(q, llm, tv):
+    """听/播放 + 有声载体 → audio（覆盖 children 误判听书）。"""
+    if str(tv) == "6":
+        return None                      # 息屏分诊链已处理
+    if not _AUDIO_LISTEN_VERB.search(q):
+        return None
+    if not _AUDIO_CARRY.search(q):
+        return None
+    if _AUDIO_VIDEO_BLOCK.search(q):
+        return None
+    return "audio"
 
 
 def _music_discovery(q):
@@ -483,6 +539,21 @@ def _edu_bright_strong(query: str) -> bool:
     return bool(_EDU_STRONG_TERM.search(q))
 
 
+_VOD_AUTEUR_ANIM = re.compile(
+    r"宫崎骏|新海诚|大友克洋|细田守|今敏|庵野秀明|押井守|汤浅政明|新川洋司|"
+    r"吉卜力|鸟山明|尾田荣一郎|千与千寻|龙猫|哈尔的移动城堡|天空之城|风之谷|红猪|青春猪头"
+)
+
+
+def _is_vod_auteur_anim(query: str) -> bool:
+    """署名动画作者/吉卜力作品名 + 动画/动漫 语境 → vod（作者电影，非少儿 content）。
+
+    宫崎骏/新海诚 等动画导演影片是 vod 媒资，children 「绘绘本/幼儿 IP」才归 children；
+    该 guard 在 children_locator 之前，避免「宫崎骏的动画」被 children 的「动画」信号劫持。
+    """
+    return bool(_VOD_AUTEUR_ANIM.search(query))
+
+
 def _make_detect_rules():
     rules = []
 
@@ -496,10 +567,13 @@ def _make_detect_rules():
          lambda q, llm, tv: "qa" if (str(tv) != "6" and llm in ("vod", "music", "qa") and _media_knowledge_qa(q)) else None)
     _add("edu_bright_strong", 155, "亮屏教育强词→education",
          lambda q, llm, tv: "education" if (str(tv) == "0" and _edu_bright_strong(q)) else None)
+    _add("vod_auteur_anim", 180, "署名动画作者影片→vod",
+         lambda q, llm, tv: "vod" if (llm in ("vod", "qa", "") and _is_vod_auteur_anim(q)) else None)
     _add("media_query", 200, "vod 媒资载体保护", lambda q, llm, tv: _media_query_decide(q, llm, tv))
     _add("media_locator", 300, "台词/片段/集数定位", lambda q, llm, tv: "vod" if (llm in ("vod", "qa") and _is_media_locator(q)) else None)
     _add("children_locator", 400, "children 内容定位",
          lambda q, llm, tv: "children" if (_match(q)[0] == "children" and re.search(r"绘本|动画|动漫|卡通|台词|哪部动画|哪个动画", q)) else None)
+    _add("audio_listen_carry", 480, "听/播放+有声载体→audio", lambda q, llm, tv: _audio_listen_carry_patch(q, llm, tv))
     _add("audio_discovery", 500, "audio 内容 Discovery", lambda q, llm, tv: "audio" if _audio_discovery(q) else None)
     _add("music_discovery", 600, "music 内容 Discovery", lambda q, llm, tv: "music" if _music_discovery(q) else None)
     _add("sports_prediction", 700, "sports 赛事预测", lambda q, llm, tv: "sports" if _sports_prediction(q) else None)
@@ -508,6 +582,7 @@ def _make_detect_rules():
          lambda q, llm, tv: ("education" if str(tv) == "0" else None)
          if _is_edu_no_anchor_qa(q, llm) else None)
     _add("signal_match", 1100, "高置信信号", lambda q, llm, tv: _signal_table_match(q))
+    _add("qa_greeting", 1150, "纯问候/闲聊→qa", lambda q, llm, tv: "qa" if _is_greeting(q) else None)
     _add("llm_domain_keep", 1200, "保 LLM 兜底", lambda q, llm, tv: llm)
     return _DetectRuleSet(rules)
 

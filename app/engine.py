@@ -267,13 +267,17 @@ def parse_plan(value: Any) -> Plan:
 def _with_source(plan: Plan, src: str, tv_mode: str | int = "0") -> Plan:
     """给计划内每个意图拍上 src=原文 + detect 判域修正。
 
-    detect_domain 用原文在 LLM 判的 domain 上做确定性覆盖（badcase/正则），
-    tv_mode 透传到 detect（0=亮屏 / 6=息屏分叉）。
+    detect_domain 用每个意图【自含的 query】（非整句 src）在 LLM 判的 domain 上做确定性覆盖。
+    必须用it.query而非整句src：多意图计划里整句会把其他子任务的问句信号（"第二个导演是谁"）
+    串扰到本子任务判域，导致"搜索刘德华的电影"这类 vod 检索被 `_is_qa` 误改到 qa。
+    每个子意图按其自身内容独立判域，才与下游 hcTools(用 it.query) 一致、对齐 golden。
     命中即改 domain；未命中保留 LLM 判定。domain 定了，tool+params 仍交给 hcTools。
     """
     out: list[Intent] = []
     for it in plan.intents:
-        domain = detect.detect_domain(src, it.domain, tv_mode=tv_mode)
+        # 用原子子意图 it.query 判域；query 空时回退整句 src。
+        judge = (it.query or "").strip() or src
+        domain = detect.detect_domain(judge, it.domain, tv_mode=tv_mode)
         out.append(Intent(query=it.query, domain=domain, tool=it.tool,
                           index=it.index, depends=it.depends, dep_on=it.dep_on, src=src))
     return Plan(intents=out)

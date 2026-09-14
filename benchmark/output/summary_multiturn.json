@@ -5,39 +5,39 @@
   "by_biz": {
     "体育": {
       "turns": 20,
-      "tool_ok": 17,
-      "both_ok": 12
+      "tool_ok": 14,
+      "both_ok": 10
     },
     "少儿": {
       "turns": 20,
-      "tool_ok": 11,
-      "both_ok": 4
+      "tool_ok": 15,
+      "both_ok": 3
     },
     "影视": {
       "turns": 50,
-      "tool_ok": 24,
-      "both_ok": 13
+      "tool_ok": 27,
+      "both_ok": 19
     },
     "教育": {
       "turns": 20,
-      "tool_ok": 4,
-      "both_ok": 3
+      "tool_ok": 13,
+      "both_ok": 10
     },
     "设备控制": {
       "turns": 20,
-      "tool_ok": 14,
-      "both_ok": 7
+      "tool_ok": 19,
+      "both_ok": 13
     },
     "音乐": {
       "turns": 20,
-      "tool_ok": 11,
-      "both_ok": 7
+      "tool_ok": 16,
+      "both_ok": 10
     }
   },
   "summary": {
-    "tool_ok": 81,
-    "tool_acc": 54.0,
-    "both_ok": 46,
-    "both_acc": 30.7
+    "tool_ok": 104,
+    "tool_acc": 69.3,
+    "both_ok": 65,
+    "both_acc": 43.3
   }
 }
