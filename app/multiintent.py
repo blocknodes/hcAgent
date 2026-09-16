@@ -27,6 +27,39 @@ class Split:
     hit: bool
 
 
+# ---- 串行「检索 → 提问」确定性拆分（评测 sheet0821_serial：搜X，然后再问X的Y）----
+# 分隔点固定为 然后问 / 然后再问；左半是检索请求，右半是对检索结果【某一部】的属性提问。
+_SERIAL_CONN = re.compile(r"然后再问|然后问")
+
+
+@dataclass
+class SerialSplit:
+    """串行「检索→提问」两条。step1=检索子句，step2=提问子句（依赖 step1 结果）。"""
+    search: str   # 检索子句(交给 hcTools vod)
+    question: str  # 提问子句(交给 hcTools qa → fan_knowledge_agent)
+    hit: bool
+
+
+def split_serial_qa(query: str) -> SerialSplit:
+    """判定 query 是否为「搜X，然后问X的Y」串行检索+提问，返回拆成两条的自包含子句。
+
+    只在 然后问/然后再问 处切一刀，取左右两半。仅当两半都非空才命中。
+    右半即对左半检索结果的属性提问（"评分最高的/最经典的/这一部的…是谁/哪年"），
+    交给下游 qa 域 + hcTools fan_knowledge_agent 权威解析。
+    """
+    q = (query or "").strip()
+    if not q:
+        return SerialSplit("", "", False)
+    m = _SERIAL_CONN.search(q)
+    if not m:
+        return SerialSplit("", "", False)
+    left = _strip(q[: m.start()])
+    right = _strip(q[m.end():])
+    if left and right:
+        return SerialSplit(search=left, question=right, hit=True)
+    return SerialSplit("", "", False)
+
+
 _STRIP = "，,、；;。 　"
 
 

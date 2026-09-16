@@ -14,6 +14,8 @@
 from __future__ import annotations
 
 import asyncio
+import logging
+import os
 import re
 import threading
 import time
@@ -22,7 +24,10 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from . import config, detect, hctools, llm, multiintent
+from .mt_rewrite_badcases import mt_rewrite_badcase
 from .prompts import T0_PLAN_PROMPT, T1_STEP_PROMPT, MT_REWRITE_PROMPT, CONTENT_DOMAIN_PROMPT
+
+logger = logging.getLogger("hcAgent.engine")
 
 # 域名闭合集（供 LLM 输出校验）。空串=未配探索，为保证给出中性默认。
 _DOMAINS = {"vod", "children", "education", "music", "audio", "sports", "device", "qa"}
@@ -65,7 +70,15 @@ def _mt_add(device_id: str, turn: dict[str, str]) -> None:
         if turns and turns[-1]["q"] == turn.get("q"):
             turns[-1]["answer"] = turn.get("answer", "")
         else:
-            turns.append({"q": turn.get("q", ""), "answer": turn.get("answer", "")})
+            new_turn = {"q": turn.get("q", ""), "answer": turn.get("answer", "")}
+            # q_raw(用户原始 query)、domain(落定域) 一并透传。仅在有值且与 q 不同时保留。
+            qr = turn.get("q_raw")
+            if qr and qr != turn.get("q"):
+                new_turn["q_raw"] = qr
+            dom = turn.get("domain")
+            if dom:
+                new_turn["domain"] = dom
+            turns.append(new_turn)
             if len(turns) > _MT_MAX_TURNS:
                 del turns[0]
         ent["ts"] = time.time()
@@ -129,6 +142,43 @@ def _short_turns(short_memory: list[dict[str, Any]] | None) -> list[dict[str, st
     return out
 
 
+def _last_short_q(short_memory: list[dict[str, Any]] | None) -> str:
+    """取 shortMemory 里最后一轮 dialogData.query（用户原始 query）。
+
+    用于改写 badcase 的『上轮 query』：进程内 _MT_CONTEXT(real_q) 没有历史时，
+    退而求其次用 shortMemory 携带的最近一轮原始用户 query 兜底。仅取最末轮。
+    """
+    for ent in reversed(short_memory or []):
+        if not isinstance(ent, dict):
+            continue
+        dialog = ent.get("dialogData") or {}
+        if isinstance(dialog, dict):
+            q = str(dialog.get("query") or "").strip()
+            if q:
+                return q
+    return ""
+
+
+def _mt_last_domain(device_id: str) -> str:
+    """返回该 device 对话历史末轮的落定域（多轮域继承用），无则 ""。"""
+    real_q = _mt_get(device_id)
+    return (real_q[-1].get("domain") or "") if real_q else ""
+
+
+def _inherit_mt_domain(device_id: str, batch: list["Intent"]) -> None:
+    """多轮域继承：对 batch 里 detect 判空(domain="")的意图，沿用上一轮稳定域。
+
+    仅当上轮有落定域、且本轮该意图确实无任何域信号时继承；不覆盖本轮已判的
+    明确域（显式切换业务的句不受影响）。single 单意图会话尤其受益。
+    """
+    prev_dom = _mt_last_domain(device_id)
+    if not prev_dom:
+        return
+    for it in batch:
+        if not it.domain:
+            it.domain = prev_dom
+
+
 def _mt_merge(real_q: list[dict[str, str]], short_a: list[dict[str, str]]) -> list[dict[str, str]]:
     """把真实改写链路(real_q.q) 和 shortMemory 应答(short_a.a) 按轮对齐成 q1-a1/q2-a2。
 
@@ -160,8 +210,25 @@ async def _mt_rewrite(cur_query: str, device_id: str, short_memory: list[dict[st
     (请求 shortMemory 携带的应答 & 候选媒资)。两者按轮对齐成 q1-a1/q2-a2 序列，
     key 为用户设计：real query 取改写链路、应答取 shortMemory，缺一用另一侧补齐。
     仅改写、不写回。无有效历史直接用原句。
+
+    优先级：改写 badcase(上一轮真实 query + 本轮请求 命中 → 固定改写)  > LLM。
     """
+    # badcase 优先：(上轮用户原话, 本轮请求) 命中即固定改写，绕过 LLM。
+    # 上轮原话优先取 _MT_CONTEXT 末轮的 q_raw(用户原始 query)，回退末轮 q(改写句)，
+    # 再回退 shortMemory 最近轮 dialogData.query。
     real_q = _mt_get(device_id)
+    prev_q = ""
+    if real_q:
+        last_q = real_q[-1]
+        prev_q = last_q.get("q_raw") or last_q.get("q") or ""
+    if not prev_q:
+        prev_q = _last_short_q(short_memory)
+    bad = mt_rewrite_badcase()
+    hit = bad.lookup(prev_q, cur_query) if prev_q else None
+    if hit is not None:
+        logger.info("mt改写 badcase 命中 prev=%r cur=%r -> %r (%s)",
+                    prev_q, cur_query, hit["target"], hit.get("id", ""))
+        return hit["target"] or cur_query
     short_a = _short_turns(short_memory)
     merged = _mt_merge(real_q, short_a)
     if not merged:
@@ -188,15 +255,24 @@ def _has_mt_history(device_id: str, short_memory: list[dict[str, Any]] | None) -
     return bool(short_memory)
 
 
-def _mt_append_answer(device_id: str, query: str, answer: str) -> None:
-    """把已完成的一轮 (query, answer) 追加进 device 对话历史。
+def _mt_append_answer(device_id: str, query: str, answer: str, query_raw: str = "",
+                      domain: str = "") -> None:
+    """把一轮 已完成 (query, answer) 追加进 device 对话历史。
 
     出现在 build_response 末尾，answer 取本轮 steps 的检索/执行 retext 摘要，
-    供下一轮 LLM 改写时还原“第2首/刚才那部”等历史引用。
+    供下一轮 LLM 改写时还原指上一环/刚才那部等历史引用。
+    query = 本轮真正改写/执行的自包含句；query_raw = 用户原始 query（可选，
+    用于改写 badcase 以上一轮用户原话做匹配键）；domain = 本轮落定的稳定域，
+    供下一轮 detect 判空/弱信号时做多轮域继承。
     """
     if not device_id or not answer.strip():
         return
-    _mt_add(device_id, {"q": query or "", "answer": answer.strip()})
+    turn = {"q": query or "", "answer": answer.strip()}
+    if query_raw and query_raw != query:
+        turn["q_raw"] = query_raw
+    if domain:
+        turn["domain"] = domain
+    _mt_add(device_id, turn)
 
 
 @dataclass
@@ -262,6 +338,61 @@ def parse_plan(value: Any) -> Plan:
             depends=dep_on > 0, dep_on=dep_on, index=i,
         ))
     return Plan(intents=intents)
+
+
+# 串行"检索+对结果排序筛选提问"里的排序词(评分最高/人气最高/播放量最高/最新/最经典…)，
+# LLM 常把它下放成第二句 qa 的二次筛选("查询结果中评分最高的XX")，导致第一句检索丢 sort。
+# 这里规则回填：排名词 belongs 第一句检索，而非第二句结果筛选。
+_SORT_PAT = [
+    (r"评分最高[的一部]*", "评分最高"),
+    (r"人气最高[的一部]*", "人气最高"),
+    (r"播放量最高[的一部]*", "播放量最高"),
+    (r"播放最高[的一部]*", "播放量最高"),
+    (r"最新的一部|最新", "最新"),
+    (r"最经典的一部|最经典", "最经典"),
+    (r"最热[的一部]*", "人气最高"),
+]
+_QA_VERB = ("导演是谁", "主演是谁", "主演都有谁", "男主角是谁", "女主角是谁",
+            "评分怎么样", "评分是多少", "哪一年上映", "讲的是什么", "讲的是什么故事",
+            "导演", "主演", "主角", "票房", "评分")
+
+
+def _merge_sort_word_to_retrieval(plan: Plan) -> Plan:
+    """串行"检索 + 对检索结果排序筛选提问"：把第二句抛出的排序词回填回第一句检索。
+
+    触发前提（LLM 常把排序词下放成第二句 qa 的结果筛选，需回填，不误伤普通串行）：
+      - 至少 2 个意图；
+      - 第一个意图是 vod 检索（domain=vod）；
+      - 后续某个【提问】意图含排序词；
+      - 第一个检索意图当前 query 未携带该排序词。
+    命中后把排序词并入检索意图 query 前部，让下游 hcTools 合成 sort。
+    """
+    if len(plan.intents) < 2:
+        return plan
+    first = plan.intents[0]
+    if first.domain != "vod" or not first.query:
+        return plan
+    sort_word = ""
+    for it in plan.intents[1:]:
+        q = it.query or ""
+        has_qa = any(v in q for v in _QA_VERB)
+        if not has_qa:
+            continue
+        for pat, rep in _SORT_PAT:
+            if re.search(pat, q):
+                sort_word = rep
+                break
+        if sort_word:
+            break
+    if not sort_word or sort_word in first.query:
+        return plan
+    fq = first.query
+    fq_clean = re.sub(r"^(搜索|帮我搜|帮我搜索|帮我找一下|帮我找|搜一下|找一下|帮我查|查一下|搜|找)\s*", "", fq).strip()
+    merged = f"{sort_word}的{fq_clean}" if fq_clean else f"{sort_word}"
+    new_first = Intent(query=merged, domain=first.domain, tool=first.tool,
+                       index=first.index, depends=first.depends, dep_on=first.dep_on,
+                       src=first.src)
+    return Plan(intents=[new_first] + plan.intents[1:])
 
 
 def _with_source(plan: Plan, src: str, tv_mode: str | int = "0") -> Plan:
@@ -472,23 +603,8 @@ def _tool_result_text(history: list[dict[str, Any]] | None) -> str:
     return ""
 
 
-# 多意图内容子句域路由：规则优先于 LLM。这些格式信号可靠(裸实体 detect 判空的兜底)。
-_CONTENT_DOMAIN_RULES = [
-    (r"动画|卡通|动漫|少儿|儿童|宝宝|幼儿|佩奇|汪汪队|熊出没|奥特曼|海绵宝宝|小恐龙|弹珠轨道|大货车|机器人", "children"),
-    (r"有声|广播剧|评书|听书|音频|收听|(?:听|想听|要听|听听).{0,10}(?:书|剧|集|故事)", "audio"),
-    (r"歌曲|专辑|单曲|MV|唱歌|点歌|歌单|音乐", "music"),
-    (r"台词|片段|片单|剧|电影|电视剧|影片|纪录片|影视|影院|哪部|那个片段|这部|看剧", "vod"),
-    (r"比赛|赛事|比分|球队|队|联赛|对战|世界杯|球|预约.{0,6}(比赛|球队)", "sports"),
-    (r"年级|课本|上册|下册|语文|数学|英语|物理|化学|生物|作文|课文|课程|启蒙", "education"),
-]
-
-
-def _content_domain_rule(query: str) -> str:
-    for pat, dom in _CONTENT_DOMAIN_RULES:
-        if re.search(pat, query):
-            return dom
-    return ""
-
+# 多意图内容子句域路由：规则优先于 LLM。判定正则已收敛到 app.detect.content_domain_rule()
+# （单一事实源，见 detect.py），engine 只引用，不再各自内嵌正则。
 
 # ---------------------------------------------------------------------------
 # 多意图并行(多状态机)
@@ -526,8 +642,35 @@ class TraceStateMachine:
             device_int = Intent(query=mi.device, domain=dev_dom, tool="execute",
                                 index=1, depends=False, dep_on=0, src=mi.device)
             return [device_int, content_int], True
+        # 串行「检索 → 提问」确定性拆分（规则优先）：搜X，然后(再)问X的Y →
+        # step1=检索(vod, 依赖回填排序词)，step2=对某部属性提问(qa→fan_knowledge_agent, dep=1)。
+        # 属于编排层(拆意图)，非 hcTools 工具参数层；工具+参数仍由下游 hcTools 权威解析。
+        sq = multiintent.split_serial_qa(query)
+        if sq.hit:
+            # 交给与 LLM 计划同一条派生管线：排序词回填 + 域审计(_with_source)，对齐 golden。
+            ser_plan = Plan(intents=[
+                Intent(query=sq.search, domain="vod", tool="execute", index=1,
+                       depends=False, dep_on=0, src=query),
+                Intent(query=sq.question, domain="qa", tool="execute", index=2,
+                       depends=False, dep_on=0, src=query),
+            ])
+            if not os.environ.get("HC_DISABLE_SORT_MERGE"):
+                ser_plan = _merge_sort_word_to_retrieval(ser_plan)
+            ser_plan = _with_source(ser_plan, query, tv_mode=tv_mode)
+            # 首批发依赖序号靠前的可用步(step1 检索)；step2 提问依赖 step1，留待续跑。
+            batch = next_batch(ser_plan, set())
+            if not batch:
+                batch = ser_plan.intents
+            if batch:
+                self._store(trace_id, ser_plan)
+                # 两意图并行(无依赖)，首批即发全部：step1=检索、step2=fuzzy 提问无媒资候选
+                # 可锚定时(路由到 fan_knowledge_agent)，并行反而保证 step2 必发(不依赖 step1 结果)。
+                return batch, True
         # 纯 LLM(T0) 分解：拆步、依赖、落库、选工均一次 LLM 决策，编排层零规则。
         plan = await self._plan(query)
+        # 串行"检索+排序提问"排序词回填规则。可用 HC_DISABLE_SORT_MERGE=1 关闭做 A/B 回归对比。
+        if not os.environ.get("HC_DISABLE_SORT_MERGE"):
+            plan = _merge_sort_word_to_retrieval(plan)
         if not plan.intents:
             # LLM 没出方案（空/纯聊天/失败）→ 兜底：单一自包含意图（非语言规则），
             # 但仍过 detect 判域，息屏(tv_mode=6)知识/点歌/有声查询可被纠正到对应域；
@@ -542,7 +685,12 @@ class TraceStateMachine:
         # 让 hcTools 以用户原话解析(工具选型以原文为准)。多意图/多步(内部依赖改写)不受影响。
         if plan.total() == 1:
             only = plan.intents[0]
-            plan = Plan(intents=[Intent(query=query, domain=only.domain, tool=only.tool,
+            # 恢复原句后，用它重新判域：T0 给原子 query 加“播放/搜索”前缀时，
+            # _with_source 是在前缀句上判的域。原句才是用户真实意图，也让域 badcase/
+            # 信号词表（按原句归一）准确命中（如“最近开播、女主演技好的古装剧”→vod，
+            # “搜索最近开播、古装剧”前缀不加域 badcase 反而判 qa）。
+            restored = detect.detect_domain(query, only.domain, tv_mode=tv_mode)
+            plan = Plan(intents=[Intent(query=query, domain=restored or only.domain, tool=only.tool,
                                         index=only.index, depends=only.depends, dep_on=only.dep_on,
                                         src=only.src)])
         executed = _executed_indexes(history)
@@ -557,7 +705,7 @@ class TraceStateMachine:
     async def _content_domain(self, query: str) -> str:
         """内容子句域路由：规则 detect 对裸实体(队名/歌名/剧名)判空时，
         先用确定性内容域规则，再未命中才让 LLM 从用户原词选域；仅用于内容意向、不改设备条域。"""
-        rule = _content_domain_rule(query)
+        rule = detect.content_domain_rule(query)
         if rule:
             return rule
         try:
@@ -719,6 +867,8 @@ async def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
         }
         if hit_source:
             step["hitSource"] = hit_source
+        # 透传真正发给 hcTools 的改写后 query（评估/审计用；badcase raw 需匹配它）
+        step["hitQuery"] = it.query
         steps.append(step)
     return steps
 
@@ -754,12 +904,17 @@ async def build_response(req) -> dict[str, Any]:
     # 串行续跑状态按 device_id 存（换 request 用 device_id 识别会话），而非 trace_id——
     # 串行 N 步 = N 个 SSE 请求 = N 个不同 trace_id，只有 device 稳定才能跨轮推进依赖链。
     batch, stop = await _SM.tick(device_id, mt_query, history, tv_mode=tv_mode)
+    # 多轮域继承：本轮某个意图 detect 判空(无域信号)时，沿用上一轮落定的稳定域，
+    # 避免"律动感强的""适合零基础的"这类弱句在改写成自包含 query 后漂移到无关域。
+    _inherit_mt_domain(device_id, batch)
     steps = await _build_steps(batch)
     # 本轮 answer 摘要：取各 step 的 retext，供下一轮多轮改写引用具体内容/序号。
     turn_answer = "；".join(s.get("retext") or "" for s in steps if s.get("retext"))
+    # 本轮落定域：优先取 batch 里第一个非空域(多意图单域为主)，用于下轮弱句继承。
+    round_domain = next((i.domain for i in batch if i.domain), "")
     # 写入 _MT_CONTEXT 的 q 用【真正改写/执行】的 mt_query，而非用户原始 query——
     # _MT_CONTEXT 语义即“真实 query 链”，供跨轮合并时还原真实执行语境。
-    _mt_append_answer(device_id, mt_query, turn_answer)
+    _mt_append_answer(device_id, mt_query, turn_answer, query_raw=query, domain=round_domain)
     body = {
         "code": 200, "message": "success", "traceId": trace_id, "deviceId": device_id,
         "data": {

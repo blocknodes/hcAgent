@@ -84,6 +84,60 @@
     {
       "query": "《黑色风暴》这首歌所在专辑是什么",
       "domain": "qa"
+    },
+    {
+      "query": "最近开播、女主演技好的古装剧",
+      "domain": "vod"
+    },
+    {
+      "query": "最近开播、女主演技好且集数较短的古装剧",
+      "domain": "vod"
+    },
+    {
+      "query": "免费、集数较短、女主演技好的最近开播古装剧",
+      "domain": "vod"
+    },
+    {
+      "query": "近三年国外视觉震撼且适合带孩子观看的科幻电影",
+      "domain": "vod"
+    },
+    {
+      "query": "时长约90分钟2026年上映不太吓人且剧情好的国产恐怖电影",
+      "domain": "vod"
+    },
+    {
+      "query": "世界杯最后谁夺冠了",
+      "domain": "qa"
+    },
+    {
+      "query": "世界杯哪天进行的决赛",
+      "domain": "qa"
+    },
+    {
+      "query": "英超半决赛0721那场谁赢了",
+      "domain": "qa"
+    },
+    {
+      "query": "可跟读的免费中文版学龄前英语启蒙动画",
+      "domain": "children"
+    },
+    {
+      "query": "一季以上、适合8岁男孩的国产恐龙科普动画",
+      "domain": "children"
+    },
+    {
+      "query": "换一个其他类型、适合8岁男孩的国产科普动画",
+      "domain": "children"
+    },
+    {
+      "query": "动画形式的",
+      "domain": "education",
+      "note": "22r3 教育上下文 bare 句—强制考试教"
+    },
+    {
+      "query": "有朗读示范",
+      "domain": "education",
+      "note": "22r4 教育上下文 强制"
     }
   ]
 }

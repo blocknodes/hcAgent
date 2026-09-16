@@ -1,73 +1,19 @@
 {
-  "total": 2912,
+  "total": 327,
   "err": 0,
   "ok_only": false,
-  "tool_acc": 95.1236,
-  "param_acc": 93.7157,
-  "joint_acc": 93.647,
+  "tool_acc": 95.107,
+  "param_acc": 91.7431,
+  "joint_acc": 91.7431,
   "by_domain": {
-    "设备": {
-      "total": 1140,
-      "tool_ok": 1089,
-      "param_ok": 1085,
-      "both_ok": 1085,
-      "tool_acc": 95.53,
-      "param_acc": 95.18,
-      "joint_acc": 95.18
-    },
-    "影视": {
-      "total": 445,
-      "tool_ok": 424,
-      "param_ok": 417,
-      "both_ok": 415,
-      "tool_acc": 95.28,
-      "param_acc": 93.71,
-      "joint_acc": 93.26
-    },
-    "有声": {
-      "total": 369,
-      "tool_ok": 343,
-      "param_ok": 339,
-      "both_ok": 339,
-      "tool_acc": 92.95,
-      "param_acc": 91.87,
-      "joint_acc": 91.87
-    },
-    "音乐": {
-      "total": 208,
-      "tool_ok": 196,
-      "param_ok": 193,
-      "both_ok": 193,
-      "tool_acc": 94.23,
-      "param_acc": 92.79,
-      "joint_acc": 92.79
-    },
-    "体育": {
-      "total": 207,
-      "tool_ok": 201,
-      "param_ok": 188,
-      "both_ok": 188,
-      "tool_acc": 97.1,
-      "param_acc": 90.82,
-      "joint_acc": 90.82
-    },
     "少儿": {
       "total": 327,
-      "tool_ok": 307,
-      "param_ok": 297,
-      "both_ok": 297,
-      "tool_acc": 93.88,
-      "param_acc": 90.83,
-      "joint_acc": 90.83
-    },
-    "教育": {
-      "total": 216,
-      "tool_ok": 210,
-      "param_ok": 210,
-      "both_ok": 210,
-      "tool_acc": 97.22,
-      "param_acc": 97.22,
-      "joint_acc": 97.22
+      "tool_ok": 311,
+      "param_ok": 300,
+      "both_ok": 300,
+      "tool_acc": 95.11,
+      "param_acc": 91.74,
+      "joint_acc": 91.74
     }
   }
 }

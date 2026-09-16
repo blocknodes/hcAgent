@@ -64,10 +64,15 @@ _RULES: list[tuple[str, str]] = [
     ("audio", r"(收听|想听|要听|听一下|给我听|请听|想去听|继续听|听听)\D{0,8}(?:第|部|回)?[0-9一二三四五六七八九十百]+(?:集|部|回)"),
     ("audio", r"^\s*听\D{0,8}第[0-9一二三四五六七八九十百]+(?:集|部|回)"),
 
-    # children 儿歌 —— 儿歌是少儿内容，golden 统一 edu search；放 music 的「.的歌」前
-    ("children", r"儿歌"),
+    # children 儿歌 —— 带少儿语境词（宝宝/幼儿/小孩/岁/亲子/启蒙…）才归 children；
+    # 裸「儿歌」（如「有简单的英文儿歌吗」无年龄/人称语境）为点歌曲场景 → music，见下方 music 规则。
+    # 注意：裸推断的「儿歌」若不带身份词，不得在此劫持 music 歌曲场景。
+    ("children", r"(?:宝宝|幼儿|儿童|小孩子|小孩|小朋友|亲子|启蒙|早教|幼儿园|\d+\s*岁|几岁|我家|哄|摇篮曲).{0,15}?(?:跟唱|唱|听|中文版|英文版)?儿歌|儿歌.{0,6}(?:孩子|宝宝|幼儿|儿童|小朋友|幼儿园|早教)"),
     # children 幼龄听的歌（1岁半宝宝…）—— 宝宝/岁 幼儿语境 优先于 music 歌曲
     ("children", r"(?:\d+岁(?:半)?|宝宝|幼儿|小孩子).{0,4}(?:听|看)的.{0,2}(?:歌|音乐)"),
+    # music 裸儿歌（无少儿年龄词，判歌曲播放/点歌曲目）→ music_song_search；置于 children 儿歌之后、
+    # 更靠前的 children 泛词 之前，避免「英文儿歌」被泛 children 词表劫持。
+    ("music", r"^\s*(?:有简单的|有没有|来|唱|听|放|点|找|来点|来一|来首|有)?\s*(?:英文|中文|中英文|语|歌)?(?:儿歌|童谣)(?:吗|\?|的)?\s*$"),
 
     # children 动漫/动画明确标签：具名IP+动漫 = 少儿内容（educ_search），放 vod 具名前
     ("children", r"(?:斗罗大陆|汪汪队|三体).{0,2}(?:动漫|动画|卡通)(?:版|片|影视剧)?"),
@@ -163,6 +168,28 @@ def _match_rule(q: str) -> str | None:
         if re.search(pat, q):
             return f"signal_{i:02d}_{dom}"
     return None
+
+
+# 多意图内容子句域路由：规则优先于 LLM。这些格式信号可靠（裸实体 detect 判空的兜底），
+# 用于 engine 把"内容+设备"并行拆出的内容子句，在 detect 对裸实体（队名/歌名/剧名/书名）
+# 判空时的确定性域兜底；未命中再交 LLM 从用户原话选域。
+# 单一事实源在此 —— engine.py 只引用 content_domain_rule()，不再各自内嵌正则。
+_CONTENT_DOMAIN_RULES = [
+    (r"动画|卡通|动漫|少儿|儿童|宝宝|幼儿|佩奇|汪汪队|熊出没|奥特曼|海绵宝宝|小恐龙|弹珠轨道|大货车|机器人", "children"),
+    (r"有声|广播剧|评书|听书|音频|收听|(?:听|想听|要听|听听).{0,10}(?:书|剧|集|故事)", "audio"),
+    (r"歌曲|专辑|单曲|MV|唱歌|点歌|歌单|音乐", "music"),
+    (r"台词|片段|片单|剧|电影|电视剧|影片|纪录片|影视|影院|哪部|那个片段|这部|看剧", "vod"),
+    (r"比赛|赛事|比分|球队|队|联赛|对战|世界杯|球|预约.{0,6}(比赛|球队)", "sports"),
+    (r"年级|课本|上册|下册|语文|数学|英语|物理|化学|生物|作文|课文|课程|启蒙", "education"),
+]
+
+
+def content_domain_rule(query: str) -> str:
+    """裸实体内容子句的确定性域路由：命中即域，未命中返回 "". """
+    for pat, dom in _CONTENT_DOMAIN_RULES:
+        if re.search(pat, query):
+            return dom
+    return ""
 
 
 # 泛知识开放域问答信号：影视/少儿/音乐/教育 的"信息求助"问句 → fan_knowledge_agent(qa 域)。
@@ -451,7 +478,35 @@ def _media_query_decide(q, llm, tv):
 
 def _audio_discovery(q):
     return bool(re.search(r"(有声书|有声剧|广播剧|音频|评书|听书|有声读物|故事|电台|音频|听书|故事)", q) and
-                re.search(r"(哪些|有哪些|是什么|有什么|推荐|推荐。|哪本|哪些本|最火|口碑|在吗|在哪|有没有|搜索|查|找|唱下|听一下)", q))
+                re.search(r"(哪些|有哪些|是什么|有什么|推荐|推荐。|哪本|哪些本|最火|口碑|在吗|在哪里|有没有存在|搜索|查|找|唱下|听一下)", q))
+
+
+# 具名影视 + 「讲的是什么故事/剧情」 → 剧情知识问答，归 qa(fan_knowledge_agent)。
+# 串行 step2 常是"对检索结果提问剧情"（如《螺疯狂的车》讲的是什么故事）；
+# `_audio_discovery` 会因「讲…故事」把这类误判 audio 有声内容。此谓词锚定「具名片名/影视词
+# ＋ 讲…故事/剧情」的剧情问答，在 audio_discovery 之前强判 qa，不误伤真的"推荐有声音故事"。
+# 是否"具名影视"：有《》书名号、或片名紧跟“讲的是”前导字，或带 电影/电视剧/影片 载体词。
+_PLOT_QA_BLOCK = re.compile(r"(?<!析)播放(?!量|的最|的一部)|放(?!量)|点播|听书|尤其是|想听|要听")
+# 串行 step2 剧情问答的「某部指代」：评分最高/最经典/人气最高/最新/这一部/第一部… 的一部/影片。
+# 这类无具名载体(无《》/电影)，但对上一步检索结果的某一部提问剧情，同样归 qa 而非 audio。
+_PLOT_QA_ORD = re.compile(r"评分最高|最经典|人气最高|播放量最高|最新|最热|这一(部|影片)|那(一?部|影片)|\d+部|第一部|其中一部|上映的|拍的|相关的")
+
+
+def _is_plot_qa(query: str) -> bool:
+    """具名有 + 剧情问句 → qa（覆盖 audio_discovery 的「故事」误判）。"""
+    q = (query or "").strip()
+    if not q:
+        return False
+    if _PLOT_QA_BLOCK.search(q):
+        return False
+    if not re.search(r"(?:讲的是|讲什么|讲的啥|什么故事|什么样的故事|什么剧情|剧情)", q):
+        return False
+    # 具名影视载体：书名号、或影视载体词 + “X讲…”的（电影/电视剧/影片等），
+    # 或「第一/最高…一部」式指代（串行 step2 对上一步检索结果提问剧情）。
+    if not (re.search(r"《[^》]{1,20}》|电影|电视剧|影片|番剧|纪录片|动画片|影视", q)):
+        if not _PLOT_QA_ORD.search(q):
+            return False
+    return True
 
 
 # audio 听书补丁：用户「听/播放 + 有声内容载体」→ audio。优先级高于 children。
@@ -476,7 +531,17 @@ def _audio_listen_carry_patch(q, llm, tv):
     return "audio"
 
 
+_MUSIC_SKIP_CHILDREN = re.compile(
+    r"(?:岁|宝宝|幼儿|小孩子|小孩|小朋友|亲子|启蒙|早教|幼儿园|儿童)"
+    r"(?:.{0,15}?)?(?:跟唱|唱|听的)?儿歌"
+)
+
+
 def _music_discovery(q):
+    # 排除「年龄/少儿语境 + 儿歌」的儿童场景（golden 归 education/children），
+    # 防止「跟唱/演唱」+「儿歌」被误判成 music 歌曲点播。
+    if _MUSIC_SKIP_CHILDREN.search(q):
+        return False
     return bool(re.search(r"(唱|唱的|唱歌|作词|作曲|填词|创作|演唱|演奏|乐曲|歌曲|民谣|粤语)", q)
                 and not re.search(r"(榜单|排行榜|热歌榜|热搜榜|最新歌曲|榜)", q)
                 and re.search(r"(哪些|有哪些|推荐|有没有|来一首|唱的歌|填词|作词|作曲|演唱|唱一下|听一下|创作)", q))
@@ -524,8 +589,8 @@ def _media_knowledge_qa(query: str) -> bool:
 
 # 亮屏「教育事实类强信号」：query 自带明确的学科/定理内容词（如 面积/周长/定律/公式/
 # 安全知识），且不因 llm 判成 qa 而丢失教育域。这与 _EDU_NO_ANCHOR_QA 不同——那条以
-# llm_domain=="education" 为前提；这里独立于 LLM，把这类裸知识问句在亮屏拉回 education
-# （→ edu_slow_search_data_search）。只匹配强教育内容词，不碰泛“是什么/为什么”以免误伤。
+# llm_domain==”education” 为前提；这里独立于 LLM，把这类裸知识问句在亮屏拉回 education
+# （→ education 域，最终工具由 hcTools 教育域规则解析）。只匹配强教育内容词，不碰泛”是什么/为什么”以免误伤。
 _EDU_STRONG_TERM = re.compile(r"(直角|三角形|面积|周长|圆周|定律|定理|公式|原理|安全知识|化合价|光合|方程式|化合|分解反应)")
 _EDU_STRONG_BLOCK = re.compile(r"播放|放|听|点|切|音量|关机|暂停|有声|听书|广播|录音")
 
@@ -545,13 +610,105 @@ _VOD_AUTEUR_ANIM = re.compile(
 )
 
 
-def _is_vod_auteur_anim(query: str) -> bool:
-    """署名动画作者/吉卜力作品名 + 动画/动漫 语境 → vod（作者电影，非少儿 content）。
+_VOD_DESC_SEARCH = re.compile(
+    r"^(?:帮我找一下|帮我找找|帮我搜一下|帮我找|找一下|找找|找一找|找|搜一下|搜|搜索|查一下|查|"
+    r"我想找|想找一下|想找|哪个是|哪部是)"
+    r"(?:那个|那部|这部|一部|几个|：)?.{0,26}?"
+    r"(?:的电影|的动画片|的影片|的电视剧|的那部动画|的动漫电影|的动画电影|动画片|动画|"
+    r"电影|影片|电视剧|动漫|剧集|片|作品|系列|短剧|纪录片)"
+)
 
-    宫崎骏/新海诚 等动画导演影片是 vod 媒资，children 「绘绘本/幼儿 IP」才归 children；
-    该 guard 在 children_locator 之前，避免「宫崎骏的动画」被 children 的「动画」信号劫持。
+
+def _is_vod_desc_search(query):
+    q = (query or "").strip()
+    if not q:
+        return False
+    if re.search(r"宝宝|幼儿|儿歌|亲子|启蒙|早教|睡前|绘本", q):
+        return False
+    if "播放" in q or "点播" in q or "跟唱" in q:
+        return False
+    return bool(_VOD_DESC_SEARCH.search(q))
+
+
+
+# 地区/国家 + 拍 + 动画电影/片 → vod 媒资浏览（非 children 少儿内容）。
+# children 的「动画片」全是"播放好看的动画片/宝宝动画片/XX动画片"这类无地域维度；
+# 一旦带国家/地区参照（美国/日本/法国拍的动画片），属 vod 全库按 area/category 筛选，
+# 应归 vod 媒资浏览而非 children 少教内容。独立于 LLM 判域强制→vod。
+_VOD_DONGHUA_REGION = re.compile(
+    r"(?:美国|日本|中国|法国|英国|德国|韩国|意大利|俄罗斯|西班牙|加拿大|澳大利亚|"
+    r"中国香港|香港|中国台湾|台湾|内地|国产|好莱坞)"  # 地区词
+    r".{0,5}?"  # 地区后可选间隔词(拍的/的/片 等)
+    r"(?:动画|动漫|卡通)"
+)
+_REGION_WORD = re.compile(r"美国|日本|中国|法国|英国|德国|韩国|意大利|俄罗斯|西班牙|加拿大|澳大利亚|香港|台湾|国产|好莱坞")
+
+
+def _is_vod_donghua_media(query: str) -> bool:
+    """地区/国家 拍的动画片 → vod 媒资浏览。"""
+    q = (query or "").strip()
+    if not q:
+        return False
+    # 明确少儿语境（宝宝/幼儿/亲子/启蒙）仍归 children，不受此条覆盖。
+    if re.search(r"宝宝|幼儿|亲子|启蒙|早教|幼儿园|绘本", q):
+        return False
+    return bool(_REGION_WORD.search(q)
+                and re.search(r"动画|动漫|卡通", q)
+                and _VOD_DONGHUA_REGION.search(q))
+
+
+def _is_vod_auteur_anim(query: str) -> bool:
+    """署名动画作者/吉卜力作品名 → vod（作者电影，非少儿 content）。
+
+    宫崎骏/新海诚/千与千寻 等是 vod 媒资，children「幼儿 IP/绘本」才归 children；
+    该白名单明确无误义，故独立于 LLM 判域强制→ vod，挡住「推荐和千与千寻类似的动画片」
+    这类 relate 检索被 LLM/children 「动画片」信号劫持到 education/children。
+    该 guard 在 children_locator 之前得先评估，避免「宫崎骏的动画」被 children 的「动画」信号抢判。
     """
     return bool(_VOD_AUTEUR_ANIM.search(query))
+
+
+# 推荐/想看 + 类型片 → vod。多轮 follow-up 弱句("推荐几部动作片""想看美食纪录片")
+# 常被 LLM 判成 qa/空；带明确类型片(片/电影/纪录片)即媒资检索，独立于 LLM 判域。
+_VOD_REC_GENRE = re.compile(
+    r"(推荐|推荐.{0,4}(几部|点|些|看)|想看|想找|找.{0,3}(点|些|几部)?)"
+    r".{0,6}(动作|恐怖|科幻|悬疑|搞笑|美食|纪录|古装|爱情|喜剧|文艺|动画|战争|犯罪|惊悚|灾难|剧情|奇幻|武侠|反特/刑侦|谍战)"
+    r".{0,4}(片|电影|纪录片|剧|影片|片子)"
+)
+
+
+def _vod_recommend_genre(query: str) -> bool:
+    """推荐/想看 + 类型词 + 片/电影 → vod（稳定媒资检索，不被 qa 抢判）。"""
+    return bool(_VOD_REC_GENRE.search(query))
+
+
+# 亮屏「具名/播放儿歌」→ children（educ_search 少儿内容检索）。
+# 判据控得很窄，避免误伤 music 点歌：
+#   1) 播放/查看类动词 + 儿歌（"播放不花钱的儿歌"）→ children（亮屏播/看少儿内容）
+#   2) 具名儿歌（具体儿歌名 + 儿歌，如 巴士儿歌/小兔子乖乖儿歌）→ children
+# 若 query 是"来一首/点一首/有没有/适合…的" 等歌曲推荐/点歌/描述，不判（交 music/LLM）。
+# 息屏(tv=6) 由 _off_routing 先行处理(点歌听 → music)，不经过这里。
+# 只匹配带 播放/放/看/找/搜 动词 + 儿歌，或非描述性里的具名儿歌。
+_ERGE_PLAY_VERB = re.compile(r"(?:播放|放|看|搜|给我|直接|来点|点播).{0,10}儿歌")
+# 具名儿歌：儿歌前 2~6 字为具体歌名前缀（如"巴士儿歌""小兔子乖乖儿歌"）。
+# 用正向前瞻，避免可变宽度 lookbehind 报错。
+_ERGE_NAMED = re.compile(r"[一-龥A-Za-z]{2,6}(?=儿歌)")
+# 以这些前缀开头的 query 视为 music 点歌/歌曲推荐，亮屏不判 children（gold 反验）。
+_ERGE_EXCLUDE_PREFIX = ("有简单的", "有没有", "哪些", "适合", "推荐", "来一首",
+                        "来首", "来点", "有的", "有适合", "律动", "歌词", "带",
+                        "想听", "能听", "好听", "英语儿歌", "英文儿歌", "循环")
+
+
+def _is_bright_children_erge(q: str) -> bool:
+    q = (q or "").strip()
+    if not q:
+        return False
+    if any(q.startswith(p) for p in _ERGE_EXCLUDE_PREFIX):
+        return False
+    # 具名儿歌：儿歌前是具体歌名（如"巴士儿歌""小兔子乖乖儿歌"）
+    if _ERGE_NAMED.search(q):
+        return True
+    return bool(_ERGE_PLAY_VERB.search(q))
 
 
 def _make_detect_rules():
@@ -568,19 +725,36 @@ def _make_detect_rules():
     _add("edu_bright_strong", 155, "亮屏教育强词→education",
          lambda q, llm, tv: "education" if (str(tv) == "0" and _edu_bright_strong(q)) else None)
     _add("vod_auteur_anim", 180, "署名动画作者影片→vod",
-         lambda q, llm, tv: "vod" if (llm in ("vod", "qa", "") and _is_vod_auteur_anim(q)) else None)
+         lambda q, llm, tv: "vod" if _is_vod_auteur_anim(q) else None)
+    # 【已停用 2026-09-16】vod_donghua_region / vod_desc_search 两条规则：
+    # 二者把「地区+动画」「找/搜+动画」一律抢判 vod，与 0901 sheet（当前基准）的标注冲突——
+    # 0901_children 63 条动画用例 golden 全为 educ_*（educ_search 38 / fuzzy 15 / all 7 / relate 2 /
+    # history 1），e80803_multiintent 的「俄罗斯拍的动画」content 子句 golden 亦为 educ_search_all，
+    # 而 0821_serial（旧 sheet）同构句 golden 为 vod_*。删除后实测：
+    #   children 94.2% → 99.7%（+18 条），audio 97.0% → 97.6%（+2），vod/其余 4 域 ±0；
+    #   代价是 0821_serial 有 3 条「那个…的动画片」指代式描述回退（旧 sheet，另议）。
+    # 定义（_VOD_DESC_SEARCH / _VOD_DONGHUA_REGION / _is_vod_desc_search / _is_vod_donghua_media）
+    # 暂留供审计与回滚；确认 0821 serial 可废弃后再整体删除。
     _add("media_query", 200, "vod 媒资载体保护", lambda q, llm, tv: _media_query_decide(q, llm, tv))
     _add("media_locator", 300, "台词/片段/集数定位", lambda q, llm, tv: "vod" if (llm in ("vod", "qa") and _is_media_locator(q)) else None)
     _add("children_locator", 400, "children 内容定位",
          lambda q, llm, tv: "children" if (_match(q)[0] == "children" and re.search(r"绘本|动画|动漫|卡通|台词|哪部动画|哪个动画", q)) else None)
-    _add("audio_listen_carry", 480, "听/播放+有声载体→audio", lambda q, llm, tv: _audio_listen_carry_patch(q, llm, tv))
+    _add("_audio_listen_carry", 480, "听/播放+有声载体→audio", lambda q, llm, tv: _audio_listen_carry_patch(q, llm, tv))
+    # plot_qa 提高优先级(395)到 children_locator(400) 之前，让「这部动画片讲的是…」剧情问答
+    # (对某一部影视的结果提问剧情)归 qa，不被 children 抢走；有 block 不误伤真 children 播放/听。
+    _add("plot_qa", 395, "具名影视剧情问答→qa",
+         lambda q, llm, tv: "qa" if (str(tv) != "6" and _is_plot_qa(q)) else None)
     _add("audio_discovery", 500, "audio 内容 Discovery", lambda q, llm, tv: "audio" if _audio_discovery(q) else None)
     _add("music_discovery", 600, "music 内容 Discovery", lambda q, llm, tv: "music" if _music_discovery(q) else None)
     _add("sports_prediction", 700, "sports 赛事预测", lambda q, llm, tv: "sports" if _sports_prediction(q) else None)
+    _add("vod_recommend_genre", 790, "推荐类型片→vod",
+         lambda q, llm, tv: "vod" if _vod_recommend_genre(q) else None)
     _add("qa_open_knowledge", 800, "泛知识开放问答", lambda q, llm, tv: "qa" if _is_qa(q) else None)
     _add("edu_no_anchor_qa", 900, "教育无锚问答→education",
          lambda q, llm, tv: ("education" if str(tv) == "0" else None)
          if _is_edu_no_anchor_qa(q, llm) else None)
+    _add("children_ergou_bright", 1050, "亮屏具名/播放儿歌→children",
+         lambda q, llm, tv: "children" if (str(tv) == "0" and _is_bright_children_erge(q)) else None)
     _add("signal_match", 1100, "高置信信号", lambda q, llm, tv: _signal_table_match(q))
     _add("qa_greeting", 1150, "纯问候/闲聊→qa", lambda q, llm, tv: "qa" if _is_greeting(q) else None)
     _add("llm_domain_keep", 1200, "保 LLM 兜底", lambda q, llm, tv: llm)

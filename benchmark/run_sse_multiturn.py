@@ -16,7 +16,7 @@ device id 规则(用户要求)：
   python benchmark/run_sse_multiturn.py -w 4          # 并发会话数(默认 4)
 输出:
   benchmark/output/detail_multiturn.csv  # 逐轮明细(会话id/轮次/gold/pred/tool_ok/param_ok/both_ok)
-  benchmark/output/summary_multiturn.csv # 按会话 + 按业务 + 全局汇总
+  benchmark/output/summary_multiturn.csv # 按会话 + 按业务 + 按轮次 + 全局汇总
   benchmark/output/summary_multiturn.json
 """
 from __future__ import annotations
@@ -86,11 +86,15 @@ def load_sessions():
     return list(sessions.values())
 
 
-def run_session(sess) -> dict:
+def run_session(sess, local=False) -> dict:
     """顺序轮完一个会话的全部轮次，共享同一 device_id + client_sid(多轮上下文)。"""
+    if local:
+        runner = _run_turn_local
+    else:
+        runner = _run_turn
     return {
         "session": sess,
-        "turns": [_run_turn(t, sess["device_id"], sess.get("client_sid")) for t in sess["turns"]],
+        "turns": [runner(t, sess["device_id"], sess.get("client_sid")) for t in sess["turns"]],
     }
 
 
@@ -114,6 +118,41 @@ def _run_turn(turn, device_id, client_sid=None):
         return {"ok": True, "turn": turn,
                 "pred_tool": (steps[0]["tool"] if steps else ""),
                 "pred_params": (steps[0]["params"] or {} if steps else {}),
+                "latency_ms": round((time.perf_counter() - started) * 1000, 1)}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "turn": turn, "error": f"{type(exc).__name__}: {exc}"}
+
+
+def _run_turn_local(turn, device_id, client_sid=None, base="http://127.0.0.1:8082"):
+    """直连本地 8082 hcAgent(/slowAgent) 跑单轮，用于快速迭代 badcase。
+
+    与 _run_turn 同返回契约；多轮上下文靠 device_id + _MT_CONTEXT 在 8082 内累积。
+    """
+    import httpx
+    started = time.perf_counter()
+    try:
+        payload = {
+            "traceId": f"eval_{turn['row']}",
+            "deviceId": device_id,
+            "data": {"query": turn["query"], "tvMode": "0", "toolHistory": []},
+        }
+        with httpx.Client(timeout=120) as c:
+            resp = c.post(f"{base}/slowAgent/1", json=payload)
+            resp.raise_for_status()
+            body = resp.json()
+        steps = [
+            {"tool": s.get("toolName") or "", "retext": s.get("retext", ""),
+             "params": s.get("parameters") or {},
+             "hit_source": s.get("hitSource") or s.get("hit_source") or "",
+             "hit_query": s.get("hitQuery") or ""}
+            for s in ((body.get("data") or {}).get("steps") or [])
+            if isinstance(s, dict) and s.get("toolName")
+        ]
+        hq = (steps[0]["hit_query"] if steps else "")
+        return {"ok": True, "turn": turn,
+                "pred_tool": (steps[0]["tool"] if steps else ""),
+                "pred_params": (steps[0]["params"] or {} if steps else {}),
+                "hit_query": hq,
                 "latency_ms": round((time.perf_counter() - started) * 1000, 1)}
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "turn": turn, "error": f"{type(exc).__name__}: {exc}"}
@@ -198,8 +237,25 @@ def _params_ok(gold, pred, depth=0):
 
 
 # fuzzy 检索工具：只有 query 自然语言重写参数（LLM 生成、随轮次变化），
-# 不作为判定标准 —— 这类工具只看 tool 对不对，param 一律不作数。
+# 不作为判定标准 —— 只有 tool 对不对，param 一律不作数。
 _PARAM_WAIVED_TOOLS = {"vod_fuzzy_search", "educ_fuzzy_search", "edu_fuzzy_search", "edu_slow_search_data_search"}
+
+# 工具等价别名：新名 fuzzy_search 与旧名 slow_search_data_search / slow_data_search 是同一工具（仅改名）。
+# 归一化到新名，避免 gold 用新名、runtime 回退旧名（或反之）时 tool 误判不匹配。
+_TOOL_ALIAS = {
+    "educ_fuzzy_search": "educ_fuzzy_search",
+    "educ_slow_search_data_search": "educ_fuzzy_search",
+    "educ_slow_data_search": "educ_fuzzy_search",
+    "edu_fuzzy_search": "edu_fuzzy_search",
+    "edu_slow_search_data_search": "edu_fuzzy_search",
+    "edu_slow_data_search": "edu_fuzzy_search",
+}
+
+
+def _norm_tool(name):
+    """把工具名归一到规范名：命中别名表则用新名，否则原样返回。"""
+    n = (name or "").strip()
+    return _TOOL_ALIAS.get(n, n)
 
 
 def score(turn, pred_tool, pred_params):
@@ -208,9 +264,9 @@ def score(turn, pred_tool, pred_params):
     gp = turn.get("expected_params") or {}
     if isinstance(gp, dict) and set(gp.keys()) == {"_raw"}:
         gp = None
-    ot = bool(et) and bool(pred_tool) and pred_tool == et
+    ot = bool(et) and bool(pred_tool) and _norm_tool(pred_tool) == _norm_tool(et)
     # fuzzy 检索类工具只看 tool 是否命中；参数(retext 等 LLM 重写)不作为评判标准。
-    op = True if (et in _PARAM_WAIVED_TOOLS) else ((not gp) or _params_ok(pred_params, gp))
+    op = True if (_norm_tool(et) in _PARAM_WAIVED_TOOLS) else ((not gp) or _params_ok(pred_params, gp))
     ob = ot and op
     diff = ""
     if not ot:
@@ -230,7 +286,7 @@ def score(turn, pred_tool, pred_params):
 
 
 # 逐轮明细列(prefix: 会话 列)
-DETAIL_HEADER = ["会话id", "业务", "组号", "轮次", "query", "源行",
+DETAIL_HEADER = ["会话id", "业务", "组号", "轮次", "query", "hit_query", "源行",
                  "gold_tool", "gold_params", "pred_tool", "pred_params",
                  "tool_ok", "param_ok", "both_ok", "latency_ms", "param_diff"]
 
@@ -241,6 +297,7 @@ def main():
     ap.add_argument("-w", "--workers", type=int, default=4, help="并发会话数")
     ap.add_argument("-n", type=int, default=0, help="只跑前 N 个会话(按会话id升序, 冒烟)")
     ap.add_argument("-c", "--config", default=None, help="覆盖 cases 数据集路径")
+    ap.add_argument("--local", action="store_true", help="直连本地 8082 hcAgent(快速迭代, 不走远端 runtime)")
     ap.add_argument("--json", action="store_true", help="机器可读汇总输出")
     args = ap.parse_args()
 
@@ -265,6 +322,9 @@ def main():
     per_biz_b: Counter = Counter()
     per_sess_t: dict = {}
     per_sess_b: dict = {}
+    per_round_t: Counter = Counter()  # 按轮次聚合 tool 正确数
+    per_round_b: Counter = Counter()  # 按轮次聚合 both 正确数
+    per_round_n: Counter = Counter()  # 按轮次总轮数
     done = 0
 
     def fold(res):
@@ -274,10 +334,12 @@ def main():
         biz = s["biz"]
         ok_t = ok_b = 0
         for t in res["turns"]:
+            rnd = t["turn"]["round"]
             if not t["ok"]:
                 err += 1
-                detail.append([sid, s["device_id"], s["grp"], t["turn"]["round"],
-                               t["turn"]["query"], t["turn"]["row"],
+                per_round_n[rnd] += 1  # 错误轮计入该轮分母
+                detail.append([sid, s["device_id"], s["grp"], rnd,
+                               t["turn"]["query"], t.get("hit_query", ""), t["turn"]["row"],
                                "", "", "", "", "ERR", "ERR", "ERR", "", t.get("error", "")])
                 continue
             tt = t["turn"]
@@ -292,7 +354,11 @@ def main():
             ok_b += ob
             per_biz_t[biz] += ot
             per_biz_b[biz] += ob
-            detail.append([sid, s["device_id"], s["grp"], tt["round"], tt["query"], tt["row"],
+            per_round_t[rnd] += ot
+            per_round_b[rnd] += ob
+            per_round_n[rnd] += 1
+            detail.append([sid, s["device_id"], s["grp"], tt["round"], tt["query"],
+                           t.get("hit_query", ""), tt["row"],
                            et, _param_repr(gp), t["pred_tool"], _param_repr(t["pred_params"]),
                            "Y" if ot else "N", "Y" if op else "N", "Y" if ob else "N",
                            t.get("latency_ms", ""), diff])
@@ -305,7 +371,7 @@ def main():
               end="", flush=True)
 
     with ThreadPoolExecutor(max_workers=max(1, args.workers)) as pool:
-        for fut in as_completed([pool.submit(run_session, s) for s in sessions]):
+        for fut in as_completed([pool.submit(run_session, s, args.local) for s in sessions]):
             try:
                 fold(fut.result())
             except Exception as exc:  # noqa: BLE001
@@ -321,10 +387,33 @@ def main():
     for s in sessions:
         biz_total[s["biz"]] += len(s["turns"])
 
+    # ---- 按轮次汇总(按第1轮..顺序排列) ----
+    def _round_rows():
+        return [
+            [f"{r}轮", per_round_n.get(f"第{r}轮", 0),
+             per_round_t.get(f"第{r}轮", 0), per_round_b.get(f"第{r}轮", 0),
+             f"{per_round_t.get(f'第{r}轮', 0) / per_round_n.get(f'第{r}轮', 1) * 100:.1f}",
+             f"{per_round_b.get(f'第{r}轮', 0) / per_round_n.get(f'第{r}轮', 1) * 100:.1f}"]
+            for r in range(1, 6) if per_round_n.get(f"第{r}轮", 0)
+        ]
+
+    def _by_round():
+        return {
+            f"第{r}轮": {
+                "turns": per_round_n.get(f"第{r}轮", 0),
+                "tool_ok": per_round_t.get(f"第{r}轮", 0),
+                "both_ok": per_round_b.get(f"第{r}轮", 0),
+                "tool_acc": round(per_round_t.get(f"第{r}轮", 0) / per_round_n.get(f"第{r}轮", 1) * 100, 1) if per_round_n.get(f"第{r}轮", 0) else 0,
+                "both_acc": round(per_round_b.get(f"第{r}轮", 0) / per_round_n.get(f"第{r}轮", 1) * 100, 1) if per_round_n.get(f"第{r}轮", 0) else 0,
+            }
+            for r in range(1, 6) if per_round_n.get(f"第{r}轮", 0)
+        }
+
     # ---- 汇总 ----
     if args.json:
         print(json.dumps({
             "sessions": len(sessions), "turns": n_turns, "errors": err,
+            "by_round": _by_round(),
             "by_biz": {b: {"turns": biz_total[b], "tool_ok": per_biz_t[b], "both_ok": per_biz_b[b]}
                        for b in biz_total},
             "summary": {
@@ -356,6 +445,10 @@ def main():
     for b, n in biz_total.items():
         rows.append([b, n, per_biz_t[b], per_biz_b[b],
                      f"{per_biz_t[b]/n*100:.1f}", f"{per_biz_b[b]/n*100:.1f}"])
+    # 按轮次汇总
+    rows.append([])
+    rows.append(["轮次", "轮数", "tool_ok", "both_ok", "tool%", "both%"])
+    rows.extend(_round_rows())
     # 全局
     rows.append([])
     rows.append(["全局", n_turns, total_ok_t, total_ok_b,
@@ -367,6 +460,7 @@ def main():
     with open(OUTDIR / "summary_multiturn.json", "w", encoding="utf-8") as f:
         json.dump({
             "sessions": len(sessions), "turns": n_turns, "errors": err,
+            "by_round": _by_round(),
             "by_biz": {b: {"turns": biz_total.get(b, 0), "tool_ok": per_biz_t[b],
                            "both_ok": per_biz_b[b]} for b in biz_total},
             "summary": {"tool_ok": total_ok_t, "tool_acc": round(total_ok_t / n_ok * 100, 1) if n_ok else 0,
@@ -375,7 +469,15 @@ def main():
 
     print(f"\n逐轮明细 -> {detail_path}")
     print(f"会话/业务/全局汇总 -> {summary_path}")
-    print(f"全局: {n_turns} 轮, 错误 {err}, tool_acc={total_ok_t/n_ok*100:.1f}%, "
+
+    # 按轮次结果
+    print("\n按轮次:  (tool=工具命中, tool+param=工具+参数都对)")
+    print(f"  {'轮次':<6}{'轮数':>5}{'tool_ok':>8}{'both_ok':>8}{'tool_acc':>9}{'both_acc':>10}")
+    for rnd_row in _round_rows():
+        rnd, n, tok, bok, tacc, bacc = rnd_row
+        print(f"  {rnd:<6}{n:>5}{tok:>8}{bok:>8}{tacc:>8}%{bacc:>8}%")
+
+    print(f"\n全局: {n_turns} 轮, 错误 {err}, tool_acc={total_ok_t/n_ok*100:.1f}%, "
           f"tool+param_acc={total_ok_b/n_ok*100:.1f}%")
 
 

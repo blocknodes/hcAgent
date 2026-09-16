@@ -104,8 +104,30 @@ def _drop_redundant_list(items):
     return out
 
 
+# fuzzy 检索工具：只有 query 自然语言重写参数（LLM 生成、随轮次变化），
+# 不作为判定标准 —— 只有 tool 对不对，param 一律不作数。
+_PARAM_WAIVED_TOOLS = {"vod_fuzzy_search", "educ_fuzzy_search", "edu_fuzzy_search", "edu_slow_search_data_search"}
+
+# 工具等价别名：新名 fuzzy_search 与旧名 slow_search_data_search / slow_data_search 是同一工具（仅改名）。
+# 归一化到新名，避免 gold 用旧名、runtime 回退新名（或反之）时 tool 误判不匹配。
+_TOOL_ALIAS = {
+    "educ_fuzzy_search": "educ_fuzzy_search",
+    "educ_slow_search_data_search": "educ_fuzzy_search",
+    "educ_slow_data_search": "educ_fuzzy_search",
+    "edu_fuzzy_search": "edu_fuzzy_search",
+    "edu_slow_search_data_search": "edu_fuzzy_search",
+    "edu_slow_data_search": "edu_fuzzy_search",
+}
+
+
+def _norm_tool(name):
+    """把工具名归一到规范名：命中别名表则用新名，否则原样返回。"""
+    n = (name or "").strip()
+    return _TOOL_ALIAS.get(n, n)
+
+
 def _params_ok(gold, pred, depth=0):
-    """参数对齐：retext 完全不算；figures 冗余字段忽略；query 字符串子串宽容；其余严格。"""
+    """参数校验：retext 半分不差；figures 冗余字段忽略；query 字符串子串宽容；其余严格。"""
     if isinstance(gold, dict) and isinstance(pred, dict):
         g = {k: v for k, v in canonical_copy(gold).items()
              if k not in _REDUNDANT_FIELDS and k != "retext"}
@@ -233,8 +255,9 @@ def main():
             if isinstance(gp, dict) and set(gp.keys()) == {"_raw"}:
                 gp = None
             pt, pp = r["tool"], r["params"] or {}
-            ok_t = bool(gt) and bool(pt) and pt == gt
-            ok_p = (not gp) or _params_ok(pp, gp)
+            ok_t = bool(gt) and bool(pt) and _norm_tool(pt) == _norm_tool(gt)
+            # fuzzy 检索类工具只看 tool 是否命中；参数(retext 等 LLM 重写)不作为评判标准。
+            ok_p = True if (_norm_tool(gt) in _PARAM_WAIVED_TOOLS) else ((not gp) or _params_ok(pp, gp))
             ob = ok_t and ok_p
             agg[biz][0] += 1
             agg[biz][1] += int(ok_t)

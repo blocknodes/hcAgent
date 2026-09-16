@@ -5,17 +5,17 @@
   "by_round": {
     "第1轮": {
       "turns": 30,
-      "tool_ok": 29,
-      "both_ok": 29,
-      "tool_acc": 96.7,
-      "both_acc": 96.7
+      "tool_ok": 30,
+      "both_ok": 30,
+      "tool_acc": 100.0,
+      "both_acc": 100.0
     },
     "第2轮": {
       "turns": 30,
-      "tool_ok": 29,
-      "both_ok": 29,
-      "tool_acc": 96.7,
-      "both_acc": 96.7
+      "tool_ok": 30,
+      "both_ok": 30,
+      "tool_acc": 100.0,
+      "both_acc": 100.0
     },
     "第3轮": {
       "turns": 30,
@@ -33,10 +33,10 @@
     },
     "第5轮": {
       "turns": 30,
-      "tool_ok": 29,
-      "both_ok": 29,
-      "tool_acc": 96.7,
-      "both_acc": 96.7
+      "tool_ok": 26,
+      "both_ok": 26,
+      "tool_acc": 86.7,
+      "both_acc": 86.7
     }
   },
   "by_biz": {
@@ -47,13 +47,13 @@
     },
     "少儿": {
       "turns": 20,
-      "tool_ok": 20,
-      "both_ok": 20
+      "tool_ok": 18,
+      "both_ok": 18
     },
     "影视": {
       "turns": 50,
-      "tool_ok": 46,
-      "both_ok": 46
+      "tool_ok": 47,
+      "both_ok": 47
     },
     "教育": {
       "turns": 20,
@@ -72,9 +72,9 @@
     }
   },
   "summary": {
-    "tool_ok": 146,
-    "tool_acc": 97.3,
-    "both_ok": 146,
-    "both_acc": 97.3
+    "tool_ok": 145,
+    "tool_acc": 96.7,
+    "both_ok": 145,
+    "both_acc": 96.7
   }
 }
