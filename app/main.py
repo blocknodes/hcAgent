@@ -95,6 +95,8 @@ async def slow_agent(poc_id: str, req: SlowRequest, request: Request) -> JSONRes
     # 原始请求体（runtime 实际发的字节，含所有字段，未经模型裁剪）
     raw = (await request.body()).decode("utf-8", "replace")
     logger.info("REQ %s raw_body=%s", poc_id, raw)
+    from .reqlog_tmp import tlog
+    tlog(req)
     # 解析后的参数（经 Pydantic 归一化，含默认值填充）
     logger.info(
         "REQ %s params=%s",

@@ -255,6 +255,62 @@ def _has_mt_history(device_id: str, short_memory: list[dict[str, Any]] | None) -
     return bool(short_memory)
 
 
+_BARE_SONG_VERB = re.compile(r"(?:播放|放|听|点播|播一下|播\s*)《([^》]{1,24})》")
+
+
+def _song_names_from_ctx(device_id: str, short_memory: list[dict[str, Any]] | None) -> list[str]:
+    """从上一轮对话提取候选歌名（《X》书名号内的 X），供裸书名号意图回填 music 用。
+
+    数据源：本进程 _MT_CONTEXT 的末轮 answer（真实应答文本，含“《吉量》”）+
+    请求 shortMemory 的 dialogData.answer。均形如“…演唱的歌曲是《吉量》…”或回显歌名。
+    无候选返回 []。
+    """
+    names: list[str] = []
+    for turn in _mt_get(device_id):
+        ans = turn.get("answer") or ""
+        names += re.findall(r"《([^》]{1,24})》", ans)
+    for ent in short_memory or []:
+        if not isinstance(ent, dict):
+            continue
+        d = ent.get("dialogData") or {}
+        if isinstance(d, dict):
+            names += re.findall(r"《([^》]{1,24})》", (d.get("answer") or ""))
+    return list(dict.fromkeys(names))
+
+
+def _reseed_bare_song(batch: list[Intent], *, device_id: str, cur_query: str,
+                      short_memory: list[dict[str, Any]] | None) -> None:
+    """裸书名号歌曲兜底：本轮意图是“播放《X》”且 X 曾在上一轮应答出现过 → 域改 music。
+
+    背景：两轮会话「周深在2026年的春晚唱的什么歌」→「帮我播一下这个歌」。MT 改写
+    常把后者压成「播放《吉量》」，丢掉了“歌”字；detect 里《吉量》无 music 锚（非
+    《庆余年》等影视具名白名单）→ 保 LLM 首轮 qa 的 vod 倾向 → 误判 vod、调 vod_fuzzy。
+
+    这里的《吉量》会从上一轮应答（“演唱的歌曲是《吉量》…”）里识别为【歌名】：
+    - 意图语句形如 “播放/放《X》” 且 无 “歌曲/歌/听/音乐” 字样的裸放 → X∈上一轮歌名
+      → 域强置 music（hcTools music_song_search 对“播放X”本来就能兜底检索歌曲）。
+    - 非裸书名号播放句、或 X 不在上下文歌名 → 不动（保持 detect 原判定）。
+    - 带“MV/看/电影/电视剧/剧”等影视载体字样的意图不参与，避免影视剧被误拉。
+    """
+    ctx_names = _song_names_from_ctx(device_id, short_memory)
+    if not ctx_names:
+        return
+    for it in batch:
+        q = (it.query or "").strip()
+        # 只救裸书名号 + 播放动作且无歌曲/音乐锚的意图
+        m = re.search(r"^(?:播放|放|播放一下|点播一下|帮我播放|帮我放|请播放)[\s]*《([^》]{1,24})》", q)
+        if not m:
+            continue
+        title = m.group(1)
+        if re.search(r"(歌曲|歌|听|音乐|单曲|专辑|MV|mv)", q):
+            continue                       # 已带 song 锚，detect 自己会判 music
+        if title not in ctx_names:
+            continue                       # 书名号内容从未在上下文歌名里出现 → 不动
+        # 已在上下文里确认是上一轮应答的歌名 → 强制 music，交给 hcTools 歌曲域兜底
+        it.domain = "music"
+        logger.info("mt歌曲名锚兜底: 意图 %r 书名号<%s> 命中上轮歌名 -> domain=music", q, title)
+
+
 def _mt_append_answer(device_id: str, query: str, answer: str, query_raw: str = "",
                       domain: str = "") -> None:
     """把一轮 已完成 (query, answer) 追加进 device 对话历史。
@@ -498,6 +554,51 @@ def next_batch(plan: Plan, executed: set[int]) -> list[Intent]:
     return out
 
 
+# ---------------------------------------------------------------------------
+# 卡通/动漫 双域并行（multi_tab）—— 对齐 「0821多意图&多业务」sheet 的
+# multi_tab_search 标注与 mock._dual_domain：首轮无历史 + 动画/动漫/卡通 query，
+# 一次下发两个并行 tab（children + vod），数据层用 parallel=true 标记。
+# 域内工具由下游 hcTools 权威解析（children → educ_search*，vod → vod_search*）。
+# ---------------------------------------------------------------------------
+# 双域触发词（对齐 0821 多意图&多业务 sheet multi_tab_search）：动画/动漫/卡通 均算。
+# 排除「动漫的片头曲/主题曲/原声/广播剧」这类把动画当定语、实为音乐/有声查询的句子
+# （0901 music/audio golden 里 4 条，触发 dual 会把它们从单域打回双域 → 回归）；
+# 再排除设备侧：开机/关机动画定制、AI 动画(=屏保)、动画定制 这类 tv_control 屏显功能
+# （0901 device golden 里 6 条），它们只是“动画”做名词定语，并非内容意图。
+_MULTI_TAB_RE = re.compile(r"动画|动漫|卡通|动画片")
+_MULTI_TAB_EXCL = re.compile(
+    r"片头曲|片尾曲|插曲|主题曲|原声|原声带|广播剧|配音|配乐|主题歌|片头歌|"
+    r"声优|音乐|歌曲|MV|旋律"
+    r"|(?:AI|ai|Ai)动画|(?:开机|关机)动画定制|动画设置|屏保|运动画面"
+)
+
+
+def _is_multi_tab(query: str, history: list | None = None) -> bool:
+    """判定是否走双域并行。仅无任何历史/上下文的纯首轮卡通/动画查询触发，
+    避免续跑/多轮把该 query 误判成双域。"""
+    q = (query or "").strip()
+    if not q:
+        return False
+    if history:
+        return False
+    if not _MULTI_TAB_RE.search(q):
+        return False
+    if _MULTI_TAB_EXCL.search(q):
+        return False
+    return True
+
+
+def _multi_tab_intents(query: str, tv_mode: str | int = "0") -> list[Intent]:
+    """双域并行的两个意图：children(tab) + vod(tab)，均无依赖、原句 src。"""
+    q = (query or "").strip()
+    return [
+        Intent(query=q, domain="children", tool="execute", index=1,
+               depends=False, dep_on=0, src=q),
+        Intent(query=q, domain="vod", tool="execute", index=2,
+               depends=False, dep_on=0, src=q),
+    ]
+
+
 def _load_maybe_str(v: Any) -> Any:
     """dict/list 原样返回；字符串尝试 JSON 反解（上游 result 可能是 JSON 文本）。"""
     if not isinstance(v, str):
@@ -625,6 +726,11 @@ class TraceStateMachine:
     # ---- 首轮：T0（一次 LLM）----
     async def _first(self, trace_id: str, query: str, history,
                      tv_mode: str | int = "0") -> tuple[list[Intent], bool]:
+        # 卡通/动漫 双域并行：无历史首轮 + 动画/动漫/卡通 query → 一次两个并行 tab。
+        # 对齐 0821多意图&多业务 sheet（multi_tab_search）与 mock._dual_domain：
+        #   children(tab) + vod(tab) 两个无依赖 step，parallel=true。
+        if _is_multi_tab(query) and not (history or []):
+            return _multi_tab_intents(query, tv_mode=tv_mode), True
         # 多意图确定性拆分（规则优先）：命中断言“内容+设备”双目标 → 直接拆成两条
         # 并行、无依赖意图(dep=[], stop=true)，两条独立交给 hcTools 权威解析最终 tool+params。
         mi = multiintent.split_multiintent(query)
@@ -632,7 +738,7 @@ class TraceStateMachine:
             # 规则已断言 mi.device 是设备子句，故域强置 device(最多让 detect 细化，不降级到 qa)。
             dev_dom = detect.detect_domain(mi.device, "device", tv_mode=tv_mode)
             dev_dom = dev_dom if dev_dom == "device" else "device"
-            # 内容子句：先规则判域；判空则用 LLM 从用户原话选域(裸实体依赖此兜底)。
+            # 内容子句：先规则引擎判定；判空则用 LLM 从用户原话选域(裸实体依赖此兜底)。
             cont_dom = detect.detect_domain(mi.content, "", tv_mode=tv_mode)
             if not cont_dom or cont_dom == "qa":
                 cont_dom = await self._content_domain(mi.content)
@@ -904,9 +1010,19 @@ async def build_response(req) -> dict[str, Any]:
     # 串行续跑状态按 device_id 存（换 request 用 device_id 识别会话），而非 trace_id——
     # 串行 N 步 = N 个 SSE 请求 = N 个不同 trace_id，只有 device 稳定才能跨轮推进依赖链。
     batch, stop = await _SM.tick(device_id, mt_query, history, tv_mode=tv_mode)
-    # 多轮域继承：本轮某个意图 detect 判空(无域信号)时，沿用上一轮落定的稳定域，
-    # 避免"律动感强的""适合零基础的"这类弱句在改写成自包含 query 后漂移到无关域。
+    # 多轮继承：本轮某个意图 detect 判空(无域信号)时，沿用上一轮落定的稳定域，
+    # 避免"律动感强的""适合零基础的"这类漂移到无关域。
     _inherit_mt_domain(device_id, batch)
+    # 歌曲名锚兜底：LLM 改写仍可能把"播一下这个歌"压成裸的「播放《吉量》」（丢“歌”字），
+    # detect 对裸书名号无 music 锚时会保 LLM 的 vod。这里在上一轮应答里找《吉量》类歌名，
+    # 匹配则把该意图强置 music（让 hcTools 的 music_song_search 兜底检索，不误判影视）。
+    # 仅对"播放/放《X》"形的裸书名号意图生效，不影响带歌/歌曲/听 字样的正常句。
+    _reseed_bare_song(batch, device_id=device_id, cur_query=query, short_memory=short_memory)
+    # multi-tab 双域并行标记：首轮无历史卡通查询由 _first 直接切成 children+vod
+    # 两个并行无依赖意图。有双方才标记 parallel，供客户端并发渲染两个 tab。
+    is_dual_tab = stop and not history and len(batch) == 2 and (
+        {i.domain for i in batch} == {"children", "vod"}
+    )
     steps = await _build_steps(batch)
     # 本轮 answer 摘要：取各 step 的 retext，供下一轮多轮改写引用具体内容/序号。
     turn_answer = "；".join(s.get("retext") or "" for s in steps if s.get("retext"))
@@ -924,6 +1040,8 @@ async def build_response(req) -> dict[str, Any]:
         },
         "stop": stop,
     }
+    if is_dual_tab:
+        body["data"]["parallel"] = True
     if not steps and stop:
         body["data"]["final"] = True
     if req.data.debug is True:
