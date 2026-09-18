@@ -547,6 +547,114 @@ def _music_discovery(q):
                 and re.search(r"(哪些|有哪些|推荐|有没有|来一首|唱的歌|填词|作词|作曲|演唱|唱一下|听一下|创作)", q))
 
 
+# ---------------------------------------------------------------------------
+# music_override：高置信歌曲/音乐频道强信号 → music（亮屏）。
+# 解决 LLM 对具体歌曲/音乐频道/歌名引用判错域（vod/qa/audio/children）导致 tool 误路由。
+# 只在高置信时覆盖：歌名/歌手/播放切歌/音乐频道/CCTV-15 等强锚 + 排除词（少儿IP/影视/有声）。
+# 位置在 badcase(100) 之后、media_knowledge_qa(150) 之前插值评估。
+# ---------------------------------------------------------------------------
+_MUSIC_OVER_SONG_STR = (
+    "500年桑田沧海 I Knew You Were Trouble. super star 一路向北 一闪一闪亮晶晶 七里香 上山岗 "
+    "世上只有妈妈好 今生最爱 你的眼神 光年之外 公主请开心 兰亭序麒麟 再遇梨花颂 凤凰花开的路口 "
+    "十送红军 南山南 卷席筒 原谅我年轻不懂爱 吻别 告白气球 土坡上狗尾巴草 土坡上的狗尾草 大花轿 "
+    "大风吹 大香蕉 大鱼 天地龙鳞 女儿殿下 好汉歌 好运来 如愿 孤勇者 富士山下 小手拍拍 小跳蛙 "
+    "小鸡小鸡 平凡之路 年轮 情人慢慢 慢慢 战火燃烧 拔萝卜 新不了情 新年快乐 晴天 最真的梦 "
+    "唱不来都等你 梁祝 梅花三弄 欧若拉 江南 江南STYLE 沂蒙山小调 没有共产党就没有新中国 消愁 "
+    "潮湿的心 爱我你就抱抱我 猪猪侠 画你 留什么给你 疼爱妈妈 白毛女 相思 离别开出花 稻香 "
+    "穆桂英下山 童心向党 红山果 背对背拥抱 野狼disco 自由飞翔 花园种花 萱草花 落花 讲不出再见 "
+    "赤伶 起风了 追光者 梦里 雪龙吟 青花瓷 谁 梦里水乡 荷塘月色 小苹果 鲁冰花"
+)
+_MUSIC_OVER_SONGS = sorted(
+    {s.strip().lower() for s in _MUSIC_OVER_SONG_STR.split(" ") if len(s.strip()) >= 2},
+    key=len, reverse=True,
+)
+_MUSIC_OVER_BLOCK = re.compile(
+    r"广播剧|如有声书|有声剧|有声|评书|听书|小说|广播|演讲稿|绘本|故事会|安徒生|格林童话|"
+    r"动画片|动漫|卡通|动画电影|电影|电视剧|剧集|纪录片|剧场版|大电影|"
+    r"宝宝|幼儿|儿童|小朋友|幼儿园|亲子|睡前故事|小猪|佩奇|汪汪|悠悠|变身|萌宠|"
+    r"普通话|粤语|中文字幕|国语|原声|第\d+[集部季]|本体"
+)
+_MUSIC_OVER_VERB = re.compile(
+    r"播放|放|听|唱|点|来一|再来一|来首|换|切|再换|下一首|上一首|首歌|给我|想|要唱|唱|点歌|K歌|k歌|循环|白噪音|MV|mv"
+)
+_MUSIC_OVER_TV = re.compile(
+    r"[Cc][Cc][Tt][Vv]|央视\s*15|中央\s?\d+台|中央卫视|音乐台|音乐频道|音乐广播|音乐电台|梨园春|戏曲频道|"
+    r"哪个台|哪个频道|1[56]台|六台"
+)
+_MUSIC_OVER_TV_MUSIC = re.compile(
+    r"二胡|民谣|轻音乐|古典乐|乐曲|戏曲|梨园|华语|流行|榜单|流行榜|名曲|舞曲|老歌|"
+    r"经典|观天|草原|奥斯卡|电影原声|原声带|OST|音乐|曲目|好歌|天"
+)
+_MUSIC_OVER_TV_BLOCK = re.compile(r"宝宝|儿童|少儿|幼|卡通|动画|动漫|乐乐|棒|跑男|同同|尼克|童话")
+_MUSIC_OVER_HIST = re.compile(
+    r"播放记录|历史|听过的|循环过|喜欢听|点过|听过|上次播放|上一次|播放列表|没听完|历史播放|上一首听"
+)
+_MUSIC_OVER_AUDIO = re.compile(
+    r"音频|宽带兖|收听|广播剧|有声|评书|电台|小说|书|节目|故事|演讲|讲座|历史故事|听书|朗读|绘本|评书"
+)
+_MUSIC_OVER_FAV = re.compile(r"收藏")
+_MUSIC_OVER_QQ = re.compile(r"[Qq][Qq]音乐|qq音乐")
+
+
+def _music_over_has_song(q: str) -> str:
+    ql = q.lower()
+    for s in _MUSIC_OVER_SONGS:
+        if s and s in ql:
+            return s
+    return ""
+
+
+def _music_override(q) -> str | None:
+    """高置信 music 强信号。命中返回 'music'，否则 None。"""
+    q = (q or "").strip()
+    if not q:
+        return None
+    # 裸「单曲」
+    if re.fullmatch(r"单曲", q):
+        return "music"
+    # 白噪音
+    if "白噪音" in q:
+        return "music"
+    # 音乐电视频道：CCTV-15 / 央视15 / 梨园春 / 哪个台+老歌/二胡/名曲/草原天放在了
+    if _MUSIC_OVER_TV.search(q) and _MUSIC_OVER_TV_MUSIC.search(q):
+        if _MUSIC_OVER_TV_BLOCK.search(q) and not re.search(
+            r"老歌|歌曲|音乐|二胡|名曲|戏曲|民谣|天建于|观舞", q
+        ):
+            return None
+        return "music"
+    # 歌名 + 播放/切歌动词（排除影视/未成年人语境）
+    s = _music_over_has_song(q)
+    if s and len(s) >= 2 and _MUSIC_OVER_VERB.search(q) and not _MUSIC_OVER_BLOCK.search(q):
+        if re.search(r"动画|动画片|动漫|卡通|电影|电视剧|纪录片|剧场版|剧集", q):
+            return None
+        return "music"
+    # 历史播放/听歌记录（音乐语境）
+    if _MUSIC_OVER_HIST.search(q) and not _MUSIC_OVER_AUDIO.search(q)        and not re.search(r"历史|故事|书|广播|音频|朗读|讲解|收听|听书|评书", q):
+        return "music"
+    # 收藏列表 + 歌/音乐
+    if _MUSIC_OVER_FAV.search(q) and re.search(r"歌|音乐|单曲|专辑|华语|经典|列表|曲|收藏", q)        and not _MUSIC_OVER_AUDIO.search(q):
+        if re.search(r"动画|幼儿|亲子|绘本|广播|书|故事", q):
+            return None
+        return "music"
+    # QQ 音乐
+    if _MUSIC_OVER_QQ.search(q) and not re.search(r"电影|电视剧|动画|纪录片", q):
+        return "music"
+    # 视频版 / MV / 歌曲视频
+    if re.search(r"视频版|MV|mv|歌曲视频|音乐视频|这首歌的视频", q):
+        if re.search(r"动画|卡通|动漫|电影|电视剧|纪录片", q):
+            return None
+        return "music"
+    # 裸歌名 + 视频
+    sv = _music_over_has_song(q)
+    if "视频" in q and sv and len(sv) >= 2 and not _MUSIC_OVER_BLOCK.search(q):
+        if re.search(r"动画|卡通|动漫|动画电影|电影|电视剧|纪录片", q):
+            return None
+        if re.search(r"猪|汪|超级|海底|佩奇|小天才|光头|喜羊|悠悠|多多", q):
+            return None
+        return "music"
+    return None
+
+
 def _sports_prediction(q):
     return bool(re.search(r"(队|vs|VS|比赛|联赛|欧冠|世界杯|冬奥|冠军|晋级|小组赛|队决赛|决赛|篮球队|足球队|女排|乒乓球|亚运|国家队)", q)
                 and re.search(r"(谁能赢|谁能胜|谁能获胜|会夺冠|能否夺冠|能赢|会不会|谁能捧杯|谁赢|大获胜|谁会赢|能取胜|能否出线|进入决赛|拿到冠军|能取得冠军)", q))
@@ -720,6 +828,8 @@ def _make_detect_rules():
     # 依序复刻原 if-栈（priority 越小越先评估，等价原先后顺序）
     _add("off_routing", 1, "息屏分诊链", lambda q, llm, tv: _off_routing(q, llm) if str(tv) == "6" else None)
     _add("badcase", 100, "精确句 badcase", lambda q, llm, tv: _badcases().get(q) or None)
+    _add("music_override", 125, "高置信歌曲/音乐频道强信号→music",
+         lambda q, llm, tv: ("music" if (str(tv) != "6" and _music_override(q)) else None))
     _add("media_knowledge_qa", 150, "亮屏媒体/明星信息咨询→qa",
          lambda q, llm, tv: "qa" if (str(tv) != "6" and llm in ("vod", "music", "qa") and _media_knowledge_qa(q)) else None)
     _add("edu_bright_strong", 155, "亮屏教育强词→education",

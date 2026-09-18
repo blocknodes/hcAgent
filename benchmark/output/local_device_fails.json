@@ -1,0 +1,2523 @@
+[
+ {
+  "query": "打开智慧之眼",
+  "gold": "smart_camera",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "智慧之眼",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "打开智慧之眼"
+  },
+  "err": ""
+ },
+ {
+  "query": "打开MicroLED自发光技术",
+  "gold": "display_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "microled自发光技术",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "打开MicroLED自发光技术"
+  },
+  "err": ""
+ },
+ {
+  "query": "音量太大了，调小点",
+  "gold": "numeric_adjust",
+  "pred": "numeric_adjust",
+  "tool_ok": true,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "降低",
+   "object": "音量",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "operation": "设置",
+   "object": "音量",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "err": ""
+ },
+ {
+  "query": "音量再大一点",
+  "gold": "numeric_adjust",
+  "pred": "numeric_adjust",
+  "tool_ok": true,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "提高",
+   "object": "音量",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "operation": "设置",
+   "object": "音量",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "err": ""
+ },
+ {
+  "query": "音量再小一点",
+  "gold": "numeric_adjust",
+  "pred": "numeric_adjust",
+  "tool_ok": true,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "降低",
+   "object": "音量",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "operation": "设置",
+   "object": "音量",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "err": ""
+ },
+ {
+  "query": "声音再大点",
+  "gold": "numeric_adjust",
+  "pred": "numeric_adjust",
+  "tool_ok": true,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "提高",
+   "object": "音量",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "operation": "设置",
+   "object": "音量",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "err": ""
+ },
+ {
+  "query": "唤醒电视",
+  "gold": "power_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "开机",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "开始播放",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "跳到10:00",
+  "gold": "playback_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "跳转",
+   "object": "",
+   "value": "10:00",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "跳到10:00"
+  },
+  "err": ""
+ },
+ {
+  "query": "跳转到10:00",
+  "gold": "playback_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "跳转",
+   "object": "",
+   "value": "10:00",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "跳转到10:00"
+  },
+  "err": ""
+ },
+ {
+  "query": "直接跳到10:00",
+  "gold": "playback_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "跳转",
+   "object": "",
+   "value": "10:00",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "直接跳到10:00"
+  },
+  "err": ""
+ },
+ {
+  "query": "停止",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "停止",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "播放",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "下一个",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "下",
+   "object": "播放控制",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "上一个",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "播放控制",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "跳到结尾",
+  "gold": "playback_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "跳转",
+   "object": "",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "跳到结尾"
+  },
+  "err": ""
+ },
+ {
+  "query": "重播",
+  "gold": "playback_control",
+  "pred": "vod_history",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "重播",
+   "object": "",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "category": [
+    "电影",
+    "电视剧",
+    "纪录片",
+    "综艺",
+    "戏曲",
+    "新闻",
+    "资讯",
+    "片花",
+    "短视频",
+    "广告",
+    "正片",
+    "动漫"
+   ]
+  },
+  "err": ""
+ },
+ {
+  "query": "从01:30开始播放",
+  "gold": "playback_control",
+  "pred": "vod_search_all",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "跳转",
+   "object": "",
+   "value": "01:30",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "query": {
+    "field": "voice_start_pos",
+    "value": "90"
+   },
+   "action": "play",
+   "retext": "从01:30开始播放"
+  },
+  "err": ""
+ },
+ {
+  "query": "跳到开始",
+  "gold": "playback_control",
+  "pred": "vod_search_all",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "跳转",
+   "object": "",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "query": {
+    "field": "voice_start_pos",
+    "value": "0"
+   },
+   "action": "play",
+   "retext": "跳到开始"
+  },
+  "err": ""
+ },
+ {
+  "query": "从05:00开始播放",
+  "gold": "playback_control",
+  "pred": "vod_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "跳转",
+   "object": "",
+   "value": "5:00",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "query": {
+    "field": "voice_start_pos",
+    "value": "300"
+   },
+   "action": "play",
+   "retext": "从05:00开始播放"
+  },
+  "err": ""
+ },
+ {
+  "query": "色彩鲜艳一点",
+  "gold": "numeric_adjust",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "提高",
+   "object": "色度",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "色度数值30",
+  "gold": "numeric_adjust",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "色度",
+   "value": "30",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "色度查询",
+  "gold": "numeric_adjust",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "查询",
+   "object": "色度",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "色度数值70",
+  "gold": "numeric_adjust",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "色度",
+   "value": "70",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "HDMI信号",
+  "gold": "source_switch",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "HDMI选择",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "无线网络",
+  "gold": "network_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "无线网络",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "有线网络",
+  "gold": "network_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "有线网络",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "HDMI接口",
+  "gold": "source_switch",
+  "pred": "fan_knowledge_agent",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "信号源",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "messages": [
+    {
+     "role": "user",
+     "content": "HDMI接口"
+    }
+   ],
+   "riskRespStrategy": "all_replace",
+   "sceneTypeIntentList": [
+    {
+     "sceneType": "knowledge_qa"
+    }
+   ]
+  },
+  "err": ""
+ },
+ {
+  "query": "两个画面",
+  "gold": "screen_layout",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "分屏",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "多任务分屏",
+  "gold": "screen_layout",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "分屏",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "迷你屏",
+  "gold": "screen_layout",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "缩小",
+   "object": "画面",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "小窗播放",
+  "gold": "screen_layout",
+  "pred": "vod_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "缩小",
+   "object": "画面",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "query": {
+    "field": "title",
+    "value": "小窗播放"
+   },
+   "action": "play",
+   "retext": "小窗播放"
+  },
+  "err": ""
+ },
+ {
+  "query": "视频模式",
+  "gold": "mode_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "图像模式",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "显示模式",
+  "gold": "mode_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "图像模式",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "图像场景模式",
+  "gold": "mode_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "图像模式",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "图像配置",
+  "gold": "mode_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "图像模式",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "图像模式管理",
+  "gold": "mode_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "图像模式",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "音效类型",
+  "gold": "mode_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "音效模式",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "声音效果类型",
+  "gold": "mode_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "音效模式",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "音效风格",
+  "gold": "mode_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "音效模式",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "列表播放",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "列表播放",
+   "object": "播放列表",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "顺序播放",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "顺序播放",
+   "object": "播放列表",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "随机播放",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "随机播放",
+   "object": "播放列表",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "播放顺序",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "顺序播放",
+   "object": "",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "启动主题",
+  "gold": "common_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "主题",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "进入主题",
+  "gold": "common_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "主题",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "打开竖屏短视频",
+  "gold": "screen_lift_rotation",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "竖屏短视频",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "打开竖屏短视频"
+  },
+  "err": ""
+ },
+ {
+  "query": "进入网络信息",
+  "gold": "network_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "网络信息",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "启动服务协议",
+  "gold": "common_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "服务协议",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "还原电影色彩",
+  "gold": "solve_picture_sound_problem_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "intent": "image_mode_movie"
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "说话声音不清楚",
+  "gold": "solve_picture_sound_problem_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "intent": "voice_not_clear"
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "声音太平面",
+  "gold": "solve_picture_sound_problem_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "intent": "lack_stereo_surround"
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "环绕效果不好",
+  "gold": "solve_picture_sound_problem_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "intent": "lack_stereo_surround"
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "我不想听了",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "停止",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "切一部",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "部",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "换一部",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "部",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "下一部",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "下",
+   "object": "",
+   "value": "部",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "上一部",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "部",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "听个别的",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "换一个",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "播放倍速调小",
+  "gold": "playback_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "降低",
+   "object": "倍速",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "播放倍速调小"
+  },
+  "err": ""
+ },
+ {
+  "query": "我要换一个听",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "这个不好换一个",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "给我切一个",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "嗯我想听个别的",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "换一个看看",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "我还是想听上一个",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "来个别的",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "换个别的听",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "听别的吧",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "这个不好换下一个",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "下",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "帮我换一个",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "放下一个",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "下",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "随机换一部",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "部",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "听下一部",
+  "gold": "playback_control",
+  "pred": "audio_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "下",
+   "object": "",
+   "value": "部",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "action": "play",
+   "query": "听下一部"
+  },
+  "err": ""
+ },
+ {
+  "query": "播下一部",
+  "gold": "playback_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "下",
+   "object": "",
+   "value": "部",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "播下一部"
+  },
+  "err": ""
+ },
+ {
+  "query": "听上一部",
+  "gold": "playback_control",
+  "pred": "audio_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "部",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "action": "play",
+   "query": "听上一部"
+  },
+  "err": ""
+ },
+ {
+  "query": "这首歌一点都不好听，暂停",
+  "gold": "playback_control",
+  "pred": "playback_control",
+  "tool_ok": true,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "停止",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "operation": "暂停",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "err": ""
+ },
+ {
+  "query": "换个节目",
+  "gold": "playback_control",
+  "pred": "vod_relate_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "query": {
+    "not": {
+     "field": "title"
+    }
+   }
+  },
+  "err": ""
+ },
+ {
+  "query": "往前切一集",
+  "gold": "playback_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "集",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "往前切一集"
+  },
+  "err": ""
+ },
+ {
+  "query": "下一个节目",
+  "gold": "playback_control",
+  "pred": "vod_relate_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "下",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "query": {
+    "not": {
+     "field": "title",
+     "value": "当前节目"
+    }
+   }
+  },
+  "err": ""
+ },
+ {
+  "query": "往后切一集",
+  "gold": "playback_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "下",
+   "object": "",
+   "value": "集",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "往后切一集"
+  },
+  "err": ""
+ },
+ {
+  "query": "别放了吧",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "停止",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "别唱了",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "停止",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "别放了呗",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "停止",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "不要放了",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "停止",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "别再放了",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "停止",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "不听了退出来",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "退出",
+   "object": "",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "退出播放",
+  "gold": "playback_control",
+  "pred": "playback_control",
+  "tool_ok": true,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "停止",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "operation": "退出",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "err": ""
+ },
+ {
+  "query": "继续",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "继续刚才那首",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "继续刚才听的",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "接着播放吧",
+  "gold": "playback_control",
+  "pred": "vod_history",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "接着放呗",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "接着播吧",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "往下放吧",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "继续给我放着",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "接着播刚才那首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "接着播刚才那首"
+  },
+  "err": ""
+ },
+ {
+  "query": "帮我接着听",
+  "gold": "playback_control",
+  "pred": "audio_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "action": "play",
+   "query": "帮我接着听"
+  },
+  "err": ""
+ },
+ {
+  "query": "下一曲",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "下",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "下一曲"
+  },
+  "err": ""
+ },
+ {
+  "query": "再来一首",
+  "gold": "playback_control",
+  "pred": "music_song_recommend",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "再来一首"
+  },
+  "err": ""
+ },
+ {
+  "query": "恢复播放",
+  "gold": "playback_control",
+  "pred": "vod_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "播放",
+   "object": "播放控制",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "query": {
+    "field": "title",
+    "value": "恢复播放"
+   },
+   "action": "play",
+   "retext": "恢复播放"
+  },
+  "err": ""
+ },
+ {
+  "query": "再换一个",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "个",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "再来一首吧",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "下一曲呗",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "下",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "下一曲呗"
+  },
+  "err": ""
+ },
+ {
+  "query": "换首别的",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "换首别的"
+  },
+  "err": ""
+ },
+ {
+  "query": "这首跳过",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "再来一首别的",
+  "gold": "playback_control",
+  "pred": "music_song_recommend",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "再来一首别的"
+  },
+  "err": ""
+ },
+ {
+  "query": "再换首别的",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "再换首别的"
+  },
+  "err": ""
+ },
+ {
+  "query": "跳过这首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "切换",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "跳过这首"
+  },
+  "err": ""
+ },
+ {
+  "query": "刚才那首",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "上一曲",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "上一曲"
+  },
+  "err": ""
+ },
+ {
+  "query": "回到刚才那首",
+  "gold": "playback_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "上一曲吧",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "上一曲吧"
+  },
+  "err": ""
+ },
+ {
+  "query": "往回切一首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "往回切一首"
+  },
+  "err": ""
+ },
+ {
+  "query": "放刚才那首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "放刚才那首"
+  },
+  "err": ""
+ },
+ {
+  "query": "切回刚才那首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "切回刚才那首"
+  },
+  "err": ""
+ },
+ {
+  "query": "听刚才那首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "听刚才那首"
+  },
+  "err": ""
+ },
+ {
+  "query": "放回刚才那首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "放回刚才那首"
+  },
+  "err": ""
+ },
+ {
+  "query": "再听一遍刚才那首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "重播",
+   "object": "播放列表",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "再听一遍刚才那首"
+  },
+  "err": ""
+ },
+ {
+  "query": "退一首回去",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "退一首回去"
+  },
+  "err": ""
+ },
+ {
+  "query": "回退一首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "退出",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "回退一首"
+  },
+  "err": ""
+ },
+ {
+  "query": "换回刚才那首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "换回刚才那首"
+  },
+  "err": ""
+ },
+ {
+  "query": "刚才那首再听一遍",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "重播",
+   "object": "",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "刚才那首再听一遍"
+  },
+  "err": ""
+ },
+ {
+  "query": "帮我切回刚才那首",
+  "gold": "playback_control",
+  "pred": "music_song_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "上",
+   "object": "",
+   "value": "首",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "帮我切回刚才那首"
+  },
+  "err": ""
+ },
+ {
+  "query": "确定第1个为壁画",
+  "gold": "screensaver_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "壁画",
+   "value": "1",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "确定第2个为壁画",
+  "gold": "screensaver_control",
+  "pred": "execute",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "壁画",
+   "value": "2",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {},
+  "err": ""
+ },
+ {
+  "query": "打开壁画",
+  "gold": "screensaver_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "壁画",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "打开壁画"
+  },
+  "err": ""
+ },
+ {
+  "query": "帮我打开壁画",
+  "gold": "screensaver_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "壁画",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "帮我打开壁画"
+  },
+  "err": ""
+ },
+ {
+  "query": "麻烦打开壁画",
+  "gold": "screensaver_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "壁画",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "麻烦打开壁画"
+  },
+  "err": ""
+ },
+ {
+  "query": "电视打开壁画",
+  "gold": "screensaver_control",
+  "pred": "power_control",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "壁画",
+   "value": "",
+   "device": "电视",
+   "location": ""
+  },
+  "pred_params": {
+   "operation": "打开",
+   "object": "开机",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "err": ""
+ },
+ {
+  "query": "能不能打开壁画",
+  "gold": "screensaver_control",
+  "pred": "vod_fuzzy_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "壁画",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "retext": "能不能打开壁画"
+  },
+  "err": ""
+ },
+ {
+  "query": "调出壁画",
+  "gold": "screensaver_control",
+  "pred": "vod_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "壁画",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "query": {
+    "field": "title",
+    "value": "壁画"
+   },
+   "action": "play",
+   "retext": "调出壁画"
+  },
+  "err": ""
+ },
+ {
+  "query": "我要打开壁画",
+  "gold": "screensaver_control",
+  "pred": "vod_search",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "打开",
+   "object": "壁画",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "pred_params": {
+   "query": {
+    "field": "title",
+    "value": "壁画"
+   },
+   "action": "play",
+   "retext": "我要打开壁画"
+  },
+  "err": ""
+ },
+ {
+  "query": "电视打开壁画设置",
+  "gold": "screensaver_control",
+  "pred": "power_control",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "壁画",
+   "value": "",
+   "device": "电视",
+   "location": ""
+  },
+  "pred_params": {
+   "operation": "打开",
+   "object": "开机",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "err": ""
+ },
+ {
+  "query": "电视打开壁纸设置",
+  "gold": "screensaver_control",
+  "pred": "power_control",
+  "tool_ok": false,
+  "param_ok": false,
+  "both_ok": false,
+  "gold_params": {
+   "operation": "设置",
+   "object": "壁纸",
+   "value": "",
+   "device": "电视",
+   "location": ""
+  },
+  "pred_params": {
+   "operation": "打开",
+   "object": "开机",
+   "value": "",
+   "device": "",
+   "location": ""
+  },
+  "err": ""
+ }
+]

@@ -1,143 +1,1067 @@
 {
-  "_comment": "跨域判域 badcase：精确句→目标域。命中即覆盖规则与 LLM 判定（L2 最高优先，仿 hcTools）。这些句在各自 testset 只出现于单域，detect 规则误判时用精确句纠正音轨/影视/教育边界。",
-  "badcases": [
-    {
-      "query": "我想看戏曲铡美案",
-      "domain": "vod"
-    },
-    {
-      "query": "我想看电视台同步在播的剧",
-      "domain": "vod"
-    },
-    {
-      "query": "杜比全景声的电影",
-      "domain": "vod"
-    },
-    {
-      "query": "中央广播电视总台2025年春节联欢晚会",
-      "domain": "vod"
-    },
-    {
-      "query": "评书隋唐演义",
-      "domain": "vod"
-    },
-    {
-      "query": "麻烦放一下你妈没告诉你别欺负熊孩子吗的电影片段啊",
-      "domain": "vod"
-    },
-    {
-      "query": "看下熊出没之雪岭熊风，熊就要有个熊样",
-      "domain": "vod"
-    },
-    {
-      "query": "听下历史类的节目吧",
-      "domain": "audio"
-    },
-    {
-      "query": "播放儿童国学启蒙故事",
-      "domain": "audio"
-    },
-    {
-      "query": "帮我查找适合孩子听的历史节目",
-      "domain": "audio"
-    },
-    {
-      "query": "正史讲解类历史节目有哪些？",
-      "domain": "audio"
-    },
-    {
-      "query": "放一下儿童故事人气榜前五的内容",
-      "domain": "audio"
-    },
-    {
-      "query": "帮我找播放量最高的儿童故事",
-      "domain": "audio"
-    },
-    {
-      "query": "播放我的历史记录",
-      "domain": "music"
-    },
-    {
-      "query": "贝瓦儿歌开始",
-      "domain": "children"
-    },
-    {
-      "query": "不带英语的小砾工程家族",
-      "domain": "children"
-    },
-    {
-      "query": "播放儿童篮球课程",
-      "domain": "education"
-    },
-    {
-      "query": "我要听虫儿飞",
-      "domain": "children"
-    },
-    {
-      "query": "2026年春晚周深唱的歌",
-      "domain": "qa"
-    },
-    {
-      "query": "适合睡前听的歌",
-      "domain": "qa"
-    },
-    {
-      "query": "《黑色风暴》这首歌所在专辑是什么",
-      "domain": "qa"
-    },
-    {
-      "query": "最近开播、女主演技好的古装剧",
-      "domain": "vod"
-    },
-    {
-      "query": "最近开播、女主演技好且集数较短的古装剧",
-      "domain": "vod"
-    },
-    {
-      "query": "免费、集数较短、女主演技好的最近开播古装剧",
-      "domain": "vod"
-    },
-    {
-      "query": "近三年国外视觉震撼且适合带孩子观看的科幻电影",
-      "domain": "vod"
-    },
-    {
-      "query": "时长约90分钟2026年上映不太吓人且剧情好的国产恐怖电影",
-      "domain": "vod"
-    },
-    {
-      "query": "世界杯最后谁夺冠了",
-      "domain": "qa"
-    },
-    {
-      "query": "世界杯哪天进行的决赛",
-      "domain": "qa"
-    },
-    {
-      "query": "英超半决赛0721那场谁赢了",
-      "domain": "qa"
-    },
-    {
-      "query": "可跟读的免费中文版学龄前英语启蒙动画",
-      "domain": "children"
-    },
-    {
-      "query": "一季以上、适合8岁男孩的国产恐龙科普动画",
-      "domain": "children"
-    },
-    {
-      "query": "换一个其他类型、适合8岁男孩的国产科普动画",
-      "domain": "children"
-    },
-    {
-      "query": "动画形式的",
-      "domain": "education",
-      "note": "22r3 教育上下文 bare 句—强制考试教"
-    },
-    {
-      "query": "有朗读示范",
-      "domain": "education",
-      "note": "22r4 教育上下文 强制"
-    }
-  ]
+ "_comment": "跨域判域 badcase：精确句→目标域。命中即覆盖规则与 LLM 判定（L2 最高优先，仿 hcTools）。这些句在各自 testset 只出现于单域，detect 规则误判时用精确句纠正音轨/影视/教育边界。",
+ "badcases": [
+  {
+   "query": "我想看戏曲铡美案",
+   "domain": "vod"
+  },
+  {
+   "query": "我想看电视台同步在播的剧",
+   "domain": "vod"
+  },
+  {
+   "query": "杜比全景声的电影",
+   "domain": "vod"
+  },
+  {
+   "query": "中央广播电视总台2025年春节联欢晚会",
+   "domain": "vod"
+  },
+  {
+   "query": "评书隋唐演义",
+   "domain": "vod"
+  },
+  {
+   "query": "麻烦放一下你妈没告诉你别欺负熊孩子吗的电影片段啊",
+   "domain": "vod"
+  },
+  {
+   "query": "看下熊出没之雪岭熊风，熊就要有个熊样",
+   "domain": "vod"
+  },
+  {
+   "query": "听下历史类的节目吧",
+   "domain": "audio"
+  },
+  {
+   "query": "播放儿童国学启蒙故事",
+   "domain": "audio"
+  },
+  {
+   "query": "帮我查找适合孩子听的历史节目",
+   "domain": "audio"
+  },
+  {
+   "query": "正史讲解类历史节目有哪些？",
+   "domain": "audio"
+  },
+  {
+   "query": "放一下儿童故事人气榜前五的内容",
+   "domain": "audio"
+  },
+  {
+   "query": "帮我找播放量最高的儿童故事",
+   "domain": "audio"
+  },
+  {
+   "query": "播放我的历史记录",
+   "domain": "music"
+  },
+  {
+   "query": "贝瓦儿歌开始",
+   "domain": "children"
+  },
+  {
+   "query": "不带英语的小砾工程家族",
+   "domain": "children"
+  },
+  {
+   "query": "播放儿童篮球课程",
+   "domain": "education"
+  },
+  {
+   "query": "我要听虫儿飞",
+   "domain": "children"
+  },
+  {
+   "query": "2026年春晚周深唱的歌",
+   "domain": "qa"
+  },
+  {
+   "query": "适合睡前听的歌",
+   "domain": "qa"
+  },
+  {
+   "query": "《黑色风暴》这首歌所在专辑是什么",
+   "domain": "qa"
+  },
+  {
+   "query": "最近开播、女主演技好的古装剧",
+   "domain": "vod"
+  },
+  {
+   "query": "最近开播、女主演技好且集数较短的古装剧",
+   "domain": "vod"
+  },
+  {
+   "query": "免费、集数较短、女主演技好的最近开播古装剧",
+   "domain": "vod"
+  },
+  {
+   "query": "近三年国外视觉震撼且适合带孩子观看的科幻电影",
+   "domain": "vod"
+  },
+  {
+   "query": "时长约90分钟2026年上映不太吓人且剧情好的国产恐怖电影",
+   "domain": "vod"
+  },
+  {
+   "query": "世界杯最后谁夺冠了",
+   "domain": "qa"
+  },
+  {
+   "query": "世界杯哪天进行的决赛",
+   "domain": "qa"
+  },
+  {
+   "query": "英超半决赛0721那场谁赢了",
+   "domain": "qa"
+  },
+  {
+   "query": "可跟读的免费中文版学龄前英语启蒙动画",
+   "domain": "children"
+  },
+  {
+   "query": "一季以上、适合8岁男孩的国产恐龙科普动画",
+   "domain": "children"
+  },
+  {
+   "query": "换一个其他类型、适合8岁男孩的国产科普动画",
+   "domain": "children"
+  },
+  {
+   "query": "动画形式的",
+   "domain": "education",
+   "note": "22r3 教育上下文 bare 句—强制考试教"
+  },
+  {
+   "query": "有朗读示范",
+   "domain": "education",
+   "note": "22r4 教育上下文 强制"
+  },
+  {
+   "query": "导演冯小刚的简介",
+   "domain": "vod"
+  },
+  {
+   "query": "饺子的简介",
+   "domain": "vod"
+  },
+  {
+   "query": "刘德华是谁",
+   "domain": "vod"
+  },
+  {
+   "query": "安妮海瑟薇的个人简介",
+   "domain": "vod"
+  },
+  {
+   "query": "最近爆火的新剧有哪些",
+   "domain": "vod"
+  },
+  {
+   "query": "老剧里有哪些口碑依然能打的？",
+   "domain": "vod"
+  },
+  {
+   "query": "现在热的剧有哪些？",
+   "domain": "vod"
+  },
+  {
+   "query": "近期最火的宝藏剧推荐",
+   "domain": "vod"
+  },
+  {
+   "query": "刚上线的新剧里，哪个最值得追？",
+   "domain": "vod"
+  },
+  {
+   "query": "播放关于哈利波特的视频",
+   "domain": "vod"
+  },
+  {
+   "query": "韩国演员马东锡演的所有电影有哪些",
+   "domain": "vod"
+  },
+  {
+   "query": "跟半熟恋人相似的综艺有哪些",
+   "domain": "vod"
+  },
+  {
+   "query": "豆瓣评分8.9分以上的大片有哪些？",
+   "domain": "vod"
+  },
+  {
+   "query": "像《孟姜女》的戏曲还有哪些？",
+   "domain": "vod"
+  },
+  {
+   "query": "最新上线的爆款高播放量国产动漫",
+   "domain": "vod"
+  },
+  {
+   "query": "推荐大人和孩子一起观看的影片",
+   "domain": "vod"
+  },
+  {
+   "query": "高分亲子综艺",
+   "domain": "vod"
+  },
+  {
+   "query": "推荐片测",
+   "domain": "vod"
+  },
+  {
+   "query": "给我推荐我喜欢的幼儿影视",
+   "domain": "vod"
+  },
+  {
+   "query": "给我推荐我喜欢的儿童影视",
+   "domain": "vod"
+  },
+  {
+   "query": "给我推荐我喜欢的少儿影视",
+   "domain": "vod"
+  },
+  {
+   "query": "对镜头说“早安、午安、晚安”是哪部电影里的",
+   "domain": "vod"
+  },
+  {
+   "query": "帮我找一部剧，讲了唐朝官员为运送荔枝而展开的故事",
+   "domain": "vod"
+  },
+  {
+   "query": "初中三年级语文上册鄂教版课文朗读",
+   "domain": "education"
+  },
+  {
+   "query": "高一的生物有哪些",
+   "domain": "education"
+  },
+  {
+   "query": "我要看关于高一上册政治的复习视频",
+   "domain": "education"
+  },
+  {
+   "query": "我想听第一次鸦片战争的课",
+   "domain": "education"
+  },
+  {
+   "query": "我要学唱歌",
+   "domain": "education"
+  },
+  {
+   "query": "高中语文诗歌鉴赏专题训练",
+   "domain": "education"
+  },
+  {
+   "query": "帮我搜索一下关于物理化学九年级上册的复习题",
+   "domain": "education"
+  },
+  {
+   "query": "找一些关于孩子心理健康相关的课程",
+   "domain": "education"
+  },
+  {
+   "query": "少儿象棋入门课程",
+   "domain": "education"
+  },
+  {
+   "query": "有没有少儿跆拳道课程",
+   "domain": "education"
+  },
+  {
+   "query": "乒乓球启蒙课程",
+   "domain": "education"
+  },
+  {
+   "query": "搜索幼儿芭蕾舞启蒙课",
+   "domain": "education"
+  },
+  {
+   "query": "播放少儿舞蹈入门课",
+   "domain": "education"
+  },
+  {
+   "query": "想找儿童舞蹈基础课",
+   "domain": "education"
+  },
+  {
+   "query": "少儿 AI 与人工智能课",
+   "domain": "education"
+  },
+  {
+   "query": "找适合幼儿的创意手工启蒙课",
+   "domain": "education"
+  },
+  {
+   "query": "幼儿美术启蒙课",
+   "domain": "education"
+  },
+  {
+   "query": "幼儿古典舞基础形体课程",
+   "domain": "education"
+  },
+  {
+   "query": "我想学儿童折纸",
+   "domain": "education"
+  },
+  {
+   "query": "有没有少儿街舞的课",
+   "domain": "education"
+  },
+  {
+   "query": "我想学少儿声乐",
+   "domain": "education"
+  },
+  {
+   "query": "打开围棋启蒙课程",
+   "domain": "education"
+  },
+  {
+   "query": "早读读什么内容效果最好？",
+   "domain": "education"
+  },
+  {
+   "query": "初中主科和副科分别有哪些？",
+   "domain": "education"
+  },
+  {
+   "query": "高中文科需要学哪些科目？",
+   "domain": "education"
+  },
+  {
+   "query": "高中一年级都学哪些科目？",
+   "domain": "education"
+  },
+  {
+   "query": "病句修改常见类型有哪些？",
+   "domain": "education"
+  },
+  {
+   "query": "中考和高考难度区别在哪？",
+   "domain": "education"
+  },
+  {
+   "query": "新高考文科组合有哪几科？",
+   "domain": "education"
+  },
+  {
+   "query": "开心的近义词有哪些？",
+   "domain": "education"
+  },
+  {
+   "query": "“火”字旁的字有哪些特点？",
+   "domain": "education"
+  },
+  {
+   "query": "关于母爱的句子有哪些",
+   "domain": "education"
+  },
+  {
+   "query": "abab的词语有哪些",
+   "domain": "education"
+  },
+  {
+   "query": "以花开头的成语都有哪些",
+   "domain": "education"
+  },
+  {
+   "query": "含有近义词的四字词语有哪些",
+   "domain": "education"
+  },
+  {
+   "query": "高考志愿填报技巧有哪些？",
+   "domain": "education"
+  },
+  {
+   "query": "怎样提高孩子的朗读能力？",
+   "domain": "education"
+  },
+  {
+   "query": "体育课对孩子有什么好处？",
+   "domain": "education"
+  },
+  {
+   "query": "三角函数的具体内容有哪些？",
+   "domain": "education"
+  },
+  {
+   "query": "作用力与反作用力遵循牛顿第三定律的哪些特点？",
+   "domain": "education"
+  },
+  {
+   "query": "怎么帮助孩子从\"要我学\"变成\"我要学\"？",
+   "domain": "education"
+  },
+  {
+   "query": "如何培养孩子的成长型思维？",
+   "domain": "education"
+  },
+  {
+   "query": "怎么帮助孩子提高解题能力？",
+   "domain": "education"
+  },
+  {
+   "query": "怎么帮助孩子建立良好的学习节奏？",
+   "domain": "education"
+  },
+  {
+   "query": "提高学习效率的有效方法都有哪些？",
+   "domain": "education"
+  },
+  {
+   "query": "推荐几首元旦节适合听的歌",
+   "domain": "music"
+  },
+  {
+   "query": "李健创作的民谣歌曲有哪些",
+   "domain": "music"
+  },
+  {
+   "query": "我想听几首张信哲唱的经典歌曲",
+   "domain": "music"
+  },
+  {
+   "query": "小提琴演奏的治愈系乐曲",
+   "domain": "music"
+  },
+  {
+   "query": "蔡徐坤唱的情人",
+   "domain": "music"
+  },
+  {
+   "query": "有没有好听的歌",
+   "domain": "music"
+  },
+  {
+   "query": "我想看哪个台有老歌节目",
+   "domain": "music"
+  },
+  {
+   "query": "中央六台播过的电影歌曲",
+   "domain": "music"
+  },
+  {
+   "query": "请放音乐广播频道的轻音乐",
+   "domain": "music"
+  },
+  {
+   "query": "来一首收藏里比较好听的",
+   "domain": "music"
+  },
+  {
+   "query": "我想听我收藏的儿歌",
+   "domain": "music"
+  },
+  {
+   "query": "来一首我收藏的治愈系音乐",
+   "domain": "music"
+  },
+  {
+   "query": "我想听上一首听过的歌",
+   "domain": "music"
+  },
+  {
+   "query": "放我之前单曲循环过的那首",
+   "domain": "music"
+  },
+  {
+   "query": "切一首我之前单曲循环的歌",
+   "domain": "music"
+  },
+  {
+   "query": "继续放我昨天没听完的那张专辑",
+   "domain": "music"
+  },
+  {
+   "query": "切到我历史里点过的那一首",
+   "domain": "music"
+  },
+  {
+   "query": "播放我昨天循环过的歌",
+   "domain": "music"
+  },
+  {
+   "query": "从历史记录里挑一首DJ",
+   "domain": "music"
+  },
+  {
+   "query": "继续放我之前的播放",
+   "domain": "music"
+  },
+  {
+   "query": "播放我前两天循环过的歌",
+   "domain": "music"
+  },
+  {
+   "query": "有什么好听的歌",
+   "domain": "music"
+  },
+  {
+   "query": "来首好听的",
+   "domain": "music"
+  },
+  {
+   "query": "这首不好听，换周杰伦的稻香",
+   "domain": "music"
+  },
+  {
+   "query": "下一首土坡上狗尾巴草",
+   "domain": "music"
+  },
+  {
+   "query": "换一首战火燃烧",
+   "domain": "music"
+  },
+  {
+   "query": "换一个奥特曼歌曲",
+   "domain": "music"
+  },
+  {
+   "query": "请播放下一首今生最爱",
+   "domain": "music"
+  },
+  {
+   "query": "换一首孤勇者",
+   "domain": "music"
+  },
+  {
+   "query": "换一首大鱼",
+   "domain": "music"
+  },
+  {
+   "query": "切个治愈民谣南山南",
+   "domain": "music"
+  },
+  {
+   "query": "这首歌不太喜欢，换一首富士山下",
+   "domain": "music"
+  },
+  {
+   "query": "不好听，切换到七里香",
+   "domain": "music"
+  },
+  {
+   "query": "下一首放孤勇者",
+   "domain": "music"
+  },
+  {
+   "query": "放下一首周杰伦的晴天",
+   "domain": "music"
+  },
+  {
+   "query": "这首不好听，换个邓紫棋的光年之外",
+   "domain": "music"
+  },
+  {
+   "query": "下一首陈奕迅的富士山下",
+   "domain": "music"
+  },
+  {
+   "query": "2025年最火的歌的MV",
+   "domain": "music"
+  },
+  {
+   "query": "唱个儿歌拔萝卜",
+   "domain": "music"
+  },
+  {
+   "query": "唱个汪汪队",
+   "domain": "music"
+  },
+  {
+   "query": "在QQ音乐里面听单依纯的不值得",
+   "domain": "music"
+  },
+  {
+   "query": "现在亮度多少",
+   "domain": "device"
+  },
+  {
+   "query": "现在清晰度多少",
+   "domain": "device"
+  },
+  {
+   "query": "现在对比度多少",
+   "domain": "device"
+  },
+  {
+   "query": "现在色度多少",
+   "domain": "device"
+  },
+  {
+   "query": "打开关于电视",
+   "domain": "device"
+  },
+  {
+   "query": "启动关于电视",
+   "domain": "device"
+  },
+  {
+   "query": "进入关于电视",
+   "domain": "device"
+  },
+  {
+   "query": "不好听换一部",
+   "domain": "device"
+  },
+  {
+   "query": "这首不好听停掉",
+   "domain": "device"
+  },
+  {
+   "query": "不好听不想听了",
+   "domain": "device"
+  },
+  {
+   "query": "这首不好听切了",
+   "domain": "device"
+  },
+  {
+   "query": "刚才那首好听回去听",
+   "domain": "device"
+  },
+  {
+   "query": "睡前关机",
+   "domain": "device"
+  },
+  {
+   "query": "退出音乐播放",
+   "domain": "device"
+  },
+  {
+   "query": "停一下音乐",
+   "domain": "device"
+  },
+  {
+   "query": "把音乐停了",
+   "domain": "device"
+  },
+  {
+   "query": "停一下这首歌",
+   "domain": "device"
+  },
+  {
+   "query": "音乐先停一下",
+   "domain": "device"
+  },
+  {
+   "query": "别放这首歌了",
+   "domain": "device"
+  },
+  {
+   "query": "音乐别放了",
+   "domain": "device"
+  },
+  {
+   "query": "别放音乐了",
+   "domain": "device"
+  },
+  {
+   "query": "关掉音乐",
+   "domain": "device"
+  },
+  {
+   "query": "把音乐关了",
+   "domain": "device"
+  },
+  {
+   "query": "把音乐退出来",
+   "domain": "device"
+  },
+  {
+   "query": "关了这首歌",
+   "domain": "device"
+  },
+  {
+   "query": "退出音乐吧",
+   "domain": "device"
+  },
+  {
+   "query": "把歌关掉",
+   "domain": "device"
+  },
+  {
+   "query": "音乐关了吧",
+   "domain": "device"
+  },
+  {
+   "query": "麻烦停一下音乐",
+   "domain": "device"
+  },
+  {
+   "query": "帮我把歌停了",
+   "domain": "device"
+  },
+  {
+   "query": "帮我关掉音乐",
+   "domain": "device"
+  },
+  {
+   "query": "太晚了停掉音乐",
+   "domain": "device"
+  },
+  {
+   "query": "接着放音乐",
+   "domain": "device"
+  },
+  {
+   "query": "把音乐接着放",
+   "domain": "device"
+  },
+  {
+   "query": "把音乐放着继续",
+   "domain": "device"
+  },
+  {
+   "query": "接着放刚才那首歌",
+   "domain": "device"
+  },
+  {
+   "query": "把这首歌接着放",
+   "domain": "device"
+  },
+  {
+   "query": "接着放刚才停的歌",
+   "domain": "device"
+  },
+  {
+   "query": "麻烦接着放歌",
+   "domain": "device"
+  },
+  {
+   "query": "帮我把音乐接着放",
+   "domain": "device"
+  },
+  {
+   "query": "音乐接着放呗",
+   "domain": "device"
+  },
+  {
+   "query": "切歌",
+   "domain": "device"
+  },
+  {
+   "query": "换一首别的歌",
+   "domain": "device"
+  },
+  {
+   "query": "换个歌吧",
+   "domain": "device"
+  },
+  {
+   "query": "这首歌切了吧",
+   "domain": "device"
+  },
+  {
+   "query": "切歌吧",
+   "domain": "device"
+  },
+  {
+   "query": "刚才那首歌",
+   "domain": "device"
+  },
+  {
+   "query": "讲座",
+   "domain": "education"
+  },
+  {
+   "query": "打开免费的二胡",
+   "domain": "education"
+  },
+  {
+   "query": "播放声母韵母整体认读音节",
+   "domain": "education"
+  },
+  {
+   "query": "小聚小聚给我播放认识钟表",
+   "domain": "education"
+  },
+  {
+   "query": "TED演讲视频",
+   "domain": "education"
+  },
+  {
+   "query": "安全教育小课堂",
+   "domain": "education"
+  },
+  {
+   "query": "播放消防安全知识竞赛考试",
+   "domain": "education"
+  },
+  {
+   "query": "国际跳棋的视频的视频",
+   "domain": "education"
+  },
+  {
+   "query": "写钢笔字",
+   "domain": "education"
+  },
+  {
+   "query": "有没有介绍学习方法的视频",
+   "domain": "education"
+  },
+  {
+   "query": "播放免费看的安全教育",
+   "domain": "education"
+  },
+  {
+   "query": "我要看架子鼓",
+   "domain": "education"
+  },
+  {
+   "query": "我要看钢琴",
+   "domain": "education"
+  },
+  {
+   "query": "我要画劳动节手抄报",
+   "domain": "education"
+  },
+  {
+   "query": "播放手抄报",
+   "domain": "education"
+  },
+  {
+   "query": "重阳节的手抄报",
+   "domain": "education"
+  },
+  {
+   "query": "用电安全手抄报",
+   "domain": "education"
+  },
+  {
+   "query": "校园安全主题黑板报",
+   "domain": "education"
+  },
+  {
+   "query": "国庆节精美手抄报模板",
+   "domain": "education"
+  },
+  {
+   "query": "搜索雷锋手抄报",
+   "domain": "education"
+  },
+  {
+   "query": "学习跳绳的视频",
+   "domain": "education"
+  },
+  {
+   "query": "打开少儿卡通绘画",
+   "domain": "education"
+  },
+  {
+   "query": "有没有手风琴的视频",
+   "domain": "education"
+  },
+  {
+   "query": "给我讲一下现在完成时态用法",
+   "domain": "education"
+  },
+  {
+   "query": "“木”字旁的字通常和什么有关？",
+   "domain": "education"
+  },
+  {
+   "query": "课堂笔记应该怎么做才有用？",
+   "domain": "education"
+  },
+  {
+   "query": "2026年小升初要考几科",
+   "domain": "education"
+  },
+  {
+   "query": "阅读课外书对成绩有帮助吗？",
+   "domain": "education"
+  },
+  {
+   "query": "认真的反义词是什么？",
+   "domain": "education"
+  },
+  {
+   "query": "得意忘形怎么造句",
+   "domain": "education"
+  },
+  {
+   "query": "1棵树的棵可以组什么词",
+   "domain": "education"
+  },
+  {
+   "query": "开建的建怎么写",
+   "domain": "education"
+  },
+  {
+   "query": "如何提高做题速度和准确率？",
+   "domain": "education"
+  },
+  {
+   "query": "abb式的词语有什么",
+   "domain": "education"
+  },
+  {
+   "query": "从的笔顺怎么写",
+   "domain": "education"
+  },
+  {
+   "query": "宝盖头一般表示什么意思？",
+   "domain": "education"
+  },
+  {
+   "query": "一个单人旁一个又是什么字",
+   "domain": "education"
+  },
+  {
+   "query": "月亮的拼音怎么写",
+   "domain": "education"
+  },
+  {
+   "query": "病从口入祸从口出是什么意思",
+   "domain": "education"
+  },
+  {
+   "query": "报仇雪恨的雪是什么意思",
+   "domain": "education"
+  },
+  {
+   "query": "1到4的随机数",
+   "domain": "education"
+  },
+  {
+   "query": "别出心裁的近义词",
+   "domain": "education"
+  },
+  {
+   "query": "植树的植怎么组词",
+   "domain": "education"
+  },
+  {
+   "query": "钢琴的拼音",
+   "domain": "education"
+  },
+  {
+   "query": "名列前茅的含义是什么",
+   "domain": "education"
+  },
+  {
+   "query": "惊喜的英文怎么写",
+   "domain": "education"
+  },
+  {
+   "query": "中文翻译I was minutes late",
+   "domain": "education"
+  },
+  {
+   "query": "成语簪缨世族的含义",
+   "domain": "education"
+  },
+  {
+   "query": "转眼的近义词是什么",
+   "domain": "education"
+  },
+  {
+   "query": "翻译一下海信电视真不错",
+   "domain": "education"
+  },
+  {
+   "query": "Do you like traveling的中文是什么",
+   "domain": "education"
+  },
+  {
+   "query": "教室的英文单词是什么？",
+   "domain": "education"
+  },
+  {
+   "query": "夕阳的夕能组什么词",
+   "domain": "education"
+  },
+  {
+   "query": "凋零风暴的拼音",
+   "domain": "education"
+  },
+  {
+   "query": "夕阳的夕组词",
+   "domain": "education"
+  },
+  {
+   "query": "香蕉怎么翻译？",
+   "domain": "education"
+  },
+  {
+   "query": "惊喜的单词",
+   "domain": "education"
+  },
+  {
+   "query": "看图写话不会写怎么办？",
+   "domain": "education"
+  },
+  {
+   "query": "把我不想去上班翻译成英文",
+   "domain": "education"
+  },
+  {
+   "query": "How old are you用汉语咋说",
+   "domain": "education"
+  },
+  {
+   "query": "打开一年级下册同步练习第三页第五题怎么做答案",
+   "domain": "education"
+  },
+  {
+   "query": "翻译一下知识就是力量",
+   "domain": "education"
+  },
+  {
+   "query": "将my heart will go on翻译成中文",
+   "domain": "education"
+  },
+  {
+   "query": "牛顿第一定律的适用条件有哪些？",
+   "domain": "education"
+  },
+  {
+   "query": "小升初该如何准备？",
+   "domain": "education"
+  },
+  {
+   "query": "复习时应该重点复习什么？",
+   "domain": "education"
+  },
+  {
+   "query": "生活中有哪些现象可以用牛顿第一定律解释？",
+   "domain": "education"
+  },
+  {
+   "query": "怎么建立各学科知识之间的联系？",
+   "domain": "education"
+  },
+  {
+   "query": "学习时总是被动接受，不会主动思考，怎么办？",
+   "domain": "education"
+  },
+  {
+   "query": "上课经常走神，有什么好方法提高课堂专注度？",
+   "domain": "education"
+  },
+  {
+   "query": "有什么科学的记忆方法？",
+   "domain": "education"
+  },
+  {
+   "query": "错题本有必要做吗？怎么做才有效？",
+   "domain": "education"
+  },
+  {
+   "query": "提高学习专注力有什么好方法？",
+   "domain": "education"
+  },
+  {
+   "query": "怎么提高学习内驱力？",
+   "domain": "education"
+  },
+  {
+   "query": "怎么培养学习反思能力？",
+   "domain": "education"
+  }
+ ]
 }

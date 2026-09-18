@@ -735,9 +735,13 @@ class TraceStateMachine:
         # 并行、无依赖意图(dep=[], stop=true)，两条独立交给 hcTools 权威解析最终 tool+params。
         mi = multiintent.split_multiintent(query)
         if mi.hit and mi.device and mi.content:
-            # 规则已断言 mi.device 是设备子句，故域强置 device(最多让 detect 细化，不降级到 qa)。
+            mi = multiintent.split_multiintent(query)
+        if mi.hit and mi.device and mi.content:
+            # 规则已断言 mi.device 是设备子句，故域强置 device（除非 detect 命中高置信音乐
+            # 强信号，如"切换到七里香"实为歌曲切歌 → music_override 拉回 music）。
             dev_dom = detect.detect_domain(mi.device, "device", tv_mode=tv_mode)
-            dev_dom = dev_dom if dev_dom == "device" else "device"
+            if dev_dom != "music":
+                dev_dom = "device"
             # 内容子句：先规则引擎判定；判空则用 LLM 从用户原话选域(裸实体依赖此兜底)。
             cont_dom = detect.detect_domain(mi.content, "", tv_mode=tv_mode)
             if not cont_dom or cont_dom == "qa":
@@ -772,9 +776,16 @@ class TraceStateMachine:
                 # 两意图并行(无依赖)，首批即发全部：step1=检索、step2=fuzzy 提问无媒资候选
                 # 可锚定时(路由到 fan_knowledge_agent)，并行反而保证 step2 必发(不依赖 step1 结果)。
                 return batch, True
+        # 音乐电视频道强信号：查哪个台/频道有老歌/二胡/名曲 等 → 必须用原句给 hcTools
+        # （LLM 常拆成「搜索老歌节目」丢"台"信号 → 判 music_song_search，实际应 tvchannel）。
+        if detect._music_override(query) == "music" and re.search(
+            r"台|频道|CCTV|cctv|中央|卫视|广播频道", query
+        ):
+            tm_dom = detect.detect_domain(query, "music", tv_mode=tv_mode) or "music"
+            return [Intent(query=query, domain=tm_dom, tool="execute", index=1, src=query)], True
         # 纯 LLM(T0) 分解：拆步、依赖、落库、选工均一次 LLM 决策，编排层零规则。
         plan = await self._plan(query)
-        # 串行"检索+排序提问"排序词回填规则。可用 HC_DISABLE_SORT_MERGE=1 关闭做 A/B 回归对比。
+        # 串行"检索+排序提问"排序词回填函数。可用 HC_DISABLE_SORT_MERGE=1 关闭做 A/B 回归对比。
         if not os.environ.get("HC_DISABLE_SORT_MERGE"):
             plan = _merge_sort_word_to_retrieval(plan)
         if not plan.intents:

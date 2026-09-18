@@ -47,14 +47,14 @@ from tools.sse_7domain_eval import (                                 # noqa: E40
 )
 
 
-def read_csv_records(domain: str):
-    """读 benchmark/cases/sheet0901_<domain>.csv → records。
+def read_csv_records(domain: str, prefix: str = "sheet0901"):
+    """读 benchmark/cases/<prefix>_<domain>.csv → records。
 
     与 build_sheet0901_cases.build 同口径，但额外保留“是否合理”(第6列,索引5)。
     各域前 6 列位置一致: 业务域, query, 意图(线上意图), 期望工具, 期望参数, 是否合理。
     空 query/空期望工具 直接跳过。
     """
-    path = CASEDIR / f"sheet0901_{domain}.csv"
+    path = CASEDIR / f"{prefix}_{domain}.csv"
     records = []
     if not path.exists():
         print(f"!! 缺测csv: {path}")
@@ -86,11 +86,66 @@ def _param_repr(p):
     return json.dumps(p, ensure_ascii=False, sort_keys=True) if p else ""
 
 
+def _norm_query_shape(q):
+    """vod search DSL 形状归一：{query:{and:[单元素]}} ↔ {query:{单元素}} 等价。
+
+    golden 的 DSL 合成在“单条件时扁平、多条件才 and 包装”之间历史上不统一
+    （金标准人工标注存在 and-single 与 flat 混用），而链路 dsl.build_search_dsl 严格
+    单条件出 flat。为不把 golden 自身形状漂移算成链路错误，把 query 子树里
+    仅含 {and:[1个条件]} 的节点扁平化为该条件本身。
+    """
+    if isinstance(q, dict):
+        inner = q.get("query")
+        if isinstance(inner, dict) and "and" in inner and isinstance(inner["and"], list) and len(inner["and"]) == 1:
+            q = {**q, "query": inner["and"][0]}
+        return {k: _norm_query_shape(v) if isinstance(v, (dict, list)) else v for k, v in q.items()}
+    if isinstance(q, list):
+        return [_norm_query_shape(i) for i in q]
+    return q
+
+
+def _norm_fee_tag(q):
+    """is_fee 值归一（免费/否→0、收费/是→1）+ tag values/value 单值归一。
+
+    在 query 条件节点层处理：{field:"is_fee", value:"免费"} → value:"0"；
+    {field:"tag", values:"X"}（单值）→ value:"X"。"""
+    _FEE = {"免费": "0", "否": "0", "免费观看": "0", "收费": "1", "是": "1"}
+    if isinstance(q, dict):
+        # 条件节点：field 专属归一
+        if q.get("field") in ("is_fee", "tag"):
+            f = q.get("field")
+            if f == "is_fee" and isinstance(q.get("value"), str):
+                q = {**q, "value": _FEE.get(q["value"], q["value"])}
+            elif f == "tag" and isinstance(q.get("values"), str):
+                q = {**q, "value": q["values"]}
+        return {k: _norm_fee_tag(v) if isinstance(v, (dict, list)) else v for k, v in q.items()}
+    if isinstance(q, list):
+        return [_norm_fee_tag(i) for i in q]
+    return q
+
+
+def params_equal_no_retext(a, b):
+    """参数对齐，忽略 retext 键（与 run_sse_multiintent 口径一致：回显不计）。
+
+    engine._build_steps 刻意把 params.retext 覆写为【用户原始句】（评测对齐 golden 原 query），
+    而 sheet_rules 的 golden retext 是 hcTools 规范化句（如 原文"欧若拉的音乐"→
+    golden retext"欧若拉的音乐"、原文"换个一路向北"→"播放一路向北"），
+    二者潜在不相等；retext 只用于回显，结构化字段才是考核对象。
+
+    另加 vod search 形状归一（{"query":{"and":[x]}} ↔ {"query":x}），见 _norm_query_shape。
+    """
+    if isinstance(a, dict) and "retext" in a:
+        a = {k: v for k, v in a.items() if k != "retext"}
+    if isinstance(b, dict) and "retext" in b:
+        b = {k: v for k, v in b.items() if k != "retext"}
+    return params_equal(_norm_query_shape(_norm_fee_tag(a)), _norm_query_shape(_norm_fee_tag(b)))
+
+
 def _param_diff(gp, pp):
     """参数差异的人类可读摘要；gp=None 表示 only-tool 不可比 → “”。"""
     if gp is None:
         return ""
-    if params_equal(gp, pp):
+    if params_equal(_norm_query_shape(gp), _norm_query_shape(pp)):
         return ""
     gp_c = canonical(gp)
     pp_c = canonical(pp)
@@ -127,8 +182,10 @@ def main():
     ap.add_argument("-d", "--domains", default=None, help="逗号分隔域: device,vod,music")
     ap.add_argument("-w", "--workers", dest="workers", type=int, default=8)
     ap.add_argument("-n", type=int, default=0, help="每域只跑前 N 条(冒烟)")
+    ap.add_argument("--prefix", default="sheet0901",
+                    help="cases/csv 前缀(默认 sheet0901；规则层用例用 sheet_rules)")
     ap.add_argument("--ok-only", action="store_true",
-                    help="只评测“是否合理”列为空或=合理 的用例，剔除 不合理/存疑")
+                    help="只评测“是否合理”列为空或标注=合理 的条，剔除 不合理/存疑")
     args = ap.parse_args()
 
     wants = {d.strip() for d in args.domains.split(",") if d.strip()} if args.domains \
@@ -137,7 +194,7 @@ def main():
 
     all_records: list[dict] = []
     for dom in domains:
-        recs = read_csv_records(dom)
+        recs = read_csv_records(dom, prefix=args.prefix)
         if args.ok_only:
             before = len(recs)
             recs = [c for c in recs if c["reasonable"] in ("", "合理")]
@@ -171,7 +228,7 @@ def main():
         pt = res.get("pred_tool") or ""
         pp = res.get("pred_params") or {}
         ot = bool(et) and pt == et
-        op = (not gp) or params_equal(pp, gp)
+        op = (not gp) or params_equal_no_retext(pp, gp)
         ob = ot and op
         diff = "" if op else _param_diff(gp, pp)
         per_domain[dom].append([CN.get(dom, dom), case["row"], case["query"],
