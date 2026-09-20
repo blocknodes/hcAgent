@@ -822,20 +822,28 @@ def _is_bright_children_erge(q: str) -> bool:
 def _make_detect_rules():
     rules = []
 
-    def _add(rid, prio, title, dec):
-        rules.append(_DRule(id=rid, priority=prio, title=title, decide=dec, scope="both"))
+    def _add(rid, prio, title, dec, group="detect.signal"):
+        # group = 该规则所属的**层/域级开关组**（见 app/config.py::RULE_SWITCHES）。
+        # 默认 detect.signal（高置信信号类，不属任何单一目标域）。
+        rules.append(_DRule(id=rid, priority=prio, title=title, decide=dec,
+                            scope="both", group=group))
 
     # 依序复刻原 if-栈（priority 越小越先评估，等价原先后顺序）
-    _add("off_routing", 1, "息屏分诊链", lambda q, llm, tv: _off_routing(q, llm) if str(tv) == "6" else None)
-    _add("badcase", 100, "精确句 badcase", lambda q, llm, tv: _badcases().get(q) or None)
+    _add("off_routing", 1, "息屏分诊链",
+         lambda q, llm, tv: _off_routing(q, llm) if str(tv) == "6" else None, "detect.off")
+    _add("badcase", 100, "精确句 badcase", lambda q, llm, tv: _badcases().get(q) or None,
+         "detect.badcase")
     _add("music_override", 125, "高置信歌曲/音乐频道强信号→music",
-         lambda q, llm, tv: ("music" if (str(tv) != "6" and _music_override(q)) else None))
+         lambda q, llm, tv: ("music" if (str(tv) != "6" and _music_override(q)) else None),
+         "detect.music")
     _add("media_knowledge_qa", 150, "亮屏媒体/明星信息咨询→qa",
-         lambda q, llm, tv: "qa" if (str(tv) != "6" and llm in ("vod", "music", "qa") and _media_knowledge_qa(q)) else None)
+         lambda q, llm, tv: "qa" if (str(tv) != "6" and llm in ("vod", "music", "qa") and _media_knowledge_qa(q)) else None,
+         "detect.qa")
     _add("edu_bright_strong", 155, "亮屏教育强词→education",
-         lambda q, llm, tv: "education" if (str(tv) == "0" and _edu_bright_strong(q)) else None)
+         lambda q, llm, tv: "education" if (str(tv) == "0" and _edu_bright_strong(q)) else None,
+         "detect.education")
     _add("vod_auteur_anim", 180, "署名动画作者影片→vod",
-         lambda q, llm, tv: "vod" if _is_vod_auteur_anim(q) else None)
+         lambda q, llm, tv: "vod" if _is_vod_auteur_anim(q) else None, "detect.vod")
     # 【已停用 2026-09-16】vod_donghua_region / vod_desc_search 两条规则：
     # 二者把「地区+动画」「找/搜+动画」一律抢判 vod，与 0901 sheet（当前基准）的标注冲突——
     # 0901_children 63 条动画用例 golden 全为 educ_*（educ_search 38 / fuzzy 15 / all 7 / relate 2 /
@@ -845,29 +853,41 @@ def _make_detect_rules():
     #   代价是 0821_serial 有 3 条「那个…的动画片」指代式描述回退（旧 sheet，另议）。
     # 定义（_VOD_DESC_SEARCH / _VOD_DONGHUA_REGION / _is_vod_desc_search / _is_vod_donghua_media）
     # 暂留供审计与回滚；确认 0821 serial 可废弃后再整体删除。
-    _add("media_query", 200, "vod 媒资载体保护", lambda q, llm, tv: _media_query_decide(q, llm, tv))
-    _add("media_locator", 300, "台词/片段/集数定位", lambda q, llm, tv: "vod" if (llm in ("vod", "qa") and _is_media_locator(q)) else None)
+    _add("media_query", 200, "vod 媒资载体保护",
+         lambda q, llm, tv: _media_query_decide(q, llm, tv), "detect.vod")
+    _add("media_locator", 300, "台词/片段/集数定位",
+         lambda q, llm, tv: "vod" if (llm in ("vod", "qa") and _is_media_locator(q)) else None,
+         "detect.vod")
     _add("children_locator", 400, "children 内容定位",
-         lambda q, llm, tv: "children" if (_match(q)[0] == "children" and re.search(r"绘本|动画|动漫|卡通|台词|哪部动画|哪个动画", q)) else None)
-    _add("_audio_listen_carry", 480, "听/播放+有声载体→audio", lambda q, llm, tv: _audio_listen_carry_patch(q, llm, tv))
+         lambda q, llm, tv: "children" if (_match(q)[0] == "children" and re.search(r"绘本|动画|动漫|卡通|台词|哪部动画|哪个动画", q)) else None,
+         "detect.children")
+    _add("_audio_listen_carry", 480, "听/播放+有声载体→audio",
+         lambda q, llm, tv: _audio_listen_carry_patch(q, llm, tv), "detect.audio")
     # plot_qa 提高优先级(395)到 children_locator(400) 之前，让「这部动画片讲的是…」剧情问答
     # (对某一部影视的结果提问剧情)归 qa，不被 children 抢走；有 block 不误伤真 children 播放/听。
     _add("plot_qa", 395, "具名影视剧情问答→qa",
-         lambda q, llm, tv: "qa" if (str(tv) != "6" and _is_plot_qa(q)) else None)
-    _add("audio_discovery", 500, "audio 内容 Discovery", lambda q, llm, tv: "audio" if _audio_discovery(q) else None)
-    _add("music_discovery", 600, "music 内容 Discovery", lambda q, llm, tv: "music" if _music_discovery(q) else None)
-    _add("sports_prediction", 700, "sports 赛事预测", lambda q, llm, tv: "sports" if _sports_prediction(q) else None)
+         lambda q, llm, tv: "qa" if (str(tv) != "6" and _is_plot_qa(q)) else None, "detect.qa")
+    _add("audio_discovery", 500, "audio 内容 Discovery",
+         lambda q, llm, tv: "audio" if _audio_discovery(q) else None, "detect.audio")
+    _add("music_discovery", 600, "music 内容 Discovery",
+         lambda q, llm, tv: "music" if _music_discovery(q) else None, "detect.music")
+    _add("sports_prediction", 700, "sports 赛事预测",
+         lambda q, llm, tv: "sports" if _sports_prediction(q) else None, "detect.sports")
     _add("vod_recommend_genre", 790, "推荐类型片→vod",
-         lambda q, llm, tv: "vod" if _vod_recommend_genre(q) else None)
-    _add("qa_open_knowledge", 800, "泛知识开放问答", lambda q, llm, tv: "qa" if _is_qa(q) else None)
+         lambda q, llm, tv: "vod" if _vod_recommend_genre(q) else None, "detect.vod")
+    _add("qa_open_knowledge", 800, "泛知识开放问答",
+         lambda q, llm, tv: "qa" if _is_qa(q) else None, "detect.qa")
     _add("edu_no_anchor_qa", 900, "教育无锚问答→education",
          lambda q, llm, tv: ("education" if str(tv) == "0" else None)
-         if _is_edu_no_anchor_qa(q, llm) else None)
+         if _is_edu_no_anchor_qa(q, llm) else None, "detect.education")
     _add("children_ergou_bright", 1050, "亮屏具名/播放儿歌→children",
-         lambda q, llm, tv: "children" if (str(tv) == "0" and _is_bright_children_erge(q)) else None)
-    _add("signal_match", 1100, "高置信信号", lambda q, llm, tv: _signal_table_match(q))
-    _add("qa_greeting", 1150, "纯问候/闲聊→qa", lambda q, llm, tv: "qa" if _is_greeting(q) else None)
-    _add("llm_domain_keep", 1200, "保 LLM 兜底", lambda q, llm, tv: llm)
+         lambda q, llm, tv: "children" if (str(tv) == "0" and _is_bright_children_erge(q)) else None,
+         "detect.children")
+    _add("signal_match", 1100, "高置信信号",
+         lambda q, llm, tv: _signal_table_match(q), "detect.signal")
+    _add("qa_greeting", 1150, "纯问候/闲聊→qa",
+         lambda q, llm, tv: "qa" if _is_greeting(q) else None, "detect.qa")
+    _add("llm_domain_keep", 1200, "保 LLM 兜底", lambda q, llm, tv: llm, "detect.keep")
     return _DetectRuleSet(rules)
 
 

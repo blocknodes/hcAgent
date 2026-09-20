@@ -19,6 +19,12 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+try:
+    from .config import rule_on as _rule_on
+except ImportError:  # 被 tools 独立测试加载时无包上下文
+    def _rule_on(_group: str) -> bool:
+        return True
+
 
 @dataclass
 class Split:
@@ -47,6 +53,8 @@ def split_serial_qa(query: str) -> SerialSplit:
     右半即对左半检索结果的属性提问（"评分最高的/最经典的/这一部的…是谁/哪年"），
     交给下游 qa 域 + hcTools fan_knowledge_agent 权威解析。
     """
+    if not _rule_on("multiintent.serial_qa"):
+        return SerialSplit("", "", False)
     q = (query or "").strip()
     if not q:
         return SerialSplit("", "", False)
@@ -186,6 +194,8 @@ def _is_device(t: str) -> bool:
 
 # ---- 入口 ----
 def split_multiintent(query: str) -> Split:
+    if not _rule_on("multiintent.content_device"):
+        return Split("", query or "", False)
     q = (query or "").strip()
     if not q:
         return Split("", q, False)

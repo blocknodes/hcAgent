@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import os
 import re
 import threading
 import time
@@ -171,6 +170,8 @@ def _inherit_mt_domain(device_id: str, batch: list["Intent"]) -> None:
     仅当上轮有落定域、且本轮该意图确实无任何域信号时继承；不覆盖本轮已判的
     明确域（显式切换业务的句不受影响）。single 单意图会话尤其受益。
     """
+    if not config.rule_on("mt.inherit_domain"):
+        return
     prev_dom = _mt_last_domain(device_id)
     if not prev_dom:
         return
@@ -223,8 +224,8 @@ async def _mt_rewrite(cur_query: str, device_id: str, short_memory: list[dict[st
         prev_q = last_q.get("q_raw") or last_q.get("q") or ""
     if not prev_q:
         prev_q = _last_short_q(short_memory)
-    bad = mt_rewrite_badcase()
-    hit = bad.lookup(prev_q, cur_query) if prev_q else None
+    bad = mt_rewrite_badcase() if config.rule_on("mt.rewrite_badcase") else None
+    hit = bad.lookup(prev_q, cur_query) if (bad is not None and prev_q) else None
     if hit is not None:
         logger.info("mt改写 badcase 命中 prev=%r cur=%r -> %r (%s)",
                     prev_q, cur_query, hit["target"], hit.get("id", ""))
@@ -292,6 +293,8 @@ def _reseed_bare_song(batch: list[Intent], *, device_id: str, cur_query: str,
     - 非裸书名号播放句、或 X 不在上下文歌名 → 不动（保持 detect 原判定）。
     - 带“MV/看/电影/电视剧/剧”等影视载体字样的意图不参与，避免影视剧被误拉。
     """
+    if not config.rule_on("mt.bare_song_reseed"):
+        return
     ctx_names = _song_names_from_ctx(device_id, short_memory)
     if not ctx_names:
         return
@@ -729,7 +732,7 @@ class TraceStateMachine:
         # 卡通/动漫 双域并行：无历史首轮 + 动画/动漫/卡通 query → 一次两个并行 tab。
         # 对齐 0821多意图&多业务 sheet（multi_tab_search）与 mock._dual_domain：
         #   children(tab) + vod(tab) 两个无依赖 step，parallel=true。
-        if _is_multi_tab(query) and not (history or []):
+        if config.rule_on("multiintent.multi_tab") and _is_multi_tab(query) and not (history or []):
             return _multi_tab_intents(query, tv_mode=tv_mode), True
         # 多意图确定性拆分（规则优先）：命中断言“内容+设备”双目标 → 直接拆成两条
         # 并行、无依赖意图(dep=[], stop=true)，两条独立交给 hcTools 权威解析最终 tool+params。
@@ -764,7 +767,7 @@ class TraceStateMachine:
                 Intent(query=sq.question, domain="qa", tool="execute", index=2,
                        depends=False, dep_on=0, src=query),
             ])
-            if not os.environ.get("HC_DISABLE_SORT_MERGE"):
+            if config.rule_on("plan.sort_merge"):
                 ser_plan = _merge_sort_word_to_retrieval(ser_plan)
             ser_plan = _with_source(ser_plan, query, tv_mode=tv_mode)
             # 首批发依赖序号靠前的可用步(step1 检索)；step2 提问依赖 step1，留待续跑。
@@ -785,8 +788,8 @@ class TraceStateMachine:
             return [Intent(query=query, domain=tm_dom, tool="execute", index=1, src=query)], True
         # 纯 LLM(T0) 分解：拆步、依赖、落库、选工均一次 LLM 决策，编排层零规则。
         plan = await self._plan(query)
-        # 串行"检索+排序提问"排序词回填函数。可用 HC_DISABLE_SORT_MERGE=1 关闭做 A/B 回归对比。
-        if not os.environ.get("HC_DISABLE_SORT_MERGE"):
+        # 串行"检索+排序提问"排序词回填。开关见 config.RULE_SWITCHES（plan.sort_merge）。
+        if config.rule_on("plan.sort_merge"):
             plan = _merge_sort_word_to_retrieval(plan)
         if not plan.intents:
             # LLM 没出方案（空/纯聊天/失败）→ 兜底：单一自包含意图（非语言规则），

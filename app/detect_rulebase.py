@@ -21,6 +21,12 @@ from typing import Any, Callable
 
 logger = logging.getLogger("hcAgent.detect_rulebase")
 
+try:
+    from .config import rule_on as _rule_on
+except ImportError:  # 被 tools 差异测试独立加载时无包上下文
+    def _rule_on(_group: str) -> bool:
+        return True
+
 # (query, llm_domain, tv_mode) -> str | None ；返回命中的域名
 Hist = tuple[str, str, str | int]
 Decider = Callable[[str, str, str | int], str | None]
@@ -35,10 +41,13 @@ class Rule:
     explain: str = ""
     scope: str = "both"      # bright | off | both — 亮屏/息屏适用性
     enabled: bool = True
+    group: str = ""          # 所属规则层开关组（config.RULE_SWITCHES 的 key），如 "detect.vod"
     note: str = ""
 
     def run(self, q: str, llm_domain: str, tv_mode: str | int):
         if not self.enabled:
+            return None
+        if self.group and not _rule_on(self.group):
             return None
         if self.decide is None:
             return None
