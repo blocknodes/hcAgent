@@ -2,6 +2,10 @@
 
 对齐 hcTools 的做法：用 httpx.AsyncClient 实现真并发（单连接池复用）。
 会以 info 级打印每次调用的输入与输出（便于观测 LLM 链路）。
+
+metadata：可选的业务上下文，透传到 OpenAI-format 请求体的 `metadata` 字段
+（网关可采集/审计；LLM 侧多数实现会忽略，不改写 messages/prompt）。
+调用方用 prompts.build_llm_metadata() 构造统一 schema。
 """
 from __future__ import annotations
 
@@ -32,16 +36,20 @@ async def chat(
     *,
     model: str = config.MODEL,
     temperature: float = 0.0,
+    metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """返回 choices[0].message；失败返回 {"__error__": ...}。
 
     带小型重试：429/反序列化失败重试，4xx 非 429 直接放弃。
+    metadata 透传到 OpenAI-format 请求体的 metadata 字段，用于链路审计/计费标签。
     """
     payload: dict[str, Any] = {"model": model, "messages": messages}
     if not model.startswith("gpt-5"):
         payload["temperature"] = temperature
         # 参考 hcTools/compare：禁用 thinking，baseline 不开只会回 " thinking"
         payload["chat_template_kwargs"] = {"enable_thinking": False}
+    if metadata:
+        payload["metadata"] = metadata
 
     headers = {"Content-Type": "application/json"}
     if config.API_KEY:

@@ -200,7 +200,8 @@ def _search_result_of(tool_frame: dict[str, Any]) -> list[dict[str, Any]]:
 
 def _run_runtime(retext: str, *, feature_code: str, device_id: str,
                  client_sid: str | None, tv_mode: str = "0",
-                 debug: bool = True) -> dict[str, Any]:
+                 debug: bool = True,
+                 slow_agent_url: str | None = None) -> dict[str, Any]:
     """直连远端 runtime，聚合 TOOL 帧(含 llmSemantic 工具名/意图 + memoryContent 参数)。"""
     payload: dict[str, Any] = {
         "feature_code": feature_code,
@@ -213,6 +214,8 @@ def _run_runtime(retext: str, *, feature_code: str, device_id: str,
         payload["client_sid"] = client_sid
     if debug:
         payload["debug"] = True
+    if slow_agent_url:
+        payload["slow_agent_url"] = slow_agent_url
 
     frames = _sse(RUNTIME_URL, payload)
     tools: list[dict[str, Any]] = []
@@ -358,6 +361,9 @@ def main() -> int:
                         help="期望工具步数(最后一轮), 不满足则退出码非0(回归断言)")
     parser.add_argument("--no-debug", dest="debug", action="store_false",
                         help="关闭 debug:true(默认开, 用于从 DEBUG 帧拿到数据集命名的真工具名)")
+    parser.add_argument("--slow-agent-url", default=None,
+                        help="透传给远端 runtime 的 slow_agent 回调地址(如 http://localhost:6006)；"
+                             "默认不传其在 payload 中缺失")
     parser.add_argument("--json", dest="as_json", action="store_true",
                         help="以 JSON 输出(多轮为数组)")
     args = parser.parse_args()
@@ -384,6 +390,7 @@ def main() -> int:
             client_sid=args.client_sid,
             tv_mode=args.tv_mode,
             debug=args.debug,
+            slow_agent_url=args.slow_agent_url,
         )
         results.append(r)
         if args.as_json:

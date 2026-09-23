@@ -13,12 +13,49 @@ from __future__ import annotations
 
 import pytest
 
+import app.engine as _engine_mod
 from app import engine
 from tests.test_llm_engine import FakeLLM, _j, fllm, client  # noqa: F401
 
 
 def _payload(query: str, **extra):
     return {"traceId": "t", "deviceId": "d", "data": {"query": query, "tvMode": "0", **extra}}
+
+
+@pytest.fixture
+def mt_client():
+    """依赖 test_llm_engine.client（TestClient(app)）即可，同源。"""
+    from fastapi.testclient import TestClient
+    from app.main import app
+    return TestClient(app)
+
+
+def test_multiintent_preserves_atomic_retext(fllm, mt_client):
+    """多意图拆分的每个 step 必须用【各自原子改写句】回显，不得糊成整句。
+
+    回归：engine._build_steps 曾以 it.src=整句("少儿编程…；放首歌")覆盖 hcTools
+    返回的原子回显，导致两条 step 的 parameters.retext / step.retext 全是同一整句。
+    多意图应保留 hcTools 给的原子回显；单意图才用原句覆盖。
+    """
+    fllm.plan = _j([
+        {"q": "少儿编程Scratch入门是啥情况", "d": "education"},
+        {"q": "放首歌", "d": "music"},
+    ])
+    # 模拟 hcTools 按原子 query 回显
+    async def fake_hctools(query, domain, metadata=None):
+        return {"education": ("edu_fuzzy_search", {"retext": query}),
+                "music": ("music_song_recommend", {"retext": query})}[domain] + ("llm_onecall",)
+    import app.engine as _e
+    _e.hctools.predict = fake_hctools
+    r = mt_client.post("/slowAgent/poc_1", json=_payload("少儿编程Scratch入门是啥情况；放首歌"))
+    steps = r.json()["data"]["steps"]
+    assert [s["toolName"] for s in steps] == ["edu_fuzzy_search", "music_song_recommend"]
+    assert steps[0]["parameters"]["retext"] == "少儿编程Scratch入门是啥情况"
+    assert steps[0]["retext"] == "少儿编程Scratch入门是啥情况"
+    assert steps[1]["parameters"]["retext"] == "放首歌"
+    assert steps[1]["retext"] == "放首歌"
+    assert steps[0]["hitQuery"] == "少儿编程Scratch入门是啥情况"
+    assert steps[1]["hitQuery"] == "放首歌"
 
 
 def test_mt_serial_first_step_only(fllm, client):

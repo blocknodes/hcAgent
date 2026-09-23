@@ -34,7 +34,7 @@ class FakeLLM:
         self.t0_times = 0
         self.t1_times = 0
 
-    async def chat(self, messages, model="", temperature=0.0):
+    async def chat(self, messages, model="", temperature=0.0, metadata=None):
         sys_prompt = messages[0]["content"]
         if T0_PLAN_PROMPT in sys_prompt:
             self.t0_times += 1

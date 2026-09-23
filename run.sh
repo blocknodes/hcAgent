@@ -16,6 +16,27 @@ if command -v lsof >/dev/null 2>&1; then
   fi
 fi
 
-# 统一日志文件：所有输出(stdout+stderr)都追加到这里。可用 HC_LOG_FILE 覆盖，默认 run.log。
-LOG_FILE="${HC_LOG_FILE:-run.log}"
+# 日志按次落盘：默认 logs/hcAgent_<启动时间戳>.log，每次启动一个新文件，永不覆盖。
+#   - HC_LOG_FILE 显式指定时原样使用（保持兼容，追加）。
+#   - logs/latest.log 软链指向最新一次启动，tail -f logs/latest.log 即可。
+LOG_DIR="logs"
+if [ -n "${HC_LOG_FILE:-}" ]; then
+  LOG_FILE="$HC_LOG_FILE"          # 显式覆盖：沿用旧语义（追加）
+  mkdir -p "$(dirname "$LOG_FILE")"
+else
+  mkdir -p "$LOG_DIR"
+  TS="$(date +%Y%m%d_%H%M%S)"
+  LOG_FILE="${LOG_DIR}/hcAgent_${TS}.log"
+  # 同秒重启兜底：避免覆盖
+  n=1
+  while [ -e "$LOG_FILE" ]; do
+    LOG_FILE="${LOG_DIR}/hcAgent_${TS}_${n}.log"
+    n=$((n+1))
+  done
+fi
+touch "$LOG_FILE"
+ln -sfn "$(cd "$(dirname "$LOG_FILE")" && pwd)/$(basename "$LOG_FILE")" "${LOG_DIR}/latest.log"
+echo "[run.sh] 日志 -> ${LOG_FILE}"
+
+# 保留：历史单体 run.log 若存在则只追加不删除（兼容旧文件）
 exec uvicorn app.main:app --host "$HOST" --port "$PORT" --reload 2>&1 | tee -a "$LOG_FILE"

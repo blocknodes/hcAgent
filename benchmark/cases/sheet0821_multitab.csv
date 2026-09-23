@@ -1,0 +1,11 @@
+业务域,query,意图,亮屏期望工具,亮屏期望参数,息屏期望工具,息屏期望参数,源行号
+多tab,切换到音乐模式，然后我要看少儿免费的动画片大货车,多意图并行,playback_control,"{""action"":""play"",""retext"":""播放少儿免费的动画片大货车""}",fan_knowledge_agent,,1
+多tab,亮度减50，再俄罗斯拍的动画,多意图并行,mode_control,"{""operation"":""设置"",""object"":""亮度"",""value"":""50""}",vod_fuzzy_search,,2
+多tab,云视听小电视最火的动漫，声音模式选择,多意图并行,playback_control,"{""action"":""play"",""retext"":""播放小电视最火的动漫""}",fan_knowledge_agent,,3
+多tab,顺序播放，播放免费动画片消防车,多意图并行,playback_control,"{""action"":""play"",""retext"":""播放免费动画片消防车""}",playback_control,,4
+多tab,放哆啦A梦动画片的主题曲，顺便调高音量,多意图并行,music_play,"{""action"":""play"",""retext"":""播放哆啦A梦动画片主题曲""}",mode_control,,5
+多tab,打开帝瓦雷低音管理系统，然后4~5岁逻辑思维启蒙动画,多意图并行,mode_control,"{""operation"":""设置"",""object"":""音效""}","playback_control",,6
+多tab,对比度调到5，然后搜索宝宝学习自我认知的少儿绘本,多意图并行,mode_control,"{""operation"":""设置"",""object"":""对比度""}","fan_knowledge_agent",,7
+多tab,海信小聚播放动画片，顺便静音设置,多意图并行,playback_control,"{""action"":""play"",""retext"":""播放动画片""}","mode_control",,8
+多tab,进入声音主题定制，再科普类动画片,多意图并行,mode_control,"{""operation"":""设置"",""object"":""声音模式""}","playback_control",,9
+多tab,图像设置，然后“我是佩奇黑，这是我的弟弟乔治”来自哪部动画,多意图并行,mode_control,"{""operation"":""设置"",""object"":""图像""}","fan_knowledge_agent",,10

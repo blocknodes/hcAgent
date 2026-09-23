@@ -19,7 +19,7 @@ def _setup(monkeypatch):
     async def fake_chat(messages, **kw):
         return {"content": '{"q":"播放流浪地球","d":"vod","tool":"vod_search"}'}
     async def fake_hctools(query, domain, metadata=None):
-        return "vod_search", {"query": query}
+        return "vod_search", {"query": query}, ""
     monkeypatch.setattr(engine.llm, "chat", fake_chat)
     monkeypatch.setattr(engine.hctools, "predict", fake_hctools)
     yield

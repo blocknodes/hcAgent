@@ -1,34 +1,80 @@
 {
-  "sessions": 8,
-  "turns": 13,
+  "sessions": 30,
+  "turns": 150,
   "errors": 0,
   "by_round": {
     "第1轮": {
-      "turns": 8,
-      "tool_ok": 8,
-      "both_ok": 3,
-      "tool_acc": 100.0,
-      "both_acc": 37.5
+      "turns": 30,
+      "tool_ok": 29,
+      "both_ok": 27,
+      "tool_acc": 96.7,
+      "both_acc": 90.0
     },
     "第2轮": {
-      "turns": 5,
-      "tool_ok": 5,
-      "both_ok": 0,
-      "tool_acc": 100.0,
-      "both_acc": 0.0
+      "turns": 30,
+      "tool_ok": 27,
+      "both_ok": 23,
+      "tool_acc": 90.0,
+      "both_acc": 76.7
+    },
+    "第3轮": {
+      "turns": 30,
+      "tool_ok": 26,
+      "both_ok": 21,
+      "tool_acc": 86.7,
+      "both_acc": 70.0
+    },
+    "第4轮": {
+      "turns": 30,
+      "tool_ok": 21,
+      "both_ok": 20,
+      "tool_acc": 70.0,
+      "both_acc": 66.7
+    },
+    "第5轮": {
+      "turns": 30,
+      "tool_ok": 24,
+      "both_ok": 22,
+      "tool_acc": 80.0,
+      "both_acc": 73.3
     }
   },
   "by_biz": {
     "体育": {
-      "turns": 13,
-      "tool_ok": 13,
-      "both_ok": 3
+      "turns": 20,
+      "tool_ok": 17,
+      "both_ok": 17
+    },
+    "少儿": {
+      "turns": 20,
+      "tool_ok": 20,
+      "both_ok": 18
+    },
+    "影视": {
+      "turns": 50,
+      "tool_ok": 32,
+      "both_ok": 27
+    },
+    "教育": {
+      "turns": 20,
+      "tool_ok": 18,
+      "both_ok": 18
+    },
+    "设备控制": {
+      "turns": 20,
+      "tool_ok": 20,
+      "both_ok": 19
+    },
+    "音乐": {
+      "turns": 20,
+      "tool_ok": 20,
+      "both_ok": 14
     }
   },
   "summary": {
-    "tool_ok": 13,
-    "tool_acc": 100.0,
-    "both_ok": 3,
-    "both_acc": 23.1
+    "tool_ok": 127,
+    "tool_acc": 84.7,
+    "both_ok": 113,
+    "both_acc": 75.3
   }
 }

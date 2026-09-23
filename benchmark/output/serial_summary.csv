@@ -1,4 +1,4 @@
 ﻿metric,ok,total,pct
-step1_ok,91,100,91.00
-step2_ok,100,100,100.00
-both_ok,91,100,91.00
+step1_ok,81,100,81.00
+step2_ok,99,100,99.00
+both_ok,80,100,80.00

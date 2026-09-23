@@ -1,7 +1,7 @@
 {
   "total": 200,
   "err": 0,
-  "device_ok": "196/200",
-  "content_ok": "187/200",
-  "both_ok": "183/200"
+  "device_ok": "184/200",
+  "content_ok": "164/200",
+  "both_ok": "153/200"
 }

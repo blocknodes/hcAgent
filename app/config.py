@@ -12,7 +12,7 @@ logger = logging.getLogger("hcAgent.config")
 
 # ---- LLM 网关环境变量 ----
 # LLM 网关（OpenAI-format /v1/chat/completions），默认 juagent 真实网关。
-API_BASE = (os.environ.get("HC_LLM_API_BASE", "http://10.19.96.219:4003/v1")).rstrip("/")
+API_BASE = (os.environ.get("HC_LLM_API_BASE", "http://127.0.0.1:7000/v1")).rstrip("/")
 API_KEY = os.environ.get("HC_LLM_API_KEY", "")
 
 # hcTools 意图解析服务地址（POST /api/predict，拿最终工具与参数）。
@@ -70,6 +70,7 @@ _RULE_DEFAULTS: dict[str, bool] = {
     "mt.bare_song_reseed": True,  # 裸书名号歌曲兜底（上轮应答里的歌名 → 强置 music）
     # ---- 计划后处理（app/engine.py）----
     "plan.sort_merge": True,      # 串行「检索+排序提问」排序词回填
+    "plan.single_obj_qa": True,   # 单目标属性/知识直问 → 直接一条 qa（不拆检索+提问）
 }
 
 

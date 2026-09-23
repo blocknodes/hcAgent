@@ -24,7 +24,13 @@ from typing import Any
 
 from . import config, detect, hctools, llm, multiintent
 from .mt_rewrite_badcases import mt_rewrite_badcase
-from .prompts import T0_PLAN_PROMPT, T1_STEP_PROMPT, MT_REWRITE_PROMPT, CONTENT_DOMAIN_PROMPT
+from .prompts import (
+    T0_PLAN_PROMPT,
+    T1_STEP_PROMPT,
+    MT_REWRITE_PROMPT,
+    CONTENT_DOMAIN_PROMPT,
+    build_llm_metadata,
+)
 
 logger = logging.getLogger("hcAgent.engine")
 
@@ -204,7 +210,8 @@ def _mt_merge(real_q: list[dict[str, str]], short_a: list[dict[str, str]]) -> li
     return merged
 
 
-async def _mt_rewrite(cur_query: str, device_id: str, short_memory: list[dict[str, Any]] | None = None) -> str:
+async def _mt_rewrite(cur_query: str, device_id: str, short_memory: list[dict[str, Any]] | None = None,
+                      trace_id: str = "", tv_mode: str | int = "0") -> str:
     """把本轮合并历史改写成自包含 query。
 
     历史 = real_q (本进程 _MT_CONTEXT 的『真正改写/执行』query 链)  +  short_a
@@ -212,16 +219,18 @@ async def _mt_rewrite(cur_query: str, device_id: str, short_memory: list[dict[st
     key 为用户设计：real query 取改写链路、应答取 shortMemory，缺一用另一侧补齐。
     仅改写、不写回。无有效历史直接用原句。
 
-    优先级：改写 badcase(上一轮真实 query + 本轮请求 命中 → 固定改写)  > LLM。
+    优先级：badcase(上一轮真实 query + 本轮请求 命中 → 固定改写)  > LLM。
     """
     # badcase 优先：(上轮用户原话, 本轮请求) 命中即固定改写，绕过 LLM。
     # 上轮原话优先取 _MT_CONTEXT 末轮的 q_raw(用户原始 query)，回退末轮 q(改写句)，
     # 再回退 shortMemory 最近轮 dialogData.query。
     real_q = _mt_get(device_id)
     prev_q = ""
+    prev_domain = ""
     if real_q:
         last_q = real_q[-1]
         prev_q = last_q.get("q_raw") or last_q.get("q") or ""
+        prev_domain = last_q.get("domain") or ""
     if not prev_q:
         prev_q = _last_short_q(short_memory)
     bad = mt_rewrite_badcase() if config.rule_on("mt.rewrite_badcase") else None
@@ -236,7 +245,17 @@ async def _mt_rewrite(cur_query: str, device_id: str, short_memory: list[dict[st
         return cur_query
     dialog = _mt_serialize(merged)
     user = MT_REWRITE_PROMPT.format(dialog=dialog, cur_query=cur_query)
-    message = await llm.chat([{"role": "user", "content": user}], model=config.MODEL)
+    # 多轮改写跨轮次（不是当前交互轮内）：标记 same_turn=False、purpose=mt_rewrite
+    message = await llm.chat(
+        [{"role": "user", "content": user}],
+        model=config.MODEL,
+        metadata=build_llm_metadata(
+            purpose="mt_rewrite", same_turn=False, op="rewrite",
+            domain=prev_domain, device_id=device_id, trace_id=trace_id,
+            has_history=bool(real_q), has_short_memory=bool(short_memory),
+            tv_mode=tv_mode,
+        ),
+    )
     if "__error__" in message:
         return cur_query
     out = (llm.text_of(message) or "").strip()
@@ -416,15 +435,46 @@ _QA_VERB = ("导演是谁", "主演是谁", "主演都有谁", "男主角是谁"
             "导演", "主演", "主角", "票房", "评分")
 
 
-def _merge_sort_word_to_retrieval(plan: Plan) -> Plan:
-    """串行"检索 + 对检索结果排序筛选提问"：把第二句抛出的排序词回填回第一句检索。
+# 单目标属性/泛知识直问：整句只问一个可执行属性（X的导演/主演/简介/…是谁、是什么、什么时候）。
+# LLM T0 常把它误拆成「检索 + 提问」两步（如「《小猪佩奇 第一季》的导演是谁」被拆成
+# children 检索 1 步 + qa 提问 1 步），制造冗余检索步，夹具只认 fan_knowledge_agent。
+# 这类纯问句应直接一条 qa → hcTools qa 域(fan_knowledge_agent)。
+_QA_SINGLE_BLOCK = re.compile(
+    # 前置检索/播放动作（搜索X/给我看X/放X/我要看X…）
+    r"搜索|搜一下|搜|查一下|查一|查|帮忙|给我|帮我|我要|我想|看看吧|看看|看一|推荐|"
+    r"播放|点播|放一|放个|放|我要看|想看|有没有|如何|怎么办|"
+    # 排序/筛选（评分最高/最新/最经典/免费/高清…）
+    r"评分最高|人气最高|最经典|最热|最新|最高|高清|免费|完整版|国语版|上映|"
+    # 串行第二目标（然后…/接着…/顺便…/再问…）
+    r"然后|接着|同时|再问|顺便|加上|并且|以及|又问",
+)
 
-    触发前提（LLM 常把排序词下放成第二句 qa 的结果筛选，需回填，不误伤普通串行）：
+
+def _is_single_obj_qa(query: str) -> bool:
+    """单目标属性/知识直答：不要拆「检索 + 提问」两步。
+
+    命中条件：通用问答信号(_is_qa)已判为知识问答 + 整句不含任何「检索/排序/串行/播放」
+    动作词。含这些词的句（搜X…/评分最高的X/放X/我要看X…）仍走原编排（LLM 计划/串行/双tab）。
+    用例：『《小猪佩奇 第一季》的导演是谁』『战狼2的主演是谁』→ True；
+          『搜索评分最高的胡歌演的电影，导演是谁』→ False（含检索+排序，仍拆两步）。
+    """
+    q = (query or "").strip()
+    if not q or not detect._is_qa(q):
+        return False
+    if _QA_SINGLE_BLOCK.search(q):
+        return False
+    return True
+
+
+def _merge_sort_word_to_retrieval(plan: Plan) -> Plan:
+    """串行"检索 + 对结果排序筛选提问"：把第二句抛出的排序词回填回第一句检索。
+
+    触发条件（LLM 常把排序词下放成第二句 qa 的结果筛选，需回填，不污染普通串行）：
       - 至少 2 个意图；
       - 第一个意图是 vod 检索（domain=vod）；
       - 后续某个【提问】意图含排序词；
       - 第一个检索意图当前 query 未携带该排序词。
-    命中后把排序词并入检索意图 query 前部，让下游 hcTools 合成 sort。
+    命中后把排序词并入检索 query 前端，让下游 hcomp 合成 sort。
     """
     if len(plan.intents) < 2:
         return plan
@@ -720,17 +770,27 @@ class TraceStateMachine:
         self._ttl = ttl
 
     async def tick(self, trace_id: str, query: str, history: list[dict[str, Any]] | None,
-                   tv_mode: str | int = "0") -> tuple[list[Intent], bool]:
+                   tv_mode: str | int = "0", device_id: str = "",
+                   trace_id_real: str = "") -> tuple[list[Intent], bool]:
+        """trace_id=状态 key(device_id)；trace_id_real=请求真实 traceId(审计用)。"""
         entry = self._load(trace_id)
         if entry is None:
-            return await self._first(trace_id, query, history, tv_mode=tv_mode)
-        return await self._continue(trace_id, history)
+            return await self._first(trace_id, query, history, tv_mode=tv_mode,
+                                     device_id=device_id, trace_id_real=trace_id_real)
+        return await self._continue(trace_id, history, device_id=device_id,
+                                    tv_mode=tv_mode, trace_id_real=trace_id_real)
 
     # ---- 首轮：T0（一次 LLM）----
     async def _first(self, trace_id: str, query: str, history,
-                     tv_mode: str | int = "0") -> tuple[list[Intent], bool]:
+                     tv_mode: str | int = "0", device_id: str = "",
+                     trace_id_real: str = "") -> tuple[list[Intent], bool]:
+        # 单目标属性/知识直答：纯问句（X的导演/主演/简介…是谁，无检索/排序/串行/播放动作）
+        # → 直接一条 qa（fan_knowledge_agent），不让 LLM 拆「检索 + 提问」两步。
+        # 必须放在 multi_tab/serial 之前：『动画片导演是谁』不能因含 动画 触发双 tab。
+        if config.rule_on("plan.single_obj_qa") and _is_single_obj_qa(query):
+            return [Intent(query=query, domain="qa", tool="execute", index=1, src=query)], True
         # 卡通/动漫 双域并行：无历史首轮 + 动画/动漫/卡通 query → 一次两个并行 tab。
-        # 对齐 0821多意图&多业务 sheet（multi_tab_search）与 mock._dual_domain：
+        # 对齐 0821多目标&多业务 sheet（multi_tab_search）与 mock._dual_domain：
         #   children(tab) + vod(tab) 两个无依赖 step，parallel=true。
         if config.rule_on("multiintent.multi_tab") and _is_multi_tab(query) and not (history or []):
             return _multi_tab_intents(query, tv_mode=tv_mode), True
@@ -748,7 +808,8 @@ class TraceStateMachine:
             # 内容子句：先规则引擎判定；判空则用 LLM 从用户原话选域(裸实体依赖此兜底)。
             cont_dom = detect.detect_domain(mi.content, "", tv_mode=tv_mode)
             if not cont_dom or cont_dom == "qa":
-                cont_dom = await self._content_domain(mi.content)
+                cont_dom = await self._content_domain(
+                    mi.content, trace_id=trace_id_real, device_id=device_id, tv_mode=tv_mode)
                 cont_dom = cont_dom or detect.detect_domain(mi.content, "", tv_mode=tv_mode) or ""
             content_int = Intent(query=mi.content, domain=cont_dom, tool="execute",
                                  index=2, depends=False, dep_on=0, src=mi.content)
@@ -787,7 +848,8 @@ class TraceStateMachine:
             tm_dom = detect.detect_domain(query, "music", tv_mode=tv_mode) or "music"
             return [Intent(query=query, domain=tm_dom, tool="execute", index=1, src=query)], True
         # 纯 LLM(T0) 分解：拆步、依赖、落库、选工均一次 LLM 决策，编排层零规则。
-        plan = await self._plan(query)
+        plan = await self._plan(query, trace_id=trace_id_real, device_id=device_id,
+                                tv_mode=tv_mode, has_history=bool(history))
         # 串行"检索+排序提问"排序词回填。开关见 config.RULE_SWITCHES（plan.sort_merge）。
         if config.rule_on("plan.sort_merge"):
             plan = _merge_sort_word_to_retrieval(plan)
@@ -822,15 +884,23 @@ class TraceStateMachine:
             self._store(trace_id, plan)
         return batch, stop
 
-    async def _content_domain(self, query: str) -> str:
+    async def _content_domain(self, query: str, trace_id: str = "", device_id: str = "",
+                              tv_mode: str | int = "0") -> str:
         """内容子句域路由：规则 detect 对裸实体(队名/歌名/剧名)判空时，
         先用确定性内容域规则，再未命中才让 LLM 从用户原词选域；仅用于内容意向、不改设备条域。"""
         rule = detect.content_domain_rule(query)
         if rule:
             return rule
         try:
-            msg = await llm.chat([{"role": "system", "content": CONTENT_DOMAIN_PROMPT},
-                                  {"role": "user", "content": query}], model=config.MODEL)
+            msg = await llm.chat(
+                [{"role": "system", "content": CONTENT_DOMAIN_PROMPT},
+                 {"role": "user", "content": query}],
+                model=config.MODEL,
+                metadata=build_llm_metadata(
+                    purpose="content_domain", same_turn=True, op="classify",
+                    device_id=device_id, trace_id=trace_id, tv_mode=tv_mode,
+                ),
+            )
             if "__error__" in msg:
                 return ""
             out = llm.text_of(msg).strip().lower()
@@ -841,10 +911,19 @@ class TraceStateMachine:
             return ""
         return ""
 
-    async def _plan(self, query: str) -> Plan:
-        message = await llm.chat([{"role": "system", "content": T0_PLAN_PROMPT},
-                            {"role": "user", "content": f"用户请求：{query}"}],
-                           model=config.MODEL)
+    async def _plan(self, query: str, trace_id: str = "", device_id: str = "",
+                    tv_mode: str | int = "0", has_history: bool = False,
+                    has_short_memory: bool = False) -> Plan:
+        message = await llm.chat(
+            [{"role": "system", "content": T0_PLAN_PROMPT},
+             {"role": "user", "content": f"用户请求：{query}"}],
+            model=config.MODEL,
+            metadata=build_llm_metadata(
+                purpose="plan", same_turn=True, op="split",
+                device_id=device_id, trace_id=trace_id, tv_mode=tv_mode,
+                has_history=has_history, has_short_memory=has_short_memory,
+            ),
+        )
         if "__error__" in message:
             return Plan()
         text = llm.text_of(message)
@@ -861,7 +940,9 @@ class TraceStateMachine:
         return parse_plan(parsed)
 
     # ---- 续跑：T1+（纯 LLM 改写当前 step 的自包含 query）----
-    async def _continue(self, trace_id: str, history) -> tuple[list[Intent], bool]:
+    async def _continue(self, trace_id: str, history, device_id: str = "",
+                        tv_mode: str | int = "0",
+                        trace_id_real: str = "") -> tuple[list[Intent], bool]:
         plan: Plan = self._state[trace_id]["plan"]
         executed = _executed_indexes(history)
         batch = next_batch(plan, executed)
@@ -872,7 +953,9 @@ class TraceStateMachine:
         # 批内依赖改写的多个意图相互独立，并发执行（真并发收益点）
         async def resolve(it: Intent) -> Intent:
             if it.depends:
-                q = await self._rewrite_step(it.query, tool_result)
+                q = await self._rewrite_step(it.query, tool_result,
+                                             trace_id=trace_id_real, device_id=device_id,
+                                             tv_mode=tv_mode, step=it.index, plan=plan)
             else:
                 q = it.query
             return Intent(query=q, domain=it.domain, tool=it.tool,
@@ -888,11 +971,22 @@ class TraceStateMachine:
             self._store(trace_id, plan)
         return resolved, stop
 
-    async def _rewrite_step(self, q: str, tool_result: str) -> str:
+    async def _rewrite_step(self, q: str, tool_result: str, trace_id: str = "",
+                            device_id: str = "", tv_mode: str | int = "0",
+                            step: int = 0, plan: Plan | None = None) -> str:
         user = f"待执行意图:{q}\n" + (f"工具结果:{tool_result}" if tool_result else "")
-        message = await llm.chat([{"role": "system", "content": T1_STEP_PROMPT},
-                            {"role": "user", "content": user}],
-                           model=config.MODEL)
+        message = await llm.chat(
+            [{"role": "system", "content": T1_STEP_PROMPT},
+             {"role": "user", "content": user}],
+            model=config.MODEL,
+            metadata=build_llm_metadata(
+                purpose="step_rewrite", same_turn=False, op="rewrite",
+                device_id=device_id, trace_id=trace_id, tv_mode=tv_mode,
+                step=step,
+                n_steps=(plan.total() if plan is not None else 0),
+                extra={"dep_chain": "1" if (plan is not None and step and step > 1) else "0"},
+            ),
+        )
         if "__error__" in message:
             return q
         out = _clean_llm_text(llm.text_of(message))
@@ -968,22 +1062,28 @@ async def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
     results = await asyncio.gather(*[_hctools_params(it) for it in batch])
     steps: list[dict[str, Any]] = []
     for it, (tool, params, hit_source) in zip(batch, results):
-        # hcTools 返回的 params.retext 是其规范化回显句(如"播放哑巴新娘第1集")，
-        # 而评测 golden.retext=用户原始 query("放第1集哑巴新娘")。为对齐评测，
-        # 把参数里的 retext 回显为【用户原句】(it.src)，action/query/sort 等结构化
-        # 字段保持 hcTools 权威结果不变。
+        # 单意图信号：_first 对原子单意图会恢复原句(query=src)，此时 query==src；
+        # 多意图里 src 恒为整句(如"少儿编程…；放首歌")、query 是原子子意图。
+        single = it.src and it.src == it.query
+        # hcTools 返回的 params.retext 是其规范化回显句(如"放首歌")。
+        # 【单意图】评测 golden.retext=用户原始 query("放第1集哑巴新娘")，且该路径
+        #   query 已恢复为原句(query=src)，用 src 回显对齐评测。
+        # 【多意图】src=整句，若用整句覆盖会把每个 step 的回显糊成同一句、丢掉
+        #   各自的原子回显（mock 版 _step 用的是各自子句 sub，见 app/mock.py）。
+        #   多意图保留 hcTools 返回的原子回显，不改写；结构化字段始终以 hcTools 为准。
         if isinstance(params, dict) and "retext" in params:
-            params = {**params, "retext": it.src or params["retext"]}
+            if single:
+                params = {**params, "retext": it.src or params["retext"]}
         if params is None:
-            params = {"query": it.src or it.query}
+            params = {"query": it.src if single else (it.query or it.src or "")}
         step: dict[str, Any] = {
             "id": f"s{it.index}",
             "toolName": tool or it.tool or "execute",
             "parameters": params,
             "plan": None,
             "dependsOn": [f"s{it.dep_on}"] if it.depends else [],
-            # step 级 retext 亦回显用户原句(与 parameters.retext 一致)。
-            "retext": it.src or it.query,
+            # step 级 retext 与 parameters.retext 一致；多意图用原子 it.query。
+            "retext": it.src if single else (it.query or it.src),
         }
         if hit_source:
             step["hitSource"] = hit_source
@@ -1019,11 +1119,13 @@ async def build_response(req) -> dict[str, Any]:
     elif not _has_mt_history(device_id, short_memory):
         mt_query = query             # 首轮无任何上下文：原句直通，不交给多轮 LLM 改写
     else:
-        mt_query = await _mt_rewrite(query, device_id, short_memory)
+        mt_query = await _mt_rewrite(query, device_id, short_memory,
+                                     trace_id=trace_id, tv_mode=tv_mode)
 
     # 串行续跑状态按 device_id 存（换 request 用 device_id 识别会话），而非 trace_id——
     # 串行 N 步 = N 个 SSE 请求 = N 个不同 trace_id，只有 device 稳定才能跨轮推进依赖链。
-    batch, stop = await _SM.tick(device_id, mt_query, history, tv_mode=tv_mode)
+    batch, stop = await _SM.tick(device_id, mt_query, history, tv_mode=tv_mode,
+                                 device_id=device_id, trace_id_real=trace_id)
     # 多轮继承：本轮某个意图 detect 判空(无域信号)时，沿用上一轮落定的稳定域，
     # 避免"律动感强的""适合零基础的"这类漂移到无关域。
     _inherit_mt_domain(device_id, batch)

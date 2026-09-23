@@ -1,0 +1,750 @@
+{
+ "per_scenario": {
+  "多tab.bright": {
+   "primary": {
+    "fewshot_cache": 2,
+    "llm_onecall": 7,
+    "llm_select": 1
+   },
+   "all": {
+    "fewshot_cache": 3,
+    "badcase": 1,
+    "llm_onecall": 14,
+    "llm_select": 1
+   }
+  },
+  "多tab.dark": {
+   "primary": {
+    "fewshot_cache": 2,
+    "llm_onecall": 7,
+    "llm_select": 1
+   },
+   "all": {
+    "fewshot_cache": 3,
+    "badcase": 1,
+    "llm_onecall": 14,
+    "llm_select": 1
+   }
+  },
+  "息屏亮屏.bright": {
+   "primary": {
+    "general_rule": 8,
+    "llm_select": 1,
+    "llm_onecall": 1
+   },
+   "all": {
+    "general_rule": 8,
+    "llm_select": 1,
+    "llm_onecall": 1
+   }
+  },
+  "息屏亮屏.dark": {
+   "primary": {
+    "general_rule": 8,
+    "llm_select": 2
+   },
+   "all": {
+    "general_rule": 8,
+    "llm_select": 2
+   }
+  }
+ },
+ "rows": [
+  [
+   "场景",
+   "样本",
+   "失败",
+   "平均ms",
+   "中位ms",
+   "P90ms",
+   "P95ms",
+   "P99ms"
+  ],
+  [
+   "多tab.bright",
+   10,
+   0,
+   622.5,
+   741.5,
+   1136.3,
+   1136.3,
+   1136.3
+  ],
+  [
+   "多tab.dark",
+   10,
+   0,
+   620.2,
+   742.5,
+   1134.6,
+   1134.6,
+   1134.6
+  ],
+  [
+   "息屏亮屏.bright",
+   10,
+   0,
+   172.2,
+   25.0,
+   932.3,
+   932.3,
+   932.3
+  ],
+  [
+   "息屏亮屏.dark",
+   10,
+   0,
+   123.4,
+   2.5,
+   509.3,
+   509.3,
+   509.3
+  ]
+ ],
+ "raw": {
+  "息屏亮屏.bright": [
+   {
+    "query": "辛芷蕾凭借哪部影片获得了威尼斯影后",
+    "tv": "0",
+    "cost_ms": 47.510433942079544,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "中国香港票房最高的影片是哪部",
+    "tv": "0",
+    "cost_ms": 244.20936778187752,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "甄嬛传沈眉庄扮演者是谁",
+    "tv": "0",
+    "cost_ms": 2.480890601873398,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "根据张桂梅真实事迹改编的电视剧",
+    "tv": "0",
+    "cost_ms": 245.0270764529705,
+    "ok": true,
+    "hitSources": [
+     "llm_select"
+    ],
+    "primary": "llm_select",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "《甄嬛传》演员表",
+    "tv": "0",
+    "cost_ms": 2.5494396686553955,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "《再见爱人第五季》有哪些值得关注的短评？",
+    "tv": "0",
+    "cost_ms": 2.0523779094219208,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "《我是歌手》最新一期什么时候播？",
+    "tv": "0",
+    "cost_ms": 242.20483750104904,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "《漫长的季节》讲了什么？",
+    "tv": "0",
+    "cost_ms": 2.223961055278778,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "获得金鸡奖最佳女主角的是谁？",
+    "tv": "0",
+    "cost_ms": 1.8479488790035248,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "我要看高启强认干爹那个片段",
+    "tv": "0",
+    "cost_ms": 932.2687946259975,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "vod_search"
+    ],
+    "nSteps": 1,
+    "error": null
+   }
+  ],
+  "息屏亮屏.dark": [
+   {
+    "query": "辛芷蕾凭借哪部影片获得了威尼斯影后",
+    "tv": "6",
+    "cost_ms": 2.802729606628418,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "中国香港票房最高的影片是哪部",
+    "tv": "6",
+    "cost_ms": 223.75300154089928,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "甄嬛传沈眉庄扮演者是谁",
+    "tv": "6",
+    "cost_ms": 2.1250173449516296,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "根据张桂梅真实事迹改编的电视剧",
+    "tv": "6",
+    "cost_ms": 245.51457911729813,
+    "ok": true,
+    "hitSources": [
+     "llm_select"
+    ],
+    "primary": "llm_select",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "《甄嬛传》演员表",
+    "tv": "6",
+    "cost_ms": 1.9709505140781403,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "《再见爱人第五季》有哪些值得关注的短评？",
+    "tv": "6",
+    "cost_ms": 1.905437558889389,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "《我是歌手》最新一期什么时候播？",
+    "tv": "6",
+    "cost_ms": 243.37855353951454,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "《漫长的季节》讲了什么？",
+    "tv": "6",
+    "cost_ms": 1.9000917673110962,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "获得金鸡奖最佳女主角的是谁？",
+    "tv": "6",
+    "cost_ms": 1.799657940864563,
+    "ok": true,
+    "hitSources": [
+     "general_rule"
+    ],
+    "primary": "general_rule",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "我要看高启强认干爹那个片段",
+    "tv": "6",
+    "cost_ms": 509.2543363571167,
+    "ok": true,
+    "hitSources": [
+     "llm_select"
+    ],
+    "primary": "llm_select",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   }
+  ],
+  "多tab.bright": [
+   {
+    "query": "切换到音乐模式，然后我要看少儿免费的动画片大货车",
+    "tv": "0",
+    "cost_ms": 6.157882511615753,
+    "ok": true,
+    "hitSources": [
+     "fewshot_cache",
+     "badcase"
+    ],
+    "primary": "fewshot_cache",
+    "tools": [
+     "mode_control",
+     "educ_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "亮度减50，再俄罗斯拍的动画",
+    "tv": "0",
+    "cost_ms": 882.4275210499763,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_search_all",
+     "vod_search_all"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "云视听小电视最火的动漫，声音模式选择",
+    "tv": "0",
+    "cost_ms": 259.009413421154,
+    "ok": true,
+    "hitSources": [
+     "llm_select"
+    ],
+    "primary": "llm_select",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "顺序播放，播放免费动画片消防车",
+    "tv": "0",
+    "cost_ms": 948.034018278122,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_search",
+     "vod_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "放哆啦A梦动画片的主题曲，顺便调高音量",
+    "tv": "0",
+    "cost_ms": 4.3528638780117035,
+    "ok": true,
+    "hitSources": [
+     "fewshot_cache",
+     "fewshot_cache"
+    ],
+    "primary": "fewshot_cache",
+    "tools": [
+     "numeric_adjust",
+     "music_song_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "打开帝瓦雷低音管理系统，然后4~5岁逻辑思维启蒙动画",
+    "tv": "0",
+    "cost_ms": 1136.2660303711891,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_search",
+     "vod_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "对比度调到5，然后搜索宝宝学习自我认知的少儿绘本",
+    "tv": "0",
+    "cost_ms": 611.0865473747253,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "numeric_adjust",
+     "educ_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "海信小聚播放动画片，顺便静音设置",
+    "tv": "0",
+    "cost_ms": 784.4970673322678,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_search",
+     "vod_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "进入声音主题定制，再科普类动画片",
+    "tv": "0",
+    "cost_ms": 894.8734179139137,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_search",
+     "vod_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "图像设置，然后“我是佩奇黑，这是我的弟弟乔治”来自哪部动画",
+    "tv": "0",
+    "cost_ms": 698.5274143517017,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_fuzzy_search",
+     "vod_fuzzy_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   }
+  ],
+  "多tab.dark": [
+   {
+    "query": "切换到音乐模式，然后我要看少儿免费的动画片大货车",
+    "tv": "6",
+    "cost_ms": 2.6747360825538635,
+    "ok": true,
+    "hitSources": [
+     "fewshot_cache",
+     "badcase"
+    ],
+    "primary": "fewshot_cache",
+    "tools": [
+     "mode_control",
+     "educ_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "亮度减50，再俄罗斯拍的动画",
+    "tv": "6",
+    "cost_ms": 882.1054138243198,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_search_all",
+     "vod_search_all"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "云视听小电视最火的动漫，声音模式选择",
+    "tv": "6",
+    "cost_ms": 256.77309185266495,
+    "ok": true,
+    "hitSources": [
+     "llm_select"
+    ],
+    "primary": "llm_select",
+    "tools": [
+     "fan_knowledge_agent"
+    ],
+    "nSteps": 1,
+    "error": null
+   },
+   {
+    "query": "顺序播放，播放免费动画片消防车",
+    "tv": "6",
+    "cost_ms": 946.6814883053303,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_search",
+     "vod_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "放哆啦A梦动画片的主题曲，顺便调高音量",
+    "tv": "6",
+    "cost_ms": 2.768009901046753,
+    "ok": true,
+    "hitSources": [
+     "fewshot_cache",
+     "fewshot_cache"
+    ],
+    "primary": "fewshot_cache",
+    "tools": [
+     "numeric_adjust",
+     "music_song_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "打开帝瓦雷低音管理系统，然后4~5岁逻辑思维启蒙动画",
+    "tv": "6",
+    "cost_ms": 1134.6479766070843,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_search",
+     "vod_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "对比度调到5，然后搜索宝宝学习自我认知的少儿绘本",
+    "tv": "6",
+    "cost_ms": 601.4050915837288,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "numeric_adjust",
+     "educ_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "海信小聚播放动画片，顺便静音设置",
+    "tv": "6",
+    "cost_ms": 787.707757204771,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_search",
+     "vod_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "进入声音主题定制，再科普类动画片",
+    "tv": "6",
+    "cost_ms": 890.04847407341,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_search",
+     "vod_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   },
+   {
+    "query": "图像设置，然后“我是佩奇黑，这是我的弟弟乔治”来自哪部动画",
+    "tv": "6",
+    "cost_ms": 697.196789085865,
+    "ok": true,
+    "hitSources": [
+     "llm_onecall",
+     "llm_onecall"
+    ],
+    "primary": "llm_onecall",
+    "tools": [
+     "educ_fuzzy_search",
+     "vod_fuzzy_search"
+    ],
+    "nSteps": 2,
+    "error": null
+   }
+  ]
+ }
+}

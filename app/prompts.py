@@ -6,6 +6,8 @@
 """
 from __future__ import annotations
 
+from typing import Any
+
 # T0：一次 LLM 出整份计划（拆/改写/落域/选工具 全收敛为一次）。无历史时 T0 是唯一调用。
 T0_PLAN_PROMPT = """你是电视语音助手。把用户请求拆成【顶层 JSON 数组】计划，只输出数组，不要 ``` 解释。
 
@@ -88,8 +90,66 @@ MT_REWRITE_PROMPT = """你是电视语音助手。下面是同一设备近来的
 本轮用户请求：{cur_query}
 若意图本就自含，原样输出即可。"""
 
+# ===========================================================================
+# LLM 调用元数据（OpenAI-format 请求体 metadata 字段）
+# ===========================================================================
+# 统一 schema：所有调 LLM 的入口都用 build_llm_metadata() 构造，透传到网关侧
+# 做链路审计/计费标签。值全部为标量或扁平 dict，避免嵌套把网关 metadata 索引拖垮。
+def build_llm_metadata(
+    *,
+    purpose: str,
+    same_turn: bool,
+    op: str = "",
+    domain: str = "",
+    device_id: str = "",
+    trace_id: str = "",
+    step: int = 0,
+    n_steps: int = 0,
+    n_intents: int = 0,
+    has_history: bool = False,
+    has_short_memory: bool = False,
+    tv_mode: str | int = "0",
+    extra: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """构造一次 LLM 调用的业务 metadata。
+
+    - purpose: 本次调用的业务类型（plan/mt_rewrite/step_rewrite/content_domain）
+    - same_turn: 是否与当前请求【同一个交互轮次】内发起：
+        True  = 随本轮请求同步派生（T0/tool 解析等，属当前轮）
+        False = 由后续请求触发的续跑（T1 改写在新的 toolHistory 请求轮）或跨轮多轮改写
+    - split/rewrite/…: 明确当前调用在做什么（拆分/改写/…），便于按流程阶段过滤
+    - 其余为链路关联键：放 Query 到网关的 audit 标签。
+    返回 dict[str, str|int|bool]（扁平），与 OpenAI metadata 兼容。
+    """
+    md: dict[str, Any] = {
+        "app": "hcAgent",
+        "purpose": purpose,
+        "same_turn": str(bool(same_turn)).lower(),
+        "device": device_id,
+        "trace": trace_id,
+    }
+    if op:
+        md["op"] = op
+    if step:
+        md["step"] = str(step)
+        md["n_steps"] = str(n_steps) if n_steps else ""
+    if domain:
+        md["domain"] = domain
+    if n_intents:
+        md["n_intents"] = str(n_intents)
+    if has_history:
+        md["has_history"] = "1"
+    if has_short_memory:
+        md["has_short_memory"] = "1"
+    if str(tv_mode) != "0":
+        md["tv_mode"] = str(tv_mode)
+    if extra:
+        md.update({k: str(v) for k, v in extra.items()})
+    return md
+
+
 # 多意图拆分后，内容子句的域判定。规则 detect 对裸实体(队名/歌名/剧名/书名)常判空，
-# 需 LLM 从用户原话选出内容所属域之一。
+# 需 LLM 从用户原话选出内容所属业务域。
 CONTENT_DOMAIN_PROMPT = """你是电视语音助手。我们在同一句用户请求里并行派生了多条意图，其中一条是对【内容检索】。
 请判断这条内容要检索哪个业务域。只能从下面选一个英文域：
   vod        影视/电影/电视剧/纪录片/戏曲/话剧（看视频）

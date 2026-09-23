@@ -1,0 +1,64 @@
+{
+  "set": "train_2k.csv",
+  "total": 2000,
+  "err": 0,
+  "tool_acc": 87.2,
+  "param_acc": 73.45,
+  "joint_acc": 72.75,
+  "by_domain": {
+    "影视": {
+      "total": 231,
+      "tool_ok": 193,
+      "param_ok": 116,
+      "both_ok": 116,
+      "tool_acc": 83.55,
+      "param_acc": 50.22,
+      "joint_acc": 50.22
+    },
+    "少儿": {
+      "total": 179,
+      "tool_ok": 98,
+      "param_ok": 49,
+      "both_ok": 44,
+      "tool_acc": 54.75,
+      "param_acc": 27.37,
+      "joint_acc": 24.58
+    },
+    "有声": {
+      "total": 256,
+      "tool_ok": 211,
+      "param_ok": 159,
+      "both_ok": 159,
+      "tool_acc": 82.42,
+      "param_acc": 62.11,
+      "joint_acc": 62.11
+    },
+    "音乐": {
+      "total": 429,
+      "tool_ok": 392,
+      "param_ok": 391,
+      "both_ok": 385,
+      "tool_acc": 91.38,
+      "param_acc": 91.14,
+      "joint_acc": 89.74
+    },
+    "体育": {
+      "total": 415,
+      "tool_ok": 394,
+      "param_ok": 302,
+      "both_ok": 299,
+      "tool_acc": 94.94,
+      "param_acc": 72.77,
+      "joint_acc": 72.05
+    },
+    "教育": {
+      "total": 490,
+      "tool_ok": 456,
+      "param_ok": 452,
+      "both_ok": 452,
+      "tool_acc": 93.06,
+      "param_acc": 92.24,
+      "joint_acc": 92.24
+    }
+  }
+}

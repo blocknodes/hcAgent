@@ -1,4 +1,4 @@
 ﻿metric,ok,total,pct
-device_ok,196,200,98.00
-content_ok,187,200,93.50
-both_ok,183,200,91.50
+device_ok,184,200,92.00
+content_ok,164,200,82.00
+both_ok,153,200,76.50
