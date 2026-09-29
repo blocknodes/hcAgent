@@ -441,11 +441,17 @@ def _det_note_ctx(x, rule_id):
         _TRACE["rule"] = rule_id
 
 
-def detect_domain(query: str, llm_domain: str, tv_mode: str | int = "0") -> str:
+def detect_domain(query: str, llm_domain: str, tv_mode: str | int = "0",
+                  segment: dict | None = None) -> str:
     """后处理 LLM 判的 domain。真主链：detect 判定由 _DETECT_RULES(DetectRuleSet) 按 priority 驱动。
 
-    每个 return 分支都是一个带 id 的 Rule（badcase/息屏/各保护节点/高置信信号/LLM 兜底）。
-    DetectRuleSet.select() 是唯一判定入口 —— 审计工具打印的 id 即真正决定 domain 的规则。
+    segment：ASR 分词元数据（data.segment）。高权重标 tvPlay（点播视频）时，
+    对「X歌/儿的歌」这类含歌字但实为剧名/节目的弱 music 信号做**分词裁决**——
+    ASR 明确它是点播视频却因裸「歌」字误判 music，由分词证据改回 vod。
+    尽量在链尾做，不破坏已有高置信 music 判断（真点歌仍走 music）。
+
+    仅 return 分支是带 id 的 Rule（skill/息屏/各保护层/高置信信号/LLM 兜底）。
+    DetectRuleSet.select() 是唯一判定入口 —— 审计工具打印的 rule 即真正决定 domain 的规则。
     """
     q = (query or "").strip()
     if not q:
@@ -454,7 +460,53 @@ def detect_domain(query: str, llm_domain: str, tv_mode: str | int = "0") -> str:
     domain, rule = _DETECT_RULES.select(q, llm_domain, str(tv_mode))
     if rule is not None:
         _det_note_ctx(rule.id, rule.id if rule.id.startswith("signal_") else None)
+        # 分词裁决：仅当规则链被判 music 且 ASR 强标 tvPlay(点播视频) 时改判 vod。
+        # 尽量避免劫持高置信真歌名点歌：只见 ASR 标「点播视频」+ query 无真性歌曲动词集合。
+        if domain == "music" and _segment_vod_ruling(segment, q):
+            _det_note_ctx("segment_tvplay->vod", "segment_tvplay_vod")
+            return "vod"
     return domain if domain is not None else (llm_domain if llm_domain else "qa")
+
+
+def _segment_vod_ruling(segment: dict | None, q: str) -> bool:
+    """ASR 分词是否给出「点播视频」裁决：tvPlay attr 权重>=0.5 即裁决。
+
+    安全阀（避免误伤真 music 意图）：
+    - query 含强歌曲动词（点歌/唱歌/K歌/歌词/歌单/MV/主题曲…）→ 明确的 music 点歌，
+      即便 ASR 标 tvPlay 也不强改（可能 ASR 分割位错）。
+    - query 不含「歌」字 → 不可能是被「X歌」弱信号误判，无需裁决。
+    仅「含『X歌』弱触发 + 无强歌曲动词 + ASR 强标点播视频」才改判 vod。
+    """
+    if not segment or not isinstance(segment, dict):
+        return False
+    wl = segment.get("wordList") or []
+    if not wl:
+        return False
+    has_tv = False
+    for w in wl:
+        if not isinstance(w, dict):
+            continue
+        at = w.get("wordAttrs") or []
+        wts = w.get("attrWeights") or {}
+        for attr in at:
+            if attr != "tvPlay":
+                continue
+            wt = wts.get(attr) if isinstance(wts, dict) else None
+            try:
+                wt = float(wt) if wt is not None else 0.0
+            except (TypeError, ValueError):
+                wt = 0.0
+            if wt < 0.5:
+                continue
+            has_tv = True
+            break
+    if not has_tv:
+        return False
+    if not re.search(r"歌", q):
+        return False
+    if re.search(r"(点歌|唱歌|K歌|k歌|歌词|歌单|MV|mv|主题曲|要唱|想唱|歌曲|听.{0,4}歌|来.{0,3}首|唱.{0,4}歌)", q):
+        return False
+    return True
 
 
 # ---------------------------------------------------------------------------

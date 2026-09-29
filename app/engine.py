@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import re
 import threading
@@ -362,6 +363,8 @@ class Intent:
     depends: bool = False
     dep_on: int = 0        # 所依赖条的 1-start 计划序号（0=无依赖）
     src: str = ""          # 喂给 hcTools 做权威解析的原文（无小，默认=query）
+    include_tool_result: bool = False  # 将依赖步骤结果写入本步 current_media 参数
+    tool_result: str = ""       # 续跑时从 toolHistory 提取的上一步结果
 
 
 @dataclass
@@ -451,17 +454,35 @@ _QA_SINGLE_BLOCK = re.compile(
 
 
 def _is_single_obj_qa(query: str) -> bool:
-    """单目标属性/知识直答：不要拆「检索 + 提问」两步。
+    """单目标属性框架：是否拆「检索 + 提问」两步。
 
     命中条件：通用问答信号(_is_qa)已判为知识问答 + 整句不含任何「检索/排序/串行/播放」
-    动作词。含这些词的句（搜X…/评分最高的X/放X/我要看X…）仍走原编排（LLM 计划/串行/双tab）。
-    用例：『《小猪佩奇 第一季》的导演是谁』『战狼2的主演是谁』→ True；
-          『搜索评分最高的胡歌演的电影，导演是谁』→ False（含检索+排序，仍拆两步）。
+    动作词 + 非「媒资检索」描述。用于保证纯问句（X的导演/主演是谁…）不超过 LLM，
+    否则让 LLM 判域（会拆两步制造冗余检索）。
+    用例：『这部《小猪佩奇 第一季》的主演是谁』→ True；
+          『张艺谋主演的电视剧』→ False（媒资检索，交 LLM 判 vod_search 而非 qa）。
     """
     q = (query or "").strip()
     if not q or not detect._is_qa(q):
         return False
     if _QA_SINGLE_BLOCK.search(q):
+        return False
+    # 媒资检索排除：X主演的/执导的/参演的 + 影视载体(电影/电视剧/片/剧集…) —
+    # 这类是"检索某人演/导的剧"，不是属性提问，交 LLM 判 vod_search(actor/director 检索)。
+    # 刻意不用「主演」裸词——它既在知识问答(「主演是谁」)也在检索(「主演的电影」)。
+    if re.search(
+        r"(?:主演|参演|出演|饰演|导演|执导|担任)的.{0,4}"
+        r"(?:电影|电视剧|电视连续剧|连续剧|剧集|影片|影视片|片|片子|作品|剧|剧场版)", q):
+        return False
+    if re.search(r"此人主演|谁主演", q) and re.search(r"(电影|电视剧|片)", q):
+        return False
+    # 引文定位排除：引某句台词/某片段问「出自哪部电影/电视剧/出处」 → 媒资定位（vod_fuzzy），
+    # 交 detect 判 vod，不是开放属性问答。"我命由我不由天，是哪部电影里面的经典台词" 永远 vod。
+    # 只认「台词/片段/名场面/那句 + 出自哪部/哪个/出处 + 影视载体」的引文定位；
+    # 不碰「XX剧多少集/XX季有几集」这类纯知识量问答，也不拦儿童/动画台词（哪部动画片里的台词
+    # → 交 detect 判 children，符合域判原则）。
+    if re.search(r"(台词|片段|名场面|那句|那场戏|出哪部|出自哪|来自哪|哪个片段)", q) and (
+        re.search(r"(电影|电视剧|影视|影片|片子|剧|经典|出处|动画|片)", q)):
         return False
     return True
 
@@ -504,20 +525,22 @@ def _merge_sort_word_to_retrieval(plan: Plan) -> Plan:
     return Plan(intents=[new_first] + plan.intents[1:])
 
 
-def _with_source(plan: Plan, src: str, tv_mode: str | int = "0") -> Plan:
-    """给计划内每个意图拍上 src=原文 + detect 判域修正。
+def _with_source(plan: Plan, src: str, tv_mode: str | int = "0",
+                 segment: dict | None = None) -> Plan:
+    """给计划内每个意图标注 src=原文 + detect 判域修正。
 
     detect_domain 用每个意图【自含的 query】（非整句 src）在 LLM 判的 domain 上做确定性覆盖。
-    必须用it.query而非整句src：多意图计划里整句会把其他子任务的问句信号（"第二个导演是谁"）
-    串扰到本子任务判域，导致"搜索刘德华的电影"这类 vod 检索被 `_is_qa` 误改到 qa。
+    必须用 LLM 判的 domain 而非整句：多轮场景里整句会把其他子任务的信号（如"导演是谁"）
+    串扰到本子任务判域，导致"搜索《XXX》的电影"这类 LLM 判的 vod 检索被 `_is_qa` 误改到 qa。
     每个子意图按其自身内容独立判域，才与下游 hcTools(用 it.query) 一致、对齐 golden。
-    命中即改 domain；未命中保留 LLM 判定。domain 定了，tool+params 仍交给 hcTools。
+    命中：即改 domain；未命中保留 LLM 判定。domain 定了，tool+params 仍交给 hcTools。
+    segment：可选 ASR 分词元数据，透传给 detect_domain 做 tvPlay(点播视频) 裁决。
     """
     out: list[Intent] = []
     for it in plan.intents:
         # 用原子子意图 it.query 判域；query 空时回退整句 src。
         judge = (it.query or "").strip() or src
-        domain = detect.detect_domain(judge, it.domain, tv_mode=tv_mode)
+        domain = detect.detect_domain(judge, it.domain, tv_mode=tv_mode, segment=segment)
         out.append(Intent(query=it.query, domain=domain, tool=it.tool,
                           index=it.index, depends=it.depends, dep_on=it.dep_on, src=src))
     return Plan(intents=out)
@@ -571,6 +594,67 @@ def _clean_llm_text(text: str) -> str:
     elif len(t) >= 2 and t[0] in "「『" and t[-1] in "」』":
         t = t[1:-1]
     return t.strip()
+
+
+# ---------------------------------------------------------------------------
+# segment 分词摘要：把 ASR 侧给的 wordList(词+权值+词性)精简成一行提示，
+# 注入 T0 计划 prompt 作为 LLM 的辅助判断依据（不改变契约，仅在原文难处歧时参考）。
+# ---------------------------------------------------------------------------
+_SEG_ATTR_CN = {"tvPlay": "点播视频", "episode": "集数", "audio": "音频", "song": "歌曲"}
+
+# 分词 tag → 对工具/域选择的裁决语义（高权重时才发声，权重>=0.5）
+# 顺序即优先级：tvPlay 是最强信号（ASR 明确标点播视频），audio/歌曲次之。
+_SEG_RULES = [
+    # (attr, 裁决文本) —— 读法：查询原文里出现该词条且权重达标时，工具域应归向谁
+    ("tvPlay",  "【分词裁决】命中 点播视频，判定为影视剧播放/检索意图（tvPlay 域），不要按歌名/音频处理"),
+    ("episode", "【分词裁决】命中 集数，属于点播片集（可在 点播 之上叠加集数参数）"),
+    ("song",    "【分词裁决】命中 歌曲，属于歌曲/音乐意图（music 域）"),
+    ("audio",   "【分词裁决】命中 音频，属于音频内容意图"),
+]
+
+
+def _segment_hint(segment: dict[str, Any] | None) -> str:
+    """把 data.segment 里的分词信号压缩成 prompt 提示；无信号返回空串。
+
+    只取 wordList 里带 attrWeights 的项（权值>=0.5 才算有参考价值），
+    输出形如「分词参考: 一人随歌=点播视频(1)，35集=集数(1)」。
+    该行作为 LLM 的辅助判断依据，可与模型自身判断分歧。
+    """
+    if not segment or not isinstance(segment, dict):
+        return ""
+    wl = segment.get("wordList") or []
+    if not wl:
+        return ""
+    parts: list[str] = []
+    rulings: list[str] = []
+    for w in wl:
+        if not isinstance(w, dict):
+            continue
+        kw = w.get("keyWordString") or w.get("wordNormal") or w.get("wordStr") or ""
+        at = w.get("wordAttrs") or []
+        wts = w.get("attrWeights") or {}
+        if not kw:
+            continue
+        for attr in at:
+            wt = wts.get(attr) if isinstance(wts, dict) else None
+            try:
+                wt = float(wt) if wt is not None else 0.0
+            except (TypeError, ValueError):
+                wt = 0.0
+            if wt < 0.5:
+                continue
+            cn = _SEG_ATTR_CN.get(attr, attr)
+            parts.append(f"{kw}={cn}({wt:g})")
+            for a, ruling in _SEG_RULES:
+                if attr == a:
+                    rulings.append(ruling)
+                    break
+    if not parts:
+        return ""
+    out = "分词参考: " + "，".join(parts)
+    if rulings:
+        out += "。" + "。".join(rulings)
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -708,6 +792,75 @@ def _buckets_medias(raw: Any) -> list[dict]:
     return out
 
 
+_CN_ORDINALS = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5,
+                "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
+
+
+def _short_memory_candidate_id(short_memory: list[dict[str, Any]] | None,
+                               query: str) -> Any | None:
+    """按本轮序号从最近一轮 shortMemory 候选中取比赛 id。"""
+    match = re.search(r"第\s*(\d+|[一二三四五六七八九十])", query or "")
+    rank = 1
+    if match:
+        raw_rank = match.group(1)
+        rank = int(raw_rank) if raw_rank.isdigit() else _CN_ORDINALS.get(raw_rank, 1)
+    if rank < 1:
+        return None
+
+    # shortMemory 末尾可能是当前轮空 stub；倒序找最近一个真正带业务候选的轮次。
+    for ent in reversed(short_memory or []):
+        if not isinstance(ent, dict):
+            continue
+        biz = ent.get("businessData") or {}
+        if not isinstance(biz, dict):
+            continue
+        candidates: list[dict[str, Any]] = []
+        for svc in biz.get("serviceData") or []:
+            if not isinstance(svc, dict):
+                continue
+            data = svc.get("data")
+            if isinstance(data, list):
+                candidates.extend(item for item in data if isinstance(item, dict))
+            elif isinstance(data, dict):
+                candidates.append(data)
+        if not candidates:
+            continue
+        if rank > len(candidates):
+            return None
+        candidate_id = candidates[rank - 1].get("id")
+        if candidate_id in (None, ""):
+            return None
+        if isinstance(candidate_id, str) and candidate_id.isdigit():
+            return int(candidate_id)
+        return candidate_id
+    return None
+
+
+def _bind_sports_short_memory_match_id(steps: list[dict[str, Any]],
+                                       short_memory: list[dict[str, Any]] | None,
+                                       query: str) -> None:
+    """给赛事阵容工具补上 shortMemory 候选 id，输出参数名为 matchId。"""
+    for step in steps:
+        if step.get("toolName") != "sports_match_lineup_search":
+            continue
+        params = step.get("parameters")
+        if not isinstance(params, dict):
+            params = {}
+            step["parameters"] = params
+        # 兼容上游可能给出的旧 id，但对阵容工具统一输出 matchId。
+        legacy_id = params.pop("id", None)
+        if params.get("matchId") not in (None, ""):
+            continue
+        candidate_id = legacy_id
+        if candidate_id in (None, ""):
+            candidate_id = _short_memory_candidate_id(
+                short_memory, str(step.get("retext") or query or "")
+            )
+        if candidate_id not in (None, ""):
+            params["matchId"] = candidate_id
+            logger.info("sports lineup 绑定 shortMemory 比赛 matchId=%r", candidate_id)
+
+
 def _first_text(raw: Any, keys: tuple[str, ...]) -> str:
     if not isinstance(raw, dict):
         return ""
@@ -753,6 +906,9 @@ def _tool_result_text(history: list[dict[str, Any]] | None) -> str:
                 text = raw.strip()
             if text:
                 return text.strip()
+            # 3) 其他结构化工具结果（如赛事预测）保留为 JSON，供依赖步骤直接消费。
+            if isinstance(raw, (dict, list)) and raw:
+                return json.dumps(raw, ensure_ascii=False, separators=(",", ":"))[:4000]
         # 该 item 无内容，回溯到更早 item
     return ""
 
@@ -771,19 +927,22 @@ class TraceStateMachine:
 
     async def tick(self, trace_id: str, query: str, history: list[dict[str, Any]] | None,
                    tv_mode: str | int = "0", device_id: str = "",
-                   trace_id_real: str = "") -> tuple[list[Intent], bool]:
+                   trace_id_real: str = "",
+                   segment: dict[str, Any] | None = None) -> tuple[list[Intent], bool]:
         """trace_id=状态 key(device_id)；trace_id_real=请求真实 traceId(审计用)。"""
         entry = self._load(trace_id)
         if entry is None:
             return await self._first(trace_id, query, history, tv_mode=tv_mode,
-                                     device_id=device_id, trace_id_real=trace_id_real)
+                                     device_id=device_id, trace_id_real=trace_id_real,
+                                     segment=segment)
         return await self._continue(trace_id, history, device_id=device_id,
                                     tv_mode=tv_mode, trace_id_real=trace_id_real)
 
-    # ---- 首轮：T0（一次 LLM）----
     async def _first(self, trace_id: str, query: str, history,
                      tv_mode: str | int = "0", device_id: str = "",
-                     trace_id_real: str = "") -> tuple[list[Intent], bool]:
+                     trace_id_real: str = "",
+                     segment: dict[str, Any] | None = None) -> tuple[list[Intent], bool]:
+        self._segment = segment  # 供 _plan 读取分词参考
         # 单目标属性/知识直答：纯问句（X的导演/主演/简介…是谁，无检索/排序/串行/播放动作）
         # → 直接一条 qa（fan_knowledge_agent），不让 LLM 拆「检索 + 提问」两步。
         # 必须放在 multi_tab/serial 之前：『动画片导演是谁』不能因含 动画 触发双 tab。
@@ -830,7 +989,8 @@ class TraceStateMachine:
             ])
             if config.rule_on("plan.sort_merge"):
                 ser_plan = _merge_sort_word_to_retrieval(ser_plan)
-            ser_plan = _with_source(ser_plan, query, tv_mode=tv_mode)
+            ser_plan = _with_source(ser_plan, query, tv_mode=tv_mode,
+                                    segment=getattr(self, "_segment", None))
             # 首批发依赖序号靠前的可用步(step1 检索)；step2 提问依赖 step1，留待续跑。
             batch = next_batch(ser_plan, set())
             if not batch:
@@ -849,7 +1009,8 @@ class TraceStateMachine:
             return [Intent(query=query, domain=tm_dom, tool="execute", index=1, src=query)], True
         # 纯 LLM(T0) 分解：拆步、依赖、落库、选工均一次 LLM 决策，编排层零规则。
         plan = await self._plan(query, trace_id=trace_id_real, device_id=device_id,
-                                tv_mode=tv_mode, has_history=bool(history))
+                                tv_mode=tv_mode, has_history=bool(history),
+                                segment=getattr(self, "_segment", None))
         # 串行"检索+排序提问"排序词回填。开关见 config.RULE_SWITCHES（plan.sort_merge）。
         if config.rule_on("plan.sort_merge"):
             plan = _merge_sort_word_to_retrieval(plan)
@@ -857,11 +1018,13 @@ class TraceStateMachine:
             # LLM 没出方案（空/纯聊天/失败）→ 兜底：单一自包含意图（非语言规则），
             # 但仍过 detect 判域，息屏(tv_mode=6)知识/点歌/有声查询可被纠正到对应域；
             # 亮屏默认不干预（llm_domain="" 保留空，交由外部）。
-            dom = detect.detect_domain(query, "", tv_mode=tv_mode)
+            dom = detect.detect_domain(query, "", tv_mode=tv_mode,
+                                    segment=getattr(self, "_segment", None))
             if not dom:
                 dom = ""
             return [Intent(query=query, domain=dom, tool="execute", index=1, src=query)], True
-        plan = _with_source(plan, query, tv_mode=tv_mode)
+        plan = _with_source(plan, query, tv_mode=tv_mode,
+                            segment=getattr(self, "_segment", None))
         # 首轮【单意图】计划：T0 常给原子 query 加动作/语序前缀(如“老版上海滩”→“播放老版上海滩”),
         # 这类改写会误导 hcTools 判 action(search↔play)。对原子单意图强制恢复为原句(query)，
         # 让 hcTools 以用户原话解析(工具选型以原文为准)。多意图/多步(内部依赖改写)不受影响。
@@ -871,7 +1034,8 @@ class TraceStateMachine:
             # _with_source 是在前缀句上判的域。原句才是用户真实意图，也让域 badcase/
             # 信号词表（按原句归一）准确命中（如“最近开播、女主演技好的古装剧”→vod，
             # “搜索最近开播、古装剧”前缀不加域 badcase 反而判 qa）。
-            restored = detect.detect_domain(query, only.domain, tv_mode=tv_mode)
+            restored = detect.detect_domain(query, only.domain, tv_mode=tv_mode,
+                                            segment=getattr(self, "_segment", None))
             plan = Plan(intents=[Intent(query=query, domain=restored or only.domain, tool=only.tool,
                                         index=only.index, depends=only.depends, dep_on=only.dep_on,
                                         src=only.src)])
@@ -913,10 +1077,16 @@ class TraceStateMachine:
 
     async def _plan(self, query: str, trace_id: str = "", device_id: str = "",
                     tv_mode: str | int = "0", has_history: bool = False,
-                    has_short_memory: bool = False) -> Plan:
+                    has_short_memory: bool = False,
+                    segment: dict[str, Any] | None = None) -> Plan:
+        hint = _segment_hint(segment)
+        user = f"用户请求：{query}"
+        if hint:
+            # 分词信号仅供歧义消解参考（如 裸集数35集/歌名），不替代用户原文。
+            user += f"\n【{hint}】"
         message = await llm.chat(
             [{"role": "system", "content": T0_PLAN_PROMPT},
-             {"role": "user", "content": f"用户请求：{query}"}],
+             {"role": "user", "content": user}],
             model=config.MODEL,
             metadata=build_llm_metadata(
                 purpose="plan", same_turn=True, op="split",
@@ -959,7 +1129,9 @@ class TraceStateMachine:
             else:
                 q = it.query
             return Intent(query=q, domain=it.domain, tool=it.tool,
-                          index=it.index, depends=it.depends, dep_on=it.dep_on, src=it.src)
+                          index=it.index, depends=it.depends, dep_on=it.dep_on, src=it.src,
+                          include_tool_result=it.include_tool_result,
+                          tool_result=tool_result if it.include_tool_result else "")
 
         resolved = list(await asyncio.gather(*[resolve(it) for it in batch]))
         cursor = max((i.index for i in resolved), default=0)
@@ -1076,9 +1248,16 @@ async def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
                 params = {**params, "retext": it.src or params["retext"]}
         if params is None:
             params = {"query": it.src if single else (it.query or it.src or "")}
+        tool_name = tool or it.tool or "execute"
+        if it.tool == "fan_knowledge_agent":
+            tool_name = "fan_knowledge_agent"
+        if it.include_tool_result and it.tool_result:
+            # 串行预测第二步：messages 仍由 qa schema 正常生成，s1 返回字符串单独透传。
+            params = dict(params) if isinstance(params, dict) else {}
+            params["current_media"] = it.tool_result
         step: dict[str, Any] = {
             "id": f"s{it.index}",
-            "toolName": tool or it.tool or "execute",
+            "toolName": tool_name,
             "parameters": params,
             "plan": None,
             "dependsOn": [f"s{it.dep_on}"] if it.depends else [],
@@ -1094,6 +1273,25 @@ async def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
 
 
 _SM = TraceStateMachine()
+
+
+def _arm_forecast_serial_plan(state_key: str, batch: list[Intent],
+                              steps: list[dict[str, Any]], query: str) -> bool:
+    """首步命中赛事预测后，保存依赖计划；本轮仅返回 s1，下一 tick 执行泛知识 s2。"""
+    if (not state_key or not batch or not steps
+            or steps[0].get("toolName") != "sports_match_forecast"):
+        return False
+    first = batch[0]
+    plan = Plan(intents=[
+        Intent(query=first.query, domain=first.domain, tool="sports_match_forecast",
+               index=1, depends=False, dep_on=0, src=query),
+        Intent(query=query, domain="qa", tool="fan_knowledge_agent",
+               index=2, depends=True, dep_on=1, src=query,
+               include_tool_result=True),
+    ])
+    _SM._store(state_key, plan)
+    logger.info("sports forecast 已挂起串行泛知识步骤: s1 -> s2")
+    return True
 
 
 async def build_response(req) -> dict[str, Any]:
@@ -1125,7 +1323,8 @@ async def build_response(req) -> dict[str, Any]:
     # 串行续跑状态按 device_id 存（换 request 用 device_id 识别会话），而非 trace_id——
     # 串行 N 步 = N 个 SSE 请求 = N 个不同 trace_id，只有 device 稳定才能跨轮推进依赖链。
     batch, stop = await _SM.tick(device_id, mt_query, history, tv_mode=tv_mode,
-                                 device_id=device_id, trace_id_real=trace_id)
+                                 device_id=device_id, trace_id_real=trace_id,
+                                 segment=req.data.segment)
     # 多轮继承：本轮某个意图 detect 判空(无域信号)时，沿用上一轮落定的稳定域，
     # 避免"律动感强的""适合零基础的"这类漂移到无关域。
     _inherit_mt_domain(device_id, batch)
@@ -1140,6 +1339,13 @@ async def build_response(req) -> dict[str, Any]:
         {i.domain for i in batch} == {"children", "vod"}
     )
     steps = await _build_steps(batch)
+    # 胜负预测走真正的串行续跑：首轮只发 s1 并 stop=false；runtime 回传
+    # toolHistory 后，状态机才发依赖 s1 的 fan_knowledge_agent(s2)。
+    if not history and _arm_forecast_serial_plan(device_id, batch, steps, query):
+        stop = False
+    # 阵容查询依赖赛事检索结果：将“第一场/第二场”对应 shortMemory 候选的 id
+    # 以 matchId 绑定到工具参数，runtime 才能查询具体比赛，而不是只拿到空参数。
+    _bind_sports_short_memory_match_id(steps, short_memory, query)
     # 本轮 answer 摘要：取各 step 的 retext，供下一轮多轮改写引用具体内容/序号。
     turn_answer = "；".join(s.get("retext") or "" for s in steps if s.get("retext"))
     # 本轮落定域：优先取 batch 里第一个非空域(多意图单域为主)，用于下轮弱句继承。
@@ -1155,6 +1361,7 @@ async def build_response(req) -> dict[str, Any]:
             "steps": steps,
         },
         "stop": stop,
+        "forceStop": stop,  # 强制停止：当前与 stop 保持一致
     }
     if is_dual_tab:
         body["data"]["parallel"] = True
@@ -1170,7 +1377,8 @@ async def build_response(req) -> dict[str, Any]:
 
 
 def _error(message: str) -> dict:
-    return {"code": 400, "message": message, "data": {"steps": []}, "stop": True}
+    return {"code": 400, "message": message, "data": {"steps": []},
+            "stop": True, "forceStop": True}
 
 
 def reset() -> None:

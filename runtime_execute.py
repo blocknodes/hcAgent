@@ -10,7 +10,7 @@
 
 用法:
   python3 tools/runtime_execute.py "刘德华的电影"
-  python3 tools/runtime_execute.py --device-id 您的device "帮我查下无间道的导演是谁,然后再搜下他的片子"
+  python3 tools/runtime_execute.py --device-id 1234 "帮我查下无间道的导演是谁,然后再搜下他的片子"
   python3 runtime_execute.py --device-id 6 "最近有啥好看的电影" "第三部导演是谁？他导过哪些电影" ...
   python3 tools/runtime_execute.py --json "query"
 """
@@ -24,36 +24,133 @@ import urllib.request
 from typing import Any
 
 RUNTIME_URL = "http://10.18.210.7:31392/api/runtime/execute"
-DEFAULT_FEATURE_CODE = "861003009000014000000712"
-DEFAULT_DEVICE_ID = "86100300900001400000071212345678"
+DEFAULT_FEATURE_CODE = "861003009000056000000505"
+DEFAULT_DEVICE_ID = 9900111205682291335156314657157449362655530101519471739595839462
 SSE_TIMEOUT = 90  # 单次 SSE 连接超时(秒)
 
+# 真实电视终端请求上下文。retext / device / feature / tvMode / debug 等运行参数
+# 在 _run_runtime 中随后覆盖，确保 CLI 显式参数始终优先。
+TERMINAL_CONTEXT: dict[str, Any] = {
+    "clientsid": "74D082860B85,1789608633788",
+    "coreversion": "217890050",
+    "tvdemover": "482000111",
+    "vidaaidever": "2026020012",
+    "calendarver": "618000061",
+    "deviceid": 9900111205682291335156314657157449362655530101519471739595839462,
+    "tvtype": "UXS",
+    "productname": "116UXS",
+    "tvfeaturecode": "861003009000056000000505",
+    "tvsystemversion": "07.02.70.202604240920;6.6",
+    "rekey": "528cb8b668b5f7005a19cfbd2a664cb9",
+    "terminaltype": "vidaa4tv",
+    "excard": "1",
+    "requestversion": "7.8.9",
+    "crequestversion": "7.8.9",
+    "vrequestversion": "7.8.8",
+    "viewversion": "lui.7.8.8.35",
+    "storeversioncode": "-1",
+    "tutorialver": "2129030080",
+    "moonmodever": "21.29.03.008.0",
+    "jubaover": "-1",
+    "snnumber": "00000000000000000000000",
+    "audioversion": "3rd.audio.690",
+    "micarrayfac": "aispeecharray",
+    "micarrayver": "96550385",
+    "token": "19ovMOAF4JKtNyDzPpcp-CJRE_CM7Qb37VOAizDpbCFxxpIjAQZDhut_CP2BSQQubbslFNd_b75F_vTEMgal4URBtc_trcw71VMKsogU2LIvIyf0G6NurBE0vqzsK8GfdHJ6Q1GSFNhCLhkvDJYfrppl7kWN5Hcg6cH2n4ctK63BLCz1ZAA4BKzsVEwrTboqJ1SedbscH4",
+    "tokencreatetime": "1789608627",
+    "tokenexpiretime": "259200",
+    "tokensubscribeid": "1550256658",
+    "customerid": "1517197036",
+    "vodversion": "2026.8.4.09.10380000.0",
+    "hisappversion": "@01.102.805",
+    "license": "1015",
+    "frontscene": "com.kurt.demo",
+    "frontactivity": "activity.MainActivity",
+    "switchstatus": "0",
+    "tvarea": "北京 北京",
+    "serialnumber": "1",
+    "tvversion": "MT9655_Fri_Apr_24_09:21:13_CST_2026",
+    "ismenuon": "0",
+    "vodability": "{\"juuiAbility\":{\"aihome\":\"1\",\"edu\":\"1\",\"edubox\":\"0\",\"hichangSupportType\":\"1\",\"hising\":\"1\",\"kids\":\"1\",\"kidsSubMode\":\"0\",\"ksongbasequanmin\":\"1\",\"musicSupportPlayHistoryCollect\":\"1\",\"supportSearchCollection\":\"1\",\"terse\":\"1\",\"widgetpro\":\"0\"},\"juuiDevice\":{\"deviceLevel\":\"Social\"},\"juuiStatus\":{\"areaCode\":\"000000000000\",\"hiSingPlayState\":\"0\",\"ispCode\":\"0\",\"kugoupid\":\"200081\",\"regionCode\":\"000000000000\",\"runDesk\":\"standard\",\"runMode\":\"standard\",\"runSubMode\":\"undefined\",\"sceneCode\":\"\",\"sceneCodeValue\":\"\",\"speechControl\":\"0\",\"vipRight\":\"[{\\\"rightProduct\\\":\\\"vod\\\",\\\"rightValue\\\":\\\"2\\\"},{\\\"rightProduct\\\":\\\"edu\\\",\\\"rightValue\\\":\\\"2\\\"},{\\\"rightProduct\\\":\\\"educ\\\",\\\"rightValue\\\":\\\"2\\\"}]\",\"audiobookPlayState\":\"\"}}",
+    "wpability": "{\"aiviewVersion\":\"7.8.8\",\"isJUAi\":\"0\",\"luiMode\":\"0\",\"screenOffMode\":\"1.1.1\"}",
+    "mcability": "{\"connected\":false}",
+    "isextconn": "0",
+    "tvmode": "0",
+    "speakermodever": "2.1",
+    "tvpicver": "702010030",
+    "mediaver": "703040320",
+    "wakeupword": "0",
+    "prodability": "{\"productType\":\"0\",\"nguser\":\"1\",\"aidebug\":\"1.0\",\"aiotapp\":\"304032000\",\"tvbrand\":\"Hisense\",\"social\":\"1.1\",\"uses2s\":\"0\",\"continuedspeech\":\"1.0\",\"iflytektts\":\"1.0\",\"tvcalendar\":\"1.0\",\"aodsupport\":\"true\",\"vpAudio\":\"1\",\"voicestartup\":\"1\",\"tvcontrolvers\":\"1,1,1,1,1,1\",\"aispeechasr\":\"1.0\",\"aispeechtts\":\"1.0\",\"iflytekvprint\":\"1.0\",\"commandwakeup\":\"1.0\",\"customwakeup\":\"1.0\",\"hisensetts\":\"2.0\",\"updateAppPage\":\"1\",\"farfieldswitch\":\"1\",\"voicestartupswitch\":\"0\"}",
+    "speechchild": "0",
+    "realbdswitch": "0",
+    "electronictutorialability": "1",
+    "mac": "74D082860B85",
+    "avatartheme": "common",
+    "systemstate": "{\"devpicmode\":\"23\",\"livetvstrategy\":\"1\",\"devsource\":\"2562\"}",
+    "paireddevices": "[{\"name\":\"X8 Pro\",\"type\":7}]",
+    "marketmode": "0",
+    "mictype": "wechat",
+    "position": "36.196773,120.517897",
+    "posinfo": "山东省,青岛市,崂山区",
+    "juappversionswitch": "0",
+    "fdswitch": "0",
+    "fdstatus": "0",
+    "voiceid": "mandarin,null,,null",
+    "vocalprint": "-1,-1",
+    "speechviewscene": "-1",
+    "mediainfo": "",
+    "personinfo": "",
+    "clientinfo": "",
+    "servicecode": "",
+    "modelType": "v3",
+    "enableSearch": "0"
+}
 
-def random_device_id() -> str:
-    """生成随机的 deviceId(每条请求独立, 避免 sessions/多样性复用)。"""
-    return secrets.token_hex(8)  # 16 位十六进制随机串
+
+def device_id_with_suffix(suffix: str) -> int:
+    """用指定数字替换默认 deviceId 的末尾数字，并保持总长度不变。"""
+    base = str(DEFAULT_DEVICE_ID)
+    if not suffix or not suffix.isdigit():
+        raise ValueError("device id 尾号必须是纯数字")
+    if len(suffix) > len(base):
+        raise ValueError(f"device id 尾号最多 {len(base)} 位")
+    return int(base[:-len(suffix)] + suffix)
+
+
+def random_device_id() -> int:
+    """随机替换默认 deviceId 的最后 4 位，并保持总长度不变。"""
+    suffix = f"{secrets.randbelow(10_000):04d}"
+    return device_id_with_suffix(suffix)
 
 
 def _sse(url: str, payload: dict[str, Any]) -> list[dict[str, Any]]:
+    """发送请求并逐行消费 SSE，在 runtime 终止帧到达后立即返回。"""
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     request = urllib.request.Request(
         url, data=body, method="POST",
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Accept": "text/event-stream",
+            "Content-Type": "application/json",
+        },
     )
-    with urllib.request.urlopen(request, timeout=SSE_TIMEOUT) as response:
-        raw = response.read().decode("utf-8")
     frames: list[dict[str, Any]] = []
-    for line in raw.splitlines():
-        line = line.strip()
-        if not line.startswith("data:"):
-            continue
-        text = line[len("data:"):].strip()
-        if not text:
-            continue
-        try:
-            frames.append(json.loads(text))
-        except json.JSONDecodeError:
-            continue
+    with urllib.request.urlopen(request, timeout=SSE_TIMEOUT) as response:
+        for raw_line in response:
+            line = raw_line.decode("utf-8", errors="replace").strip()
+            if not line.startswith("data:"):
+                continue
+            text = line[len("data:"):].strip()
+            if not text or text == "[DONE]":
+                continue
+            try:
+                frame = json.loads(text)
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(frame, dict):
+                continue
+            frames.append(frame)
+            if (frame.get("header") or {}).get("status") == 2:
+                break
     return frames
 
 
@@ -180,42 +277,67 @@ def _memory_data_of(tool_frame: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _search_result_of(tool_frame: dict[str, Any]) -> list[dict[str, Any]]:
-    """从模糊搜索帧的 data.content.searchResultList 提取候选媒资(基础字段)。"""
+    """从模糊搜索业务结果提取候选媒资(基础字段)。
+
+    真机返回结构(TOOL 帧, application.data):
+      data.content.searchResultList[].data[]      # 内容桶(通常嵌套在含 total/ranking 的桶结构里)
+    少数帧没有外层桶, 只有:
+      data.content.searchResultList[] = 直接媒资对象 或 {data: 单对象}
+    两者都吃, data 可能为单 dict(非 list)。
+    """
     app = (tool_frame.get("application_data") or {})
     d = app.get("data") or {} if isinstance(app, dict) else {}
     if not isinstance(d, dict):
         return []
-    content = d.get("content")
-    if not isinstance(content, dict):
-        return []
-    rows: list[dict[str, Any]] = []
-    for bucket in content.get("searchResultList") or []:
-        if not isinstance(bucket, dict):
+    # data 下可能再嵌一层 data(真机 content/loginfo/total 都在这层)
+    for level in (d, d.get("data") if isinstance(d.get("data"), dict) else None):
+        if not isinstance(level, dict):
             continue
-        for item in bucket.get("data") or []:
-            if isinstance(item, dict):
-                rows.append(item)
-    return rows
+        content = level.get("content")
+        if not isinstance(content, dict):
+            continue
+        rows: list[dict[str, Any]] = []
+        for bucket in content.get("searchResultList") or []:
+            if not isinstance(bucket, dict):
+                continue
+            bd = bucket.get("data")
+            if isinstance(bd, dict):
+                rows.append(bd)
+            elif isinstance(bd, list):
+                rows.extend(x for x in bd if isinstance(x, dict))
+            elif any(k in bucket for k in ("mediaTitle", "mediaId", "title")):
+                rows.append(bucket)
+        if rows:
+            return rows
+    return []
 
 
-def _run_runtime(retext: str, *, feature_code: str, device_id: str,
+def _run_runtime(retext: str, *, feature_code: str, device_id: int,
                  client_sid: str | None, tv_mode: str = "0",
                  debug: bool = True,
-                 slow_agent_url: str | None = None) -> dict[str, Any]:
+                 slow_agent_url: str | None = None,
+                 print_sse_params: bool = False) -> dict[str, Any]:
     """直连远端 runtime，聚合 TOOL 帧(含 llmSemantic 工具名/意图 + memoryContent 参数)。"""
-    payload: dict[str, Any] = {
-        "feature_code": feature_code,
-        "device_id": device_id,
+    # 从真实电视终端上下文起步，仅覆盖终端协议中的原始字段。
+    # 保持默认 payload 与真机请求一致，避免同时发送 snake_case 别名导致歧义。
+    payload: dict[str, Any] = dict(TERMINAL_CONTEXT)
+    payload.update({
+        "tvfeaturecode": feature_code,
+        "deviceid": device_id,
         "retext": retext,
-        "tv_mode": tv_mode,
-        "enable_slow": True,
-    }
+        "tvmode": tv_mode,
+        "enable_slow": "true",
+        "debug": bool(debug),
+    })
     if client_sid:
-        payload["client_sid"] = client_sid
-    if debug:
-        payload["debug"] = True
+        payload["clientsid"] = client_sid
     if slow_agent_url:
         payload["slow_agent_url"] = slow_agent_url
+
+    if print_sse_params:
+        print(f"[debug] SSE URL: {RUNTIME_URL}", file=sys.stderr)
+        print("[debug] SSE payload:", file=sys.stderr)
+        print(json.dumps(payload, ensure_ascii=False, indent=2), file=sys.stderr)
 
     frames = _sse(RUNTIME_URL, payload)
     tools: list[dict[str, Any]] = []
@@ -330,20 +452,17 @@ def _show_result(result: dict[str, Any]) -> None:
         if not t.get("candidates") and step_answers.get(ti[0] - 1):
             print(f"           answer: {step_answers[ti[0] - 1]}")
 
-    if not plans:
+    plan_steps = _plan_steps_dedup(plans)
+    if not plan_steps:
         for i, t in enumerate(tools, 1):
             ti[0] = i
             dump_step(f"tool {i}", t)
     else:
-        for pi, d in enumerate(plans, 1):
-            steps = d.get("steps") or []
-            print(f"  plan {pi}: {len(steps)} steps")
-            for s in steps:
-                if not isinstance(s, dict) or not s.get("toolName"):
-                    continue
-                ti[0] += 1
-                t = tools[ti[0] - 1] if ti[0] - 1 < len(tools) else {"tool": s.get("toolName"), "retext": s.get("retext"), "params": s.get("parameters") or {}}
-                dump_step(f"step {ti[0]}", t)
+        print(f"  plan: {len(plan_steps)} steps")
+        for s in plan_steps:
+            ti[0] += 1
+            t = tools[ti[0] - 1] if ti[0] - 1 < len(tools) else s
+            dump_step(f"step {ti[0]}", t)
 
 
 def main() -> int:
@@ -351,16 +470,19 @@ def main() -> int:
     parser.add_argument("retext", nargs="+", default=None,
                         help="用户请求(可多个；同一 device_id 依序发送，多轮/串行会话延续)")
     parser.add_argument("--feature-code", default=DEFAULT_FEATURE_CODE)
-    parser.add_argument("--device-id", default=DEFAULT_DEVICE_ID,
-                        help="固定 deviceId(多轮会话复用)")
-    parser.add_argument("--device-random", action="store_true",
-                        help="每次调用生成随机 device id, 等价于 --device-id random")
+    device_group = parser.add_mutually_exclusive_group()
+    device_group.add_argument("--device-id", default=None, metavar="SUFFIX",
+                              help="用指定数字替换默认 deviceId 的末尾几位")
+    device_group.add_argument("--device-random", action="store_true",
+                              help="随机替换默认 deviceId 的最后 4 位")
     parser.add_argument("--client-sid", default=None)
     parser.add_argument("--tv-mode", default="0")
     parser.add_argument("--expect-steps", dest="expect_steps", type=int, default=None,
                         help="期望工具步数(最后一轮), 不满足则退出码非0(回归断言)")
     parser.add_argument("--no-debug", dest="debug", action="store_false",
                         help="关闭 debug:true(默认开, 用于从 DEBUG 帧拿到数据集命名的真工具名)")
+    parser.add_argument("--debug", dest="print_sse_params", action="store_true",
+                        help="调用 SSE 前将最终请求 URL 和 payload 打印到标准错误")
     parser.add_argument("--slow-agent-url", default=None,
                         help="透传给远端 runtime 的 slow_agent 回调地址(如 http://localhost:6006)；"
                              "默认不传其在 payload 中缺失")
@@ -375,12 +497,17 @@ def main() -> int:
         return 2
     if args.device_random:
         device_id = random_device_id()
+    elif args.device_id is not None:
+        try:
+            device_id = device_id_with_suffix(args.device_id)
+        except ValueError as exc:
+            parser.error(str(exc))
     else:
-        device_id = args.device_id
+        device_id = DEFAULT_DEVICE_ID
 
     results: list[dict[str, Any]] = []
     for i, retext in enumerate(retexts, 1):
-        if len(retexts) > 1:
+        if len(retexts) > 1 and not args.as_json:
             sep = "=" * 24
             print(f"\n{sep} 第 {i}/{len(retexts)} 轮: {retext} {sep}")
         r = _run_runtime(
@@ -391,17 +518,21 @@ def main() -> int:
             tv_mode=args.tv_mode,
             debug=args.debug,
             slow_agent_url=args.slow_agent_url,
+            print_sse_params=args.print_sse_params,
         )
         results.append(r)
-        if args.as_json:
-            print(json.dumps(r, ensure_ascii=False, indent=2))
-        else:
+        if not args.as_json:
             _show_result(r)
 
+    if args.as_json:
+        output: dict[str, Any] | list[dict[str, Any]]
+        output = results[0] if len(results) == 1 else results
+        print(json.dumps(output, ensure_ascii=False, indent=2))
+
     if args.expect_steps is not None:
-        total = sum(len(r["tools"]) for r in results)
-        if total != args.expect_steps:
-            print(f"\nFAIL: expected {args.expect_steps} tool frames (累计), got {total}",
+        actual = len(results[-1]["tools"])
+        if actual != args.expect_steps:
+            print(f"\nFAIL: expected {args.expect_steps} tool frames (最后一轮), got {actual}",
                   file=sys.stderr)
             return 1
     return 0

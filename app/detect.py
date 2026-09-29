@@ -441,11 +441,17 @@ def _det_note_ctx(x, rule_id):
         _TRACE["rule"] = rule_id
 
 
-def detect_domain(query: str, llm_domain: str, tv_mode: str | int = "0") -> str:
+def detect_domain(query: str, llm_domain: str, tv_mode: str | int = "0",
+                  segment: dict | None = None) -> str:
     """后处理 LLM 判的 domain。真主链：detect 判定由 _DETECT_RULES(DetectRuleSet) 按 priority 驱动。
 
-    每个 return 分支都是一个带 id 的 Rule（badcase/息屏/各保护节点/高置信信号/LLM 兜底）。
-    DetectRuleSet.select() 是唯一判定入口 —— 审计工具打印的 id 即真正决定 domain 的规则。
+    segment：ASR 分词元数据（data.segment）。高权重标 tvPlay（点播视频）时，
+    对「X歌/儿的歌」这类含歌字但实为剧名/节目的弱 music 信号做**分词裁决**——
+    ASR 明确它是点播视频却因裸「歌」字误判 music，由分词证据改回 vod。
+    尽量在链尾做，不破坏已有高置信 music 判断（真点歌仍走 music）。
+
+    仅 return 分支是带 id 的 Rule（skill/息屏/各保护层/高置信信号/LLM 兜底）。
+    DetectRuleSet.select() 是唯一判定入口 —— 审计工具打印的 rule 即真正决定 domain 的规则。
     """
     q = (query or "").strip()
     if not q:
@@ -454,7 +460,96 @@ def detect_domain(query: str, llm_domain: str, tv_mode: str | int = "0") -> str:
     domain, rule = _DETECT_RULES.select(q, llm_domain, str(tv_mode))
     if rule is not None:
         _det_note_ctx(rule.id, rule.id if rule.id.startswith("signal_") else None)
+        # 分词裁决：当规则链被判 music/audio 且 ASR 强标 tvPlay(点播视频) 时改判 vod。
+        # 场景：query 含歧义子串（歌/小说/音乐）被 music/audio 抢判，但 ASR 分词明确
+        # 它是【点播视频/电影/剧】（tvPlay 权重 >=0.5）。真点歌(唱/听)/真听书(朗读/评书/
+        # 广播剧)已在 _segment_vod_ruling 内屏蔽，不会误伤。
+        if domain in ("music", "audio") and _segment_vod_ruling(segment, q):
+            _det_note_ctx("segment_tvplay->vod", "segment_tvplay_vod")
+            return "vod"
     return domain if domain is not None else (llm_domain if llm_domain else "qa")
+
+
+def _segment_vod_ruling(segment: dict | None, q: str) -> bool:
+    """ASR 强标「点播视频」(tvPlay attr >=0.5) + 弱「歌/小说/音乐」内容词 → 改判 vod。
+
+    场景：query 里含歧义子串（歌/音乐/小说/听），可能被 music/audio 规则误判，
+    但 ASR 分词明确它是【视频/电视/电影】时，应回到 vod。
+    - 命中 tvPlay 权重 >=0.5 才裁决（低权重不可靠）。
+    - 触发条件= query 含「歌」或含「小说/说/播报/广播/电台」之一（歧义子串）。
+    - 屏蔽：query 带“听” + 音频载体（听书/听说/朗读/评书/广播剧/有声…）→ 真 audio，
+      不裁决。query 带“歌”的真点歌动词也屏蔽（见下）。
+
+    安全阀：
+      - 点歌/唱歌/K歌/歌词/歌单/MV/主题曲/… → 明确 music，不裁决。
+      - “听/朗读/广播剧/评书/有声书/听写” → 真 audio，不裁决。
+      - 其余（含歧义子串但无强听/唱意图）→ 裁决 vod。
+    """
+    if not segment or not isinstance(segment, dict):
+        return False
+    wl = segment.get("wordList") or []
+    if not wl:
+        return False
+    has_tv = False
+    for w in wl:
+        if not isinstance(w, dict):
+            continue
+        at = w.get("wordAttrs") or []
+        wts = w.get("attrWeights") or {}
+        for attr in at:
+            if attr != "tvPlay":
+                continue
+            wt = wts.get(attr) if isinstance(wts, dict) else None
+            try:
+                wt = float(wt) if wt is not None else 0.0
+            except (TypeError, ValueError):
+                wt = 0.0
+            if wt < 0.5:
+                continue
+            has_tv = True
+            break
+    if not has_tv:
+        return False
+    # 三段判决策：
+    # 级联裁决（顺序即优先级）：
+    # 1) 明确「影视动作」：看电影/看剧/追剧/刷剧/看影视/点播 → vod（比载体词优先，
+    #    即使片名带 小说/歌/曲 也反转；用户 bug："嗯我要看电影刺杀小说家" ASR tvPlay → vod）。
+    if re.search(
+        r"(看电影|看电视剧|看剧|刷剧|追剧|看影视|看片|看大片|看影院|点播)",
+        q):
+        return True
+    # 2) 音频/音乐动作 + 音频载体：听/播放/放/点/唱/读/循环/学习/跳… + 书/小说/节目/歌/曲/第N集/历史/大结局。
+    #    → 真 听书/听歌/收音，不反转（"收听斗罗大陆大结局那一集" 是听书）。
+    if re.search(
+        r"(听|收听|放|播放|点|唱|朗读|跟读|学习|循环|读|跳|切到|切|来一首)",
+        q) and re.search(
+        r"(听书|有声书|朗读|评书|广播剧|有声|有声音|广播|电台|FM|fm|"
+        r"书|小说|故事|相声|节目|专辑|音频|演唱会|曲|歌|歌曲|音乐|片尾曲|主题曲|原声带|"
+        r"回|章节|连载|历史|播放记录|听过的|上次|循环过|记录|原声|大结局|"
+        r"第[一二三四五六七八九十\d]+[回集章节部])",
+        q):
+        return False
+    # 3) 影视名词（电影/电视剧/剧集/影视/影片/电影版/大结局/续集/全集/完整版）→ vod。
+    if re.search(
+        r"(电影|电视剧|剧集|连续剧|影片|影院|大片|剧场版|电影版|完整版|"
+        r"上映|上线|影视|片名|彩蛋|预告|花絮|正片|大结局|续集|全集)",
+        q):
+        return True
+    # 4) 默认不动（tv 弱信号不足）。
+    return False
+    # 3) 其余无强意图 → 默认不动（tv 弱信号不足）。
+    return False
+    # 2) 明确 vod 意图（电影/电视剧/剧集/续集/点播/追剧/影院/影视片…）：
+    #    ASR 强标 tvPlay + 明确影视动词 → 必是视频，即使片名带 歌/曲 字也翻转。
+    #    （用户原 bug："嗯我要看电影刺杀小说家" ASR tvPlay, llm 误判 audio —— 看电影 是 vod 锚。）
+    if re.search(
+        r"(看电影|看电视剧|看剧|刷剧|追剧|看影视|电影|电视剧|剧集|连续剧|"
+        r"影片|影院|点播|大片|剧场版|电影版|大结局|续集|完整版|"
+        r"上映|上线|影视|片名|看片|彩蛋|预告|花絮|正片)",
+        q):
+        return True
+    # 3) 其余无强意图 → 默认不翻转（tvPlay 弱信号不足改判）。
+    return False
 
 
 # ---------------------------------------------------------------------------
@@ -467,9 +562,12 @@ except ImportError:  # 被 tools 独立加载时无包上下文
     from detect_rulebase import DetectRuleSet as _DetectRuleSet, Rule as _DRule
 
 
-def _media_query_decide(q, llm, tv):
+def _media_query_decide(q, llm, tv, segment=None):
     if llm == "vod" and _is_media_query(q):
         dom_kn, _ = _match(q)
+        # 电影名含"小说/听"等字但 ASR 强标 tvPlay(点播视频) → 是影视剧，不是听书
+        if dom_kn in ("audio", "music") and _segment_vod_ruling(segment, q):
+            return "vod"
         if dom_kn in ("children", "audio", "music"):
             return dom_kn
         return "vod"
@@ -562,17 +660,18 @@ _MUSIC_OVER_SONG_STR = (
     "唱不来都等你 梁祝 梅花三弄 欧若拉 江南 江南STYLE 沂蒙山小调 没有共产党就没有新中国 消愁 "
     "潮湿的心 爱我你就抱抱我 猪猪侠 画你 留什么给你 疼爱妈妈 白毛女 相思 离别开出花 稻香 "
     "穆桂英下山 童心向党 红山果 背对背拥抱 野狼disco 自由飞翔 花园种花 萱草花 落花 讲不出再见 "
-    "赤伶 起风了 追光者 梦里 雪龙吟 青花瓷 谁 梦里水乡 荷塘月色 小苹果 鲁冰花"
+    "赤伶 起风了 追光者 梦里 雪龙吟 青花瓷 谁 梦里水乡 荷塘月色 小苹果 鲁冰花 "
+    "蓝莲花 夜空中最亮的星"
 )
 _MUSIC_OVER_SONGS = sorted(
     {s.strip().lower() for s in _MUSIC_OVER_SONG_STR.split(" ") if len(s.strip()) >= 2},
     key=len, reverse=True,
 )
 _MUSIC_OVER_BLOCK = re.compile(
-    r"广播剧|如有声书|有声剧|有声|评书|听书|小说|广播|演讲稿|绘本|故事会|安徒生|格林童话|"
-    r"动画片|动漫|卡通|动画电影|电影|电视剧|剧集|纪录片|剧场版|大电影|"
-    r"宝宝|幼儿|儿童|小朋友|幼儿园|亲子|睡前故事|小猪|佩奇|汪汪|悠悠|变身|萌宠|"
-    r"普通话|粤语|中文字幕|国语|原声|第\d+[集部季]|本体"
+    r"广播剧|如有声书|听书|小说|广播|演讲稿|绘本|故事会|安徒生|格林童话|"
+    r"动画片|动漫|卡通|动画电影|电影|电视剧|剧集|纪录片|纪录片|大电影|"
+    r"宝宝|幼儿|儿童|小朋友|幼儿园|亲子|睡前故事|小猪|佩奇|汪汪|变身|萌宠|"
+    r"普通话|粤语|中文字幕|国语|原声|第\d+[集部季]|续集|全集|第[一二三四五六七八九十]+[集部季]|本体"
 )
 _MUSIC_OVER_VERB = re.compile(
     r"播放|放|听|唱|点|来一|再来一|来首|换|切|再换|下一首|上一首|首歌|给我|想|要唱|唱|点歌|K歌|k歌|循环|白噪音|MV|mv"

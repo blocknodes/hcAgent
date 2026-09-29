@@ -11,6 +11,8 @@
 """
 from __future__ import annotations
 
+import asyncio
+
 import pytest
 
 import app.engine as _engine_mod
@@ -120,3 +122,110 @@ def test_mt_serial_person_name_resolved(fllm, client):
     b = r.json()
     assert b["code"] == 200
     assert b["data"]["steps"], "应至少发一个依赖 step"
+
+
+def test_sports_lineup_binds_ranked_short_memory_id():
+    """跨轮阵容查询应把“第 N 场”对应的 shortMemory 比赛 id 传给工具。"""
+    short = [
+        {
+            "businessData": {
+                "serviceData": [{
+                    "data": [
+                        {"id": 36428, "title": "亚洲杯决赛：约旦1-3卡塔尔"},
+                        {"id": "36427", "title": "亚洲杯半决赛：伊朗2-3卡塔尔"},
+                    ]
+                }]
+            },
+            "dialogData": {"query": "亚洲杯最近的比赛", "answer": "找到比赛"},
+        },
+        # 模拟 runtime 附加在末尾的当前轮空 stub；提取时应跳过它。
+        {"businessData": {}, "dialogData": {"query": "第一场比赛的首发阵容"}},
+    ]
+    first = [{"toolName": "sports_match_lineup_search", "parameters": {},
+              "retext": "第一场比赛的首发阵容"}]
+    second = [{"toolName": "sports_match_lineup_search", "parameters": {},
+               "retext": "第2场比赛的首发阵容"}]
+
+    engine._bind_sports_short_memory_match_id(first, short, "第一场比赛的首发阵容")
+    engine._bind_sports_short_memory_match_id(second, short, "第2场比赛的首发阵容")
+
+    assert first[0]["parameters"] == {"matchId": 36428}
+    assert second[0]["parameters"] == {"matchId": 36427}
+
+
+def test_sports_lineup_normalizes_legacy_id():
+    """hcTools 给出旧 id 时应规范为 matchId，且不得被 shortMemory 覆盖。"""
+    steps = [{"toolName": "sports_match_lineup_search", "parameters": {"id": 999},
+              "retext": "第一场比赛的首发阵容"}]
+    short = [{"businessData": {"serviceData": [{"data": [{"id": 36428}]}]}}]
+
+    engine._bind_sports_short_memory_match_id(steps, short, "第一场比赛的首发阵容")
+
+    assert steps[0]["parameters"] == {"matchId": 999}
+
+
+
+
+def test_sports_forecast_runs_as_serial_followup(fllm, client, monkeypatch):
+    """赛事预测首轮 stop=false；续跑时将 s1 结果传入泛知识 s2。"""
+    query = "帮我预测一下皇马和巴萨的比赛谁能赢"
+    fllm.plan = _j([{"q": query, "d": "sports"}])
+    fllm.t1 = "结合比赛数据预测皇马和巴萨谁能赢"
+    qa_queries = []
+
+    async def fake_hctools(q, domain, metadata=None):
+        if domain == "sports":
+            return (
+                "sports_match_forecast",
+                {"query": {"and": [
+                    {"field": "sport_team_home", "value": "皇马"},
+                    {"field": "sport_team_guest", "value": "巴萨"},
+                ]}},
+                "llm_onecall",
+            )
+        assert domain == "qa"
+        qa_queries.append(q)
+        return (
+            "fan_knowledge_agent",
+            {"messages": [{"role": "user", "content": q}]},
+            "llm_onecall",
+        )
+
+    monkeypatch.setattr(engine.hctools, "predict", fake_hctools)
+    engine.reset()
+    try:
+        first = client.post("/slowAgent/poc_1", json=_payload(query)).json()
+        assert [s["id"] for s in first["data"]["steps"]] == ["s1"]
+        assert first["data"]["steps"][0]["toolName"] == "sports_match_forecast"
+        assert first["stop"] is False
+        assert first["forceStop"] is False
+
+        forecast_result = "皇马近期4胜1负，巴萨近期2胜2平1负"
+        history = [{"id": "s1", "toolName": "sports_match_forecast",
+                    "result": forecast_result}]
+        second = client.post(
+            "/slowAgent/poc_1", json=_payload(query, toolHistory=history)
+        ).json()
+
+        assert [s["id"] for s in second["data"]["steps"]] == ["s2"]
+        step = second["data"]["steps"][0]
+        assert step["toolName"] == "fan_knowledge_agent"
+        assert step["dependsOn"] == ["s1"]
+        assert second["stop"] is True
+        assert qa_queries == [fllm.t1]
+        assert forecast_result not in qa_queries[0]
+        assert step["parameters"]["messages"][-1]["content"] == fllm.t1
+        assert step["parameters"]["current_media"] == forecast_result
+        assert fllm.t0_times == 1
+        assert fllm.t1_times == 1
+    finally:
+        engine.reset()
+
+
+def test_non_forecast_does_not_arm_serial_plan():
+    """其他体育工具不应挂起预测续跑状态。"""
+    batch = [engine.Intent(query="皇马最近的比赛", domain="sports", index=1)]
+    steps = [{"id": "s1", "toolName": "sports_match_search", "parameters": {}}]
+
+    assert engine._arm_forecast_serial_plan("device", batch, steps,
+                                            "皇马最近的比赛") is False

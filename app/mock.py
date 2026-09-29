@@ -120,8 +120,10 @@ def _response(
             "steps": steps,
         },
         "stop": stop,
+        "forceStop": stop,
     }
 
 
 def _error(message: str) -> dict[str, Any]:
-    return {"code": 400, "message": message, "data": {"steps": []}, "stop": True}
+    return {"code": 400, "message": message, "data": {"steps": []},
+            "stop": True, "forceStop": True}

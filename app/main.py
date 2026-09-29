@@ -9,7 +9,7 @@
              "toolHistory":[...],"toolList":[...],"timestamp":"..."}}
   → {"code":200,"message":"success","traceId":"...","deviceId":"...",
      "data":{"planId","schemaVersion","planType","planConfidence","steps":[...],
-             "final"?:true,"parallel"?:true},"stop":bool}
+             "final"?:true,"parallel"?:true},"stop":bool,"forceStop":bool}
 
 恒定走目标架构 **纯 LLM 主干**（app.engine，T0/T1 全 LLM，一个 tick 恰一次调用，
 编排层零语言规则）。
@@ -67,6 +67,7 @@ async def on_validation_error(request: Request, exc: RequestValidationError) -> 
             "message": "validation error",
             "data": {"steps": []},
             "stop": True,
+            "forceStop": True,
             "errors": [
                 {"loc": list(e.get("loc", [])), "msg": e.get("msg"), "type": e.get("type")}
                 for e in exc.errors()
