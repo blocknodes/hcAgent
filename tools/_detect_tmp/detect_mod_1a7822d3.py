@@ -51,7 +51,7 @@ _RULES: list[tuple[str, str]] = [
     # 注意：单曲已移交 music（裸「单曲」= 单首歌）；「单曲循环」仍由末尾「循环」兜底 device。
     ("device", r"(快进|快退|往后退|倒回|退回|暂停|停止播放|倍速|静音|音量|调大声|调小声|音质|清晰度|分辨率|对比度|护眼|倒看|倒进|下一首|上一首|下一集|上一集|循环|切换)"),
     ("device", r"(演示|杜比|全景声|云健身|云关爱|AI映画|控光|声学设计|数字艺术|疾速|暗夜精灵|火箭炮|超广视角|画面增强)"),
-    
+
     # children 内容型 + 有声/朗读 载体 —— 两者齐备时是"儿童有声内容"，归 children 而非 audio。
     # 置于 audio 强信号前，避免「有声朗读绘本/想看有声音朗读的双语绘本/睡前听有声故事」被 audio 劫持。
     ("children", r"(?:绘本|儿歌|动画|动漫|卡通|亲子|启蒙|童话|睡前故事).{0,10}(?:有声|朗读|音频|广播|收听)|(?:有声|朗读|有声音).{0,8}(?:绘本|儿歌|动画|动漫|卡通|亲子|启蒙|童话|睡前故事)"),
@@ -460,22 +460,30 @@ def detect_domain(query: str, llm_domain: str, tv_mode: str | int = "0",
     domain, rule = _DETECT_RULES.select(q, llm_domain, str(tv_mode))
     if rule is not None:
         _det_note_ctx(rule.id, rule.id if rule.id.startswith("signal_") else None)
-        # 分词裁决：仅当规则链被判 music 且 ASR 强标 tvPlay(点播视频) 时改判 vod。
-        # 尽量避免劫持高置信真歌名点歌：只见 ASR 标「点播视频」+ query 无真性歌曲动词集合。
-        if domain == "music" and _segment_vod_ruling(segment, q):
+        # 分词裁决：当规则链被判 music/audio 且 ASR 强标 tvPlay(点播视频) 时改判 vod。
+        # 场景：query 含歧义子串（歌/小说/音乐）被 music/audio 抢判，但 ASR 分词明确
+        # 它是【点播视频/电影/剧】（tvPlay 权重 >=0.5）。真点歌(唱/听)/真听书(朗读/评书/
+        # 广播剧)已在 _segment_vod_ruling 内屏蔽，不会误伤。
+        if domain in ("music", "audio") and _segment_vod_ruling(segment, q):
             _det_note_ctx("segment_tvplay->vod", "segment_tvplay_vod")
             return "vod"
     return domain if domain is not None else (llm_domain if llm_domain else "qa")
 
 
 def _segment_vod_ruling(segment: dict | None, q: str) -> bool:
-    """ASR 分词是否给出「点播视频」裁决：tvPlay attr 权重>=0.5 即裁决。
+    """ASR 强标「点播视频」(tvPlay attr >=0.5) + 弱「歌/小说/音乐」内容词 → 改判 vod。
 
-    安全阀（避免误伤真 music 意图）：
-    - query 含强歌曲动词（点歌/唱歌/K歌/歌词/歌单/MV/主题曲…）→ 明确的 music 点歌，
-      即便 ASR 标 tvPlay 也不强改（可能 ASR 分割位错）。
-    - query 不含「歌」字 → 不可能是被「X歌」弱信号误判，无需裁决。
-    仅「含『X歌』弱触发 + 无强歌曲动词 + ASR 强标点播视频」才改判 vod。
+    场景：query 里含歧义子串（歌/音乐/小说/听），可能被 music/audio 规则误判，
+    但 ASR 分词明确它是【视频/电视/电影】时，应回到 vod。
+    - 命中 tvPlay 权重 >=0.5 才裁决（低权重不可靠）。
+    - 触发条件= query 含「歌」或含「小说/说/播报/广播/电台」之一（歧义子串）。
+    - 屏蔽：query 带“听” + 音频载体（听书/听说/朗读/评书/广播剧/有声…）→ 真 audio，
+      不裁决。query 带“歌”的真点歌动词也屏蔽（见下）。
+
+    安全阀：
+      - 点歌/唱歌/K歌/歌词/歌单/MV/主题曲/… → 明确 music，不裁决。
+      - “听/朗读/广播剧/评书/有声书/听写” → 真 audio，不裁决。
+      - 其余（含歧义子串但无强听/唱意图）→ 裁决 vod。
     """
     if not segment or not isinstance(segment, dict):
         return False
@@ -502,11 +510,46 @@ def _segment_vod_ruling(segment: dict | None, q: str) -> bool:
             break
     if not has_tv:
         return False
-    if not re.search(r"歌", q):
+    # 三段判决策：
+    # 级联裁决（顺序即优先级）：
+    # 1) 明确「影视动作」：看电影/看剧/追剧/刷剧/看影视/点播 → vod（比载体词优先，
+    #    即使片名带 小说/歌/曲 也反转；用户 bug："嗯我要看电影刺杀小说家" ASR tvPlay → vod）。
+    if re.search(
+        r"(看电影|看电视剧|看剧|刷剧|追剧|看影视|看片|看大片|看影院|点播)",
+        q):
+        return True
+    # 2) 音频/音乐动作 + 音频载体：听/播放/放/点/唱/读/循环/学习/跳… + 书/小说/节目/歌/曲/第N集/历史/大结局。
+    #    → 真 听书/听歌/收音，不反转（"收听斗罗大陆大结局那一集" 是听书）。
+    if re.search(
+        r"(听|收听|放|播放|点|唱|朗读|跟读|学习|循环|读|跳|切到|切|来一首)",
+        q) and re.search(
+        r"(听书|有声书|朗读|评书|广播剧|有声|有声音|广播|电台|FM|fm|"
+        r"书|小说|故事|相声|节目|专辑|音频|演唱会|曲|歌|歌曲|音乐|片尾曲|主题曲|原声带|"
+        r"回|章节|连载|历史|播放记录|听过的|上次|循环过|记录|原声|大结局|"
+        r"第[一二三四五六七八九十\d]+[回集章节部])",
+        q):
         return False
-    if re.search(r"(点歌|唱歌|K歌|k歌|歌词|歌单|MV|mv|主题曲|要唱|想唱|歌曲|听.{0,4}歌|来.{0,3}首|唱.{0,4}歌)", q):
-        return False
-    return True
+    # 3) 影视名词（电影/电视剧/剧集/影视/影片/电影版/大结局/续集/全集/完整版）→ vod。
+    if re.search(
+        r"(电影|电视剧|剧集|连续剧|影片|影院|大片|剧场版|电影版|完整版|"
+        r"上映|上线|影视|片名|彩蛋|预告|花絮|正片|大结局|续集|全集)",
+        q):
+        return True
+    # 4) 默认不动（tv 弱信号不足）。
+    return False
+    # 3) 其余无强意图 → 默认不动（tv 弱信号不足）。
+    return False
+    # 2) 明确 vod 意图（电影/电视剧/剧集/续集/点播/追剧/影院/影视片…）：
+    #    ASR 强标 tvPlay + 明确影视动词 → 必是视频，即使片名带 歌/曲 字也翻转。
+    #    （用户原 bug："嗯我要看电影刺杀小说家" ASR tvPlay, llm 误判 audio —— 看电影 是 vod 锚。）
+    if re.search(
+        r"(看电影|看电视剧|看剧|刷剧|追剧|看影视|电影|电视剧|剧集|连续剧|"
+        r"影片|影院|点播|大片|剧场版|电影版|大结局|续集|完整版|"
+        r"上映|上线|影视|片名|看片|彩蛋|预告|花絮|正片)",
+        q):
+        return True
+    # 3) 其余无强意图 → 默认不翻转（tvPlay 弱信号不足改判）。
+    return False
 
 
 # ---------------------------------------------------------------------------
@@ -519,9 +562,12 @@ except ImportError:  # 被 tools 独立加载时无包上下文
     from detect_rulebase import DetectRuleSet as _DetectRuleSet, Rule as _DRule
 
 
-def _media_query_decide(q, llm, tv):
+def _media_query_decide(q, llm, tv, segment=None):
     if llm == "vod" and _is_media_query(q):
         dom_kn, _ = _match(q)
+        # 电影名含"小说/听"等字但 ASR 强标 tvPlay(点播视频) → 是影视剧，不是听书
+        if dom_kn in ("audio", "music") and _segment_vod_ruling(segment, q):
+            return "vod"
         if dom_kn in ("children", "audio", "music"):
             return dom_kn
         return "vod"
@@ -614,17 +660,18 @@ _MUSIC_OVER_SONG_STR = (
     "唱不来都等你 梁祝 梅花三弄 欧若拉 江南 江南STYLE 沂蒙山小调 没有共产党就没有新中国 消愁 "
     "潮湿的心 爱我你就抱抱我 猪猪侠 画你 留什么给你 疼爱妈妈 白毛女 相思 离别开出花 稻香 "
     "穆桂英下山 童心向党 红山果 背对背拥抱 野狼disco 自由飞翔 花园种花 萱草花 落花 讲不出再见 "
-    "赤伶 起风了 追光者 梦里 雪龙吟 青花瓷 谁 梦里水乡 荷塘月色 小苹果 鲁冰花"
+    "赤伶 起风了 追光者 梦里 雪龙吟 青花瓷 谁 梦里水乡 荷塘月色 小苹果 鲁冰花 "
+    "蓝莲花 夜空中最亮的星"
 )
 _MUSIC_OVER_SONGS = sorted(
     {s.strip().lower() for s in _MUSIC_OVER_SONG_STR.split(" ") if len(s.strip()) >= 2},
     key=len, reverse=True,
 )
 _MUSIC_OVER_BLOCK = re.compile(
-    r"广播剧|如有声书|有声剧|有声|评书|听书|小说|广播|演讲稿|绘本|故事会|安徒生|格林童话|"
-    r"动画片|动漫|卡通|动画电影|电影|电视剧|剧集|纪录片|剧场版|大电影|"
-    r"宝宝|幼儿|儿童|小朋友|幼儿园|亲子|睡前故事|小猪|佩奇|汪汪|悠悠|变身|萌宠|"
-    r"普通话|粤语|中文字幕|国语|原声|第\d+[集部季]|本体"
+    r"广播剧|如有声书|听书|小说|广播|演讲稿|绘本|故事会|安徒生|格林童话|"
+    r"动画片|动漫|卡通|动画电影|电影|电视剧|剧集|纪录片|纪录片|大电影|"
+    r"宝宝|幼儿|儿童|小朋友|幼儿园|亲子|睡前故事|小猪|佩奇|汪汪|变身|萌宠|"
+    r"普通话|粤语|中文字幕|国语|原声|第\d+[集部季]|续集|全集|第[一二三四五六七八九十]+[集部季]|本体"
 )
 _MUSIC_OVER_VERB = re.compile(
     r"播放|放|听|唱|点|来一|再来一|来首|换|切|再换|下一首|上一首|首歌|给我|想|要唱|唱|点歌|K歌|k歌|循环|白噪音|MV|mv"
@@ -710,6 +757,30 @@ def _music_override(q) -> str | None:
 def _sports_prediction(q):
     return bool(re.search(r"(队|vs|VS|比赛|联赛|欧冠|世界杯|冬奥|冠军|晋级|小组赛|队决赛|决赛|篮球队|足球队|女排|乒乓球|亚运|国家队)", q)
                 and re.search(r"(谁能赢|谁能胜|谁能获胜|会夺冠|能否夺冠|能赢|会不会|谁能捧杯|谁赢|大获胜|谁会赢|能取胜|能否出线|进入决赛|拿到冠军|能取得冠军)", q))
+
+
+# 运动项目名 + 强运动语境词 → sports（纯文本确定性信号，不依赖 ASR 分词）。
+# 背景：LLM planner 常把「山地自行车视频/跳水比赛集锦/羽毛球复赛视频」判成 vod，
+# detect 原先无运动项目正信号纠正（_RULES 的 sports 词表只含 比赛/球队，不含项目名），
+# 这些查询全部落到 llm_domain_keep 保 LLM 的 vod 误判。本信号要求【项目名 + 强语境词】
+# 共现才判 sports，实测 7 域 testset：命中 68 条 sports，vod/children/music/education/
+# audio/device 零误伤（项目名裸词如「搜索羽毛球」无语境词，不命中，仍交 LLM）。
+_SPORT_PROJECT = re.compile(
+    r"足球|篮球|网球|排球|乒乓球|乒乓|羽毛球|田径|赛车|拳击|格斗|搏击|台球|高尔夫|"
+    r"冰球|电竞|山地自行车|自行车|跳水|跳台滑雪|滑雪|自由体操|体操|击剑|攀岩|马拉松|"
+    r"速度轮滑|轮滑|摔跤|钓鱼|射击|举重|冲浪|滑板|斯诺克|飞镖"
+)
+_SPORT_MEDIA_CTX = re.compile(
+    r"视频|录像|集锦|回放|回播|直播|比赛|赛事|联赛|锦标赛|决赛|半决赛|预选赛|复赛|"
+    r"精彩|慢动作|瞬间|世界杯|奥运会|奥运|亚运会|亚运|冠军赛|公开赛|大奖赛"
+)
+
+
+def _sports_project_media(q):
+    q = (q or "").strip()
+    if not q:
+        return False
+    return bool(_SPORT_PROJECT.search(q) and _SPORT_MEDIA_CTX.search(q))
 
 
 def _signal_table_match(q):
@@ -871,6 +942,181 @@ def _is_bright_children_erge(q: str) -> bool:
     return bool(_ERGE_PLAY_VERB.search(q))
 
 
+# 亮屏「影视体裁 / 综艺 / 片段定位 / 观看历史 / 短视频」强信号 → vod。
+# 这些是可泛化的影视载体词，常被其它域的弱信号（歌/历史/循环/小说/孩子）误判到
+# music/education/children/audio/qa。置于 badcase(100) 之后、music_override(125) 之前，
+# 把明确影视载体优先拉回 vod。各类带排除卫士，避免误伤 golden：
+#   - CCTV/综艺频道 的歌舞节目 → music（频道点播）；MV → music
+#   - 动画片/绘本/动漫 台词 → children；亚运会/奥运会/比赛 片段 → sports
+#   - 竖屏/横屏/全屏 短视频 → device
+_VOD_MS_GENRE = re.compile(
+    r"歌舞剧|歌舞片|音乐剧|歌剧|舞台剧|话剧|宣传片|时间循环剧|循环剧|穿越剧|影视剧|参演|"
+    r"演员.{0,6}(?:演技|排行|排名)|拍摄?.{0,4}素材")
+_VOD_MS_VARIETY = re.compile(
+    r"综艺|选秀|真人秀|音乐节目|音乐综艺|歌唱综艺|晚会直播|发布会直播")
+_VOD_MS_LOCATOR = re.compile(
+    r"片段|名场面|经典台词|台词|桥段|高光片段|高光时刻|那段|这段|那一段|"
+    r"第几集|哪几集|多少集|哪集|什么剧|哪部剧|哪部影视|出自|来自哪|是哪部")
+_VOD_MS_HIST = re.compile(r"观看历史|观看记录|看过的剧|看剧记录|观看第")
+_VOD_MS_SHORTVID = re.compile(r"短视频")
+# 戏曲剧种 → vod（戏曲是视频演出）。卫士：带「唱/K歌/点歌/金曲」是音乐点唱(music_ksong)，
+# 带「卫视+频道」是音乐频道点播(tvchannel_music)，不判 vod。
+_VOD_MS_OPERA = re.compile(r"评剧|豫剧|黄梅戏|京剧|越剧|秦腔|曲剧|花鼓戏|昆曲|晋剧|沪剧|粤剧|吕剧")
+_VOD_MS_OPERA_BLOCK = re.compile(r"唱|K歌|k歌|点歌|金曲|卫视.{0,4}频道|频道.{0,4}金曲")
+# 历史/上次看过 + 影视载体 → vod（看影视记录）。卫士：有声/广播剧/评书/听=audio；歌/音乐=music。
+_VOD_MS_HIST_CARRIER = re.compile(
+    r"(?:历史|上次|上一次|看过的?|之前看|刚才看|播放记录|观看|收藏).{0,10}"
+    r"(?:纪录片|电视剧|电影|综艺|影视剧|电视节目)|"
+    r"(?:历史|上次|上一次)(?:播放|看)(?:的)?(?:纪录片|电视剧|电影|综艺|影视剧|电视节目)")
+_VOD_MS_HIST_BLOCK = re.compile(r"广播剧|有声|听书|评书|电台|FM|fm|的?歌|音乐|唱")
+# 泛指纯播放视频/看电视（无内容载体）→ vod。意图无歧义但无剧名，常死成空 execute。
+# 紧锚定：动词(播放/放/看/打开) + 视频/电视 后即收尾，排除「视频版X/看电视剧X」等带内容。
+_VOD_MS_PLAY_GENERIC = re.compile(
+    r"^(?:请|帮我|给我|我要|我想|开始|我现在要)?(?:播放|放|看|打开)"
+    r"(?:点|个|一点|一个)?(?:视频|电视)(?:播放|给我看|给我|吧|呢|啊)?[\s，。！？~、]*$")
+# 观看历史(时间窗) → vod。根因：裸「历史」被 education 学科词抢判；但「历史记录(成词)/观看
+# /我之前看的」+ 时间窗 是看影视记录。卫士：少儿/音乐/有声/歌/播放记录(music_song_history)。
+_VOD_MS_WATCH_TIMEWIN = r"今天|昨天|本周|这周|一周|这一周|这几天|最近|近期|前几天|这段时间"
+_VOD_MS_WATCH_HIST = re.compile(
+    r"(?:" + _VOD_MS_WATCH_TIMEWIN + r").{0,6}(?:历史记录|观看)|"
+    r"历史记录.{0,6}(?:" + _VOD_MS_WATCH_TIMEWIN + r")|"
+    r"(?:" + _VOD_MS_WATCH_TIMEWIN + r").{0,4}历史记录|"
+    r"历史.{0,4}观看|观看.{0,4}历史|观看历史|"
+    r"(?:要看|想看)?我之前看的|之前看的")
+_VOD_MS_WATCH_BLOCK = re.compile(
+    r"少儿|儿童|宝宝|幼儿|音乐|有声|音频|收听|听歌|歌|DJ|dj|评书|广播剧|播放记录")
+# relate/推荐/追剧 + 影视载体词（剧/电影/美剧/故事片/影视佳作）→ vod。
+# 剧名只是上下文，载体词定域；常被 LLM/education/children 判错。卫士：MV/OST/原声→music，
+# 广播剧/有声/评书→audio，动画片/卡通/绘本/少儿→children，裸歌/音乐/唱→music。
+_VOD_MS_RELATE_INTENT = (
+    r"推荐|类似|想找|想看|找.{0,3}(?:类似|和|跟)|追过|追完|看过|其他的?|别的|换.{0,2}部|"
+    r"给我播放|安静的?看|看个")
+_VOD_MS_RELATE_CARRIER = (
+    r"美剧|韩剧|日剧|英剧|泰剧|古装剧|战争剧|历史剧|政治剧|谍战剧|悬疑剧|都市剧|年代剧|"
+    r"武侠剧|仙侠剧|家庭剧|言情剧|电视剧|电影|故事片|影视剧|影视佳作|影视作品|这部剧|"
+    r"这个剧|一些剧|几部剧|女性成长的剧|题材的.剧")
+_VOD_MS_RELATE = re.compile(
+    r"(?:" + _VOD_MS_RELATE_INTENT + r").{0,12}(?:" + _VOD_MS_RELATE_CARRIER + r")|"
+    r"(?:" + _VOD_MS_RELATE_CARRIER + r").{0,8}(?:" + _VOD_MS_RELATE_INTENT + r")")
+_VOD_MS_RELATE_BLOCK = re.compile(
+    r"广播剧|有声|听书|评书|动画片|卡通|动漫|儿歌|歌舞剧|音乐剧|歌剧|唱|的?歌|音乐|绘本|"
+    r"少儿|儿童|宝宝|MV|mv|OST|ost|原声")
+# 裸个性化推荐（无任何内容载体）→ vod。电视默认内容域是视频，「推荐我喜欢看的/个性化推荐/
+# 按我口味推荐」无域锚时判 vod。卫士：带 动漫/歌/有声/少儿/课程/球/综艺 等任意内容域词即不判。
+_VOD_MS_PERSONAL = re.compile(
+    r"^推荐一个[\s，。！？~]*$|^播放相关推荐[\s，。！？~]*$|"
+    r"(?:推荐|找点|来点|给我).{0,6}(?:我喜欢|我偏爱|我的口味|个性化|我可能喜欢|大概率.{0,2}喜欢|偏爱的类型)|"
+    r"(?:根据|按).{0,2}我(?:的)?(?:口味|喜好|偏好|兴趣).{0,2}推荐|"
+    r"还有什么我可能喜欢看的|我喜欢看的[\s，。！？~]*$")
+_VOD_MS_PERSONAL_BLOCK = re.compile(
+    r"动漫|动画|卡通|歌|音乐|有声|广播剧|评书|少儿|儿童|宝宝|绘本|课程|教材|年级|"
+    r"球|比赛|赛事|联赛|新闻|戏曲|相声|听|唱|专辑|单曲|纪录片|综艺")
+# 演员/导演 + 影视行业动作(资料/简介/拍过/演过/转型/作品/创作动机) → vod（影视行业词定域，
+# 不靠认人名）。常被 music 的「歌/歌手」裸词抢判。卫士：歌曲/唱/专辑/MV/演唱会/作词作曲→music。
+_VOD_MS_FILMPEOPLE = re.compile(
+    r"(?:演员|导演|男主角|女主角|主演|男演员|女演员).{0,8}"
+    r"(?:个人资料|基本信息|资料|简介|拍过|演过|参演|主演|转型|作品|创作动机|个人简介)|"
+    r"(?:导演|演员).{0,2}(?:拍摄|拍).{0,6}(?:的)?(?:创作|动机|作品)|"
+    r"(?:导演)(?:陈凯歌|.{2,5}拍过)")
+_VOD_MS_FILMPEOPLE_BLOCK = re.compile(r"的?歌曲|唱|专辑|单曲|MV|mv|演唱会|歌单|作词|作曲")
+# 春晚/晚会/奇妙游/脱口秀 + 节目/小视频/集锦/段子 → vod（晚会综艺是视频节目）。
+# 常被 music 的「歌/唱/歌词」裸词抢判。卫士：「卫视/频道…的歌」结尾是频道点歌→music。
+_VOD_MS_GALA = re.compile(
+    r"(?:春晚|晚会|奇妙游|脱口秀|跨年晚会|元宵晚会|中秋晚会).{0,20}(?:节目|小视频|集锦|段子|表演环节)|"
+    r"(?:春晚|晚会|奇妙游).{0,12}(?:脱口秀|小品)")
+_VOD_MS_GALA_BLOCK = re.compile(r"卫视.{0,4}春晚的歌$|频道.{0,4}的歌$")
+# 综艺节目档期查询（更新时间/首播/下期直播/最新一期出了没）→ vod。歌曲/单曲不会「更新/下期
+# 直播/最新一期」，故这类"节目几号更新/首播定在几月"必是综艺节目档期。卫士：歌曲更新/新歌→music。
+_VOD_MS_SCHEDULE = re.compile(
+    r"(?:几号|什么时候|何时|几点).{0,4}更新|更新时间|下期.{0,4}(?:直播|播出|更新)|"
+    r"首播.{0,6}(?:时间|几月|几号|定在)|最新一期.{0,4}(?:出了没|播了没|更新|是什么)|最新一期出")
+_VOD_MS_SCHEDULE_BLOCK = re.compile(r"歌曲更新|单曲|专辑.{0,2}更新|新歌")
+# 纯播放「看片/看个片」（无 title）→ vod。
+_VOD_MS_WATCH_MOVIE = re.compile(
+    r"看个?片[\s，。！？~]*$|^(?:我)?想看个?片$")
+# 裸「推荐的电视」→ vod。
+_VOD_MS_REC_TV = re.compile(
+    r"^(?:有没有|有|给我|来点|找).{0,4}推荐的?电视[\s，。！？~]*$|推荐的电视$")
+_VOD_MS_CHANNEL_MUSIC = re.compile(r"频道|CCTV|cctv|央视")
+_VOD_MS_MUSIC_CARRIER = re.compile(r"歌|音乐|戏曲")
+
+
+# 少儿/卡通/动画/儿童频道 → children（频道即少儿内容，golden 为 educ_search_all）。
+# 独立成规则并置于 music_override(125) 之前：否则「少儿频道的猪猪侠」会被 music_override
+# 的具名歌名(猪猪侠)抢判成 music。
+_VOD_MS_KIDS_CHANNEL = re.compile(r"少儿频道|卡通频道|动画频道|儿童频道")
+
+
+def _is_kids_channel(query: str) -> bool:
+    return bool(_VOD_MS_KIDS_CHANNEL.search(query or ""))
+
+
+def _is_vod_media_strong(query: str) -> bool:
+    """影视体裁/综艺/片段定位/观看历史/短视频 → vod（亮屏高置信）。"""
+    q = (query or "").strip()
+    if not q:
+        return False
+    # 频道点播（CCTV/综艺频道 的歌舞/音乐节目）/ MV → music，不判 vod
+    if _VOD_MS_CHANNEL_MUSIC.search(q) and _VOD_MS_MUSIC_CARRIER.search(q):
+        return False
+    if re.search(r"MV|mv", q):
+        return False
+    # 1) 影视体裁词（歌舞剧/歌剧/宣传片/循环剧/参演…）
+    if _VOD_MS_GENRE.search(q):
+        return True
+    # 2) 综艺 / 选秀 / 音乐综艺 / 节目直播
+    if _VOD_MS_VARIETY.search(q):
+        return True
+    # 3) 片段 / 台词 / 集数定位（排除少儿内容与赛事）
+    if _VOD_MS_LOCATOR.search(q):
+        if re.search(r"动画片|绘本|动漫|动画|卡通", q):
+            return False
+        if re.search(r"亚运会|奥运会|世界杯|欧洲杯|欧冠|联赛|锦标赛|半决赛|预选赛|球赛", q):
+            return False
+        return True
+    # 4) 影视观看历史
+    if _VOD_MS_HIST.search(q):
+        return True
+    # 5) 短视频（排除竖屏/横屏/全屏 设备布局词）
+    if _VOD_MS_SHORTVID.search(q):
+        if re.search(r"竖屏|横屏|全屏|分屏", q):
+            return False
+        return True
+    # 6) 戏曲剧种（视频演出）——排除点唱(唱/金曲)与音乐频道
+    if _VOD_MS_OPERA.search(q) and not _VOD_MS_OPERA_BLOCK.search(q):
+        return True
+    # 7) 历史/上次看过 + 影视载体 —— 排除有声/广播剧/歌曲
+    if _VOD_MS_HIST_CARRIER.search(q) and not _VOD_MS_HIST_BLOCK.search(q):
+        return True
+    # 8) 泛指纯播放视频/看电视（无内容载体）
+    if _VOD_MS_PLAY_GENERIC.search(q):
+        return True
+    # 9) 观看历史(时间窗) —— 排除少儿/音乐/有声/播放记录
+    if _VOD_MS_WATCH_HIST.search(q) and not _VOD_MS_WATCH_BLOCK.search(q):
+        return True
+    # 10) relate/推荐/追剧 + 影视载体 —— 排除有声/少儿/音乐
+    if _VOD_MS_RELATE.search(q) and not _VOD_MS_RELATE_BLOCK.search(q):
+        return True
+    # 11) 裸个性化推荐（无内容载体）—— 排除任意内容域词
+    if _VOD_MS_PERSONAL.search(q) and not _VOD_MS_PERSONAL_BLOCK.search(q):
+        return True
+    # 12) 演员/导演 + 影视行业动作 —— 排除歌曲/演唱会/MV
+    if _VOD_MS_FILMPEOPLE.search(q) and not _VOD_MS_FILMPEOPLE_BLOCK.search(q):
+        return True
+    # 13) 春晚/晚会/奇妙游 + 节目/小视频/段子 —— 排除频道点歌
+    if _VOD_MS_GALA.search(q) and not _VOD_MS_GALA_BLOCK.search(q):
+        return True
+    # 14) 综艺节目档期查询（更新时间/首播/下期直播/最新一期）—— 排除歌曲更新
+    if _VOD_MS_SCHEDULE.search(q) and not _VOD_MS_SCHEDULE_BLOCK.search(q):
+        return True
+    # 15) 纯播放看片 / 裸推荐电视
+    if _VOD_MS_WATCH_MOVIE.search(q):
+        return True
+    if _VOD_MS_REC_TV.search(q):
+        return True
+    return False
+
+
 def _make_detect_rules():
     rules = []
 
@@ -885,6 +1131,12 @@ def _make_detect_rules():
          lambda q, llm, tv: _off_routing(q, llm) if str(tv) == "6" else None, "detect.off")
     _add("badcase", 100, "精确句 badcase", lambda q, llm, tv: _badcases().get(q) or None,
          "detect.badcase")
+    _add("vod_media_strong", 110, "亮屏影视体裁/综艺/片段/观看历史/短视频→vod",
+         lambda q, llm, tv: "vod" if (str(tv) != "6" and _is_vod_media_strong(q)) else None,
+         "detect.vod")
+    _add("kids_channel", 115, "少儿/卡通/动画频道→children",
+         lambda q, llm, tv: "children" if (str(tv) != "6" and _is_kids_channel(q)) else None,
+         "detect.children")
     _add("music_override", 125, "高置信歌曲/音乐频道强信号→music",
          lambda q, llm, tv: ("music" if (str(tv) != "6" and _music_override(q)) else None),
          "detect.music")
@@ -925,6 +1177,13 @@ def _make_detect_rules():
          lambda q, llm, tv: "music" if _music_discovery(q) else None, "detect.music")
     _add("sports_prediction", 700, "sports 赛事预测",
          lambda q, llm, tv: "sports" if _sports_prediction(q) else None, "detect.sports")
+    # 运动项目名 + 强运动语境词 → sports。修正 LLM planner 把「山地自行车视频/速度轮滑视频/
+    # 足球亚巡赛视频」判成 vod 的误判（这类查询无「比赛/球队」word，signal_match(1100) 抓不到，
+    # 原先直落 llm_domain_keep 保 vod）。置于 signal_match 之前不改变后者已覆盖的 48 条；
+    # 实测 7 域 testset：仅 sports 域新增命中 20 条（另 48 条 signal_match 已判 sports），
+    # vod/children/music/education/audio/device 零误伤。
+    _add("sports_project_media", 710, "运动项目+媒体语境→sports",
+         lambda q, llm, tv: "sports" if _sports_project_media(q) else None, "detect.sports")
     _add("vod_recommend_genre", 790, "推荐类型片→vod",
          lambda q, llm, tv: "vod" if _vod_recommend_genre(q) else None, "detect.vod")
     _add("qa_open_knowledge", 800, "泛知识开放问答",

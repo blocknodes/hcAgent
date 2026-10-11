@@ -953,6 +953,22 @@ class TraceStateMachine:
         #   children(tab) + vod(tab) 两个无依赖 step，parallel=true。
         if config.rule_on("multiintent.multi_tab") and _is_multi_tab(query) and not (history or []):
             return _multi_tab_intents(query, tv_mode=tv_mode), True
+        # 整句高置信单意图守卫：命中 vod_media_strong / qa_subjective 的整句是内聚单意图，
+        # 但 split_multiintent 会把上下文从句（"看完《中国好声音》"/"根据我收藏的视频"/
+        # "《罗马假日》中"）误当成 device 子句拆走，首子句落 numeric_adjust/screen_layout 等错域。
+        # 故必须在 split_multiintent 之前拦截，强制单步、用原句交 hcTools 对应域权威解析
+        # （已验证产出 vod_relate/personalized、fan_knowledge_agent 正确）。
+        # 双闸：显式串行标记 or 真设备命令词 → 放行给下方确定性拆分（真「设备+内容」多意图）。
+        if (config.rule_on("plan.whole_sentence_guard") and str(tv_mode) != "6"
+                and not re.search(r"然后|接着|之后|；|先.{0,8}再|再.{0,6}(?:把|调|搜|放|看)", query)
+                and not re.search(
+                    r"音量|调大声|调小声|调大|调小|静音|亮度|全屏|分屏|投屏|息屏|关机|开机|重启|"
+                    r"快进|快退|暂停|切换到|切到|护眼模式|声音模式|音乐模式|杜比|环绕声|清晰度调|分辨率调",
+                    query)):
+            if detect._is_vod_media_strong(query):
+                return [Intent(query=query, domain="vod", tool="execute", index=1, src=query)], True
+            if detect._is_qa_subjective(query):
+                return [Intent(query=query, domain="qa", tool="execute", index=1, src=query)], True
         # 多意图确定性拆分（规则优先）：命中断言“内容+设备”双目标 → 直接拆成两条
         # 并行、无依赖意图(dep=[], stop=true)，两条独立交给 hcTools 权威解析最终 tool+params。
         mi = multiintent.split_multiintent(query)
@@ -1251,6 +1267,19 @@ async def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
         tool_name = tool or it.tool or "execute"
         if it.tool == "fan_knowledge_agent":
             tool_name = "fan_knowledge_agent"
+        # 兜底：仍是 execute 说明 planner 无法映射成具体工具 → 统一走 qa(fan_knowledge_agent)返回。
+        # 复用 hcTools qa 域（其 rules/fallback 产出 fan_knowledge_agent + 合法 fan_params）；
+        # hcTools 不可用时内联构造最小合法参数，保证兜底必落到 qa。
+        if tool_name == "execute":
+            fb_q = it.src if single else (it.query or it.src or "")
+            qa_tool, qa_params, qa_hit = await hctools.predict(fb_q, "qa")
+            if qa_tool:
+                tool_name, params, hit_source = qa_tool, qa_params, (qa_hit or "execute_fallback_qa")
+            else:
+                tool_name = "fan_knowledge_agent"
+                params = {"messages": [{"role": "user", "content": fb_q}],
+                          "riskRespStrategy": "all_replace"}
+                hit_source = "execute_fallback_qa"
         if it.include_tool_result and it.tool_result:
             # 串行预测第二步：messages 仍由 qa schema 正常生成，s1 返回字符串单独透传。
             params = dict(params) if isinstance(params, dict) else {}

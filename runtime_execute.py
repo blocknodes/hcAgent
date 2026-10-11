@@ -17,10 +17,15 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
+import re
 import secrets
 import sys
+import time
 import urllib.request
+from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
 RUNTIME_URL = "http://10.18.210.7:31392/api/runtime/execute"
@@ -465,10 +470,143 @@ def _show_result(result: dict[str, Any]) -> None:
             dump_step(f"step {ti[0]}", t)
 
 
+# ---------------------------------------------------------------------------
+# CSV 批处理：读入含 query 列的 csv，逐条走 runtime，输出首工具域 + 工具链到 csv。
+# ---------------------------------------------------------------------------
+_BATCH_TOOL_DOMAIN = [
+    ("vod", r"^vod_|^tvchannel|^live_"),
+    ("music", r"^music_"),
+    ("audio", r"^audio_"),
+    ("education", r"^edu"),
+    ("sports", r"^sports_"),
+    ("children", r"^child|^kid"),
+    ("device", r"^(numeric_adjust|playback_control|mode_control|power_control|"
+               r"source_switch|timer_control|screen_|open$)"),
+    ("qa", r"^knowledge_agent|^fan_knowledge|^qa"),
+]
+
+
+def _batch_tool_to_domain(tool: str) -> str:
+    if not tool:
+        return "(空execute)"
+    for dom, pat in _BATCH_TOOL_DOMAIN:
+        if re.search(pat, tool):
+            return dom
+    return f"(其他:{tool})"
+
+
+def _batch_load_queries(path: str) -> list[tuple[str, str]]:
+    """读 csv，返回 [(query, reason)]；去重、保留首列 query / 可选 reason 列。"""
+    rows, seen = [], set()
+    with open(path, encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        qcol = None
+        for cand in ("query", "Query", "retext", "问题", "用户query"):
+            if reader.fieldnames and cand in reader.fieldnames:
+                qcol = cand
+                break
+        if qcol is None:
+            qcol = (reader.fieldnames or ["query"])[0]
+        for r in reader:
+            q = re.sub(r"\s+", "", (r.get(qcol, "") or "").strip())
+            if not q or q in seen:
+                continue
+            seen.add(q)
+            rows.append((q, (r.get("reason", "") or "").strip()))
+    return rows
+
+
+def _batch_run_one(i: int, q: str, reason: str, *, feature_code: str,
+                   random_each: bool, device_id: int, client_sid: str | None,
+                   tv_mode: str, debug: bool) -> dict[str, Any]:
+    """批处理单条：跑一次 runtime 取首工具。
+
+    random_each=True(--device-random-all)：本条用独立随机 device，隔离短记忆/多轮上下文；
+    否则统一用传入的 device_id（--device-random 时为全体共用的同一随机 id，默认为固定 id）。
+    """
+    did = random_device_id() if random_each else device_id
+    try:
+        res = _run_runtime(q, feature_code=feature_code, device_id=did,
+                           client_sid=client_sid, tv_mode=tv_mode, debug=debug)
+        tools = [t.get("tool") for t in (res.get("tools") or [])]
+        params = [t.get("params") for t in (res.get("tools") or [])]
+        dom = _batch_tool_to_domain(tools[0] if tools else "")
+        return {"i": i, "q": q, "tools": tools, "domain0": dom,
+                "params": params, "reason": reason, "err": ""}
+    except Exception as exc:  # noqa: BLE001
+        return {"i": i, "q": q, "tools": [], "domain0": "(ERR)",
+                "params": [], "reason": reason, "err": f"{type(exc).__name__}: {exc}"}
+
+
+def run_batch(csv_in: str, csv_out: str, *, feature_code: str, random_each: bool,
+              device_id: int, client_sid: str | None, tv_mode: str, debug: bool,
+              workers: int, limit: int = 0) -> int:
+    """批处理入口：csv_in → 逐条 runtime → csv_out + 首工具域分布。"""
+    rows = _batch_load_queries(csv_in)
+    if limit:
+        rows = rows[:limit]
+    print(f"批处理 {len(rows)} 条 → 远端 runtime (workers={workers})  输入={csv_in}\n")
+
+    out: list[dict[str, Any]] = []
+    dist: Counter[str] = Counter()
+    errs = 0
+    t0 = time.time()
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        futs = {
+            pool.submit(_batch_run_one, i, q, rs, feature_code=feature_code,
+                        random_each=random_each, device_id=device_id,
+                        client_sid=client_sid, tv_mode=tv_mode, debug=debug): i
+            for i, (q, rs) in enumerate(rows, 1)
+        }
+        done = 0
+        for fut in as_completed(futs):
+            o = fut.result()
+            out.append(o)
+            done += 1
+            if o["err"]:
+                errs += 1
+                print(f"[{o['i']:>3}] !ERR {o['q']}  ({o['err']})")
+            else:
+                dist[o["domain0"]] += 1
+                t0n = o["tools"][0] if o["tools"] else "(空)"
+                print(f"[{o['i']:>3}] {o['domain0']:<12s} {t0n or '(空)':<24s} {o['q']}")
+            if done % 30 == 0:
+                print(f"    ... {done}/{len(rows)}  ({time.time()-t0:.0f}s)", flush=True)
+
+    out.sort(key=lambda x: x["i"])
+    with open(csv_out, "w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["序号", "query", "首工具域", "工具链", "参数", "err", "reason"])
+        for o in out:
+            w.writerow([
+                o["i"], o["q"], o["domain0"],
+                " | ".join(str(t) for t in (o.get("tools") or [])),
+                json.dumps(o.get("params"), ensure_ascii=False) if o.get("params") else "",
+                o.get("err", ""), o.get("reason", ""),
+            ])
+    print(f"\n完成 {len(out)} 条, 用时 {time.time()-t0:.0f}s, 错误 {errs} 条")
+    print(f"结果 → {csv_out}\n")
+    print("=== 首工具域分布 ===")
+    for d, n in dist.most_common():
+        print(f"  {d:<14s} {n:>3d}")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("retext", nargs="+", default=None,
-                        help="用户请求(可多个；同一 device_id 依序发送，多轮/串行会话延续)")
+    parser.add_argument("retext", nargs="*", default=None,
+                        help="用户请求(可多个；同一 device_id 依序发送，多轮/串行会话延续)。"
+                             "批处理模式(--csv-in)下忽略")
+    parser.add_argument("--csv-in", default=None,
+                        help="批处理：输入 csv(含 query 列)，逐条跑 runtime")
+    parser.add_argument("--csv-out", default=None,
+                        help="批处理：输出 csv(默认 <csv-in>_runtime_out.csv)")
+    parser.add_argument("--workers", type=int, default=5,
+                        help="批处理并发数(默认 5)")
+    parser.add_argument("--limit", type=int, default=0,
+                        help="批处理只跑前 N 条(0=全部)")
+    parser.add_argument("--device-random-all", action="store_true",
+                        help="批处理：每条用不同的随机 device id(隔离短记忆/多轮上下文)")
     parser.add_argument("--feature-code", default=DEFAULT_FEATURE_CODE)
     device_group = parser.add_mutually_exclusive_group()
     device_group.add_argument("--device-id", default=None, metavar="SUFFIX",
@@ -490,20 +628,40 @@ def main() -> int:
                         help="以 JSON 输出(多轮为数组)")
     args = parser.parse_args()
 
-    retexts = args.retext
-    if not retexts:
-        print("错误: 缺少 retext(用户请求)", file=sys.stderr)
-        parser.print_usage(file=sys.stderr)
-        return 2
-    if args.device_random:
-        device_id = random_device_id()
-    elif args.device_id is not None:
+    if args.device_id is not None:
         try:
             device_id = device_id_with_suffix(args.device_id)
         except ValueError as exc:
             parser.error(str(exc))
+    elif args.device_random:
+        device_id = random_device_id()
     else:
         device_id = DEFAULT_DEVICE_ID
+
+    # 批处理模式：--csv-in 存在时逐条跑 runtime，输出 csv，忽略位置参数 retext。
+    if args.csv_in:
+        csv_out = args.csv_out or re.sub(r"\.csv$", "", args.csv_in) + "_runtime_out.csv"
+        # device 语义：
+        #   --device-random-all → 每条用不同随机 id(random_each=True)
+        #   --device-random     → 全体共用同一随机 id(device_id 已在上方算好)
+        #   --device-id / 默认   → 全体共用固定 id
+        return run_batch(
+            args.csv_in, csv_out,
+            feature_code=args.feature_code,
+            random_each=args.device_random_all,
+            device_id=device_id,
+            client_sid=args.client_sid,
+            tv_mode=args.tv_mode,
+            debug=args.debug,
+            workers=args.workers,
+            limit=args.limit,
+        )
+
+    retexts = args.retext
+    if not retexts:
+        print("错误: 缺少 retext(用户请求) 或 --csv-in(批处理)", file=sys.stderr)
+        parser.print_usage(file=sys.stderr)
+        return 2
 
     results: list[dict[str, Any]] = []
     for i, retext in enumerate(retexts, 1):

@@ -32,8 +32,8 @@
 影视,刚上线的新剧里，哪个最值得追？,,vod_fuzzy_search,"{""retext"": ""刚上线的新剧里哪个最值得追""}",,
 影视,刚上线就播放量破千万的新剧,,vod_fuzzy_search,"{""retext"": ""刚上线就播放量破千万的新剧""}",,
 影视,豆瓣高分的老经典电影推荐,,vod_fuzzy_search,"{""retext"": ""豆瓣高分的老经典电影推荐""}",,
-影视,我这一辈子相声,,vod_search,,,G5:gold参数为空(应显式)
-影视,请播放张云雷的相声,,vod_search,,,G5:gold参数为空(应显式)
+影视,我这一辈子相声,,vod_search,"{""action"": ""search"", ""retext"": ""我这一辈子相声"", ""query"": {""and"": [{""field"": ""title"", ""value"": ""我这一辈子""}, {""field"": ""tag"", ""value"": ""相声""}]}}",,
+影视,请播放张云雷的相声,,vod_search,"{""action"": ""play"", ""retext"": ""请播放张云雷的相声"", ""query"": {""and"": [{""or"": [{""field"": ""actor"", ""value"": ""张云雷""}, {""field"": ""entertainer"", ""value"": ""张云雷""}]}, {""field"": ""tag"", ""value"": ""相声""}]}}",,
 影视,中产人群喜欢看什么类型的影片,,vod_fuzzy_search,"{""retext"": ""中产人群喜欢看什么类型的影片""}",,
 影视,中年人爱看什么,,vod_search,"{""action"": ""search"", ""retext"": ""中年人爱看什么"", ""query"": {""field"": ""target"", ""value"": ""中年人""}}",,
 影视,中老年人爱看的电视剧,,vod_search,"{""action"": ""search"", ""retext"": ""中老年人爱看的电视剧"", ""query"": {""and"": [{""field"": ""category"", ""value"": ""电视剧""}, {""field"": ""target"", ""value"": ""中老年人""}]}}",,
@@ -59,7 +59,7 @@
 影视,电视连续剧狄仁杰免费,,vod_search,"{""action"": ""search"", ""retext"": ""电视连续剧狄仁杰免费"", ""query"": {""and"": [{""field"": ""category"", ""value"": ""电视剧""}, {""field"": ""title"", ""value"": ""狄仁杰""}, {""field"": ""is_fee"", ""value"": ""0""}]}}",,
 影视,老九门盗墓笔记,,vod_search,"{""action"": ""search"", ""retext"": ""老九门盗墓笔记"", ""query"": {""field"": ""title"", ""values"": [""老九门"", ""盗墓笔记""], ""operator"": ""or""}}",,
 影视,请换薛仁贵传奇,,vod_search,"{""action"": ""search"", ""retext"": ""请换薛仁贵传奇"", ""query"": {""field"": ""title"", ""value"": ""薛仁贵传奇""}}",,
-影视,豫剧王宝钏,,vod_search,,,G5:gold参数为空(应显式)
+影视,豫剧王宝钏,,vod_search,"{""action"": ""search"", ""retext"": ""豫剧王宝钏"", ""query"": {""and"": [{""or"": [{""field"": ""title"", ""value"": ""王宝钏""}, {""field"": ""role"", ""value"": ""王宝钏""}]}, {""field"": ""tag"", ""value"": ""豫剧""}]}}",,
 影视,王鹤棣演的电影,,vod_search,"{""action"": ""search"", ""retext"": ""王鹤棣演的电影"", ""query"": {""and"": [{""field"": ""category"", ""value"": ""电影""}, {""field"": ""actor"", ""value"": ""王鹤棣""}]}}",,
 影视,许冠文粤语电影,,vod_search_all,"{""action"": ""search"", ""retext"": ""许冠文粤语电影"", ""query"": {""and"": [{""or"": [{""field"": ""actor"", ""value"": ""许冠文""}, {""field"": ""director"", ""value"": ""许冠文""}, {""field"": ""entertainer"", ""value"": ""许冠文""}]}, {""field"": ""language"", ""value"": ""粤语""}, {""field"": ""category"", ""value"": ""电影""}]}}",,
 影视,剧版三生三世十里桃花,,vod_search,"{""action"": ""search"", ""retext"": ""剧版三生三世十里桃花"", ""query"": {""and"": [{""field"": ""category"", ""value"": ""电视剧""}, {""field"": ""title"", ""value"": ""三生三世十里桃花""}]}}",,
@@ -85,8 +85,8 @@
 影视,这几天电视上刚更新的电视剧,,vod_search,"{""action"": ""search"", ""retext"": ""这几天电视上刚更新的电视剧"", ""query"": {""field"": ""category"", ""value"": ""电视剧""}, ""sort"": {""new"": {""order"": ""desc""}}}",,
 影视,新片推荐,,vod_search,"{""action"": ""search"", ""retext"": ""新片推荐"", ""query"": {""field"": ""category"", ""value"": ""电影""}, ""sort"": {""new"": {""order"": ""desc""}}}",,
 影视,跟《80姐妹的交换人生》题材接近的剧集,,vod_relate_search,"{""query"": {""and"": [{""field"": ""category"", ""value"": ""电视剧""}, {""field"": ""title"", ""value"": ""80姐妹的交换人生""}]}}",,
-影视,推荐和《盗墓笔记》相似的电视剧,,vod_relate_search,,,G5:gold参数为空(应显式)
-影视,有没有类似于《与青春有关的日志》的剧,,vod_relate_search,,,G5:gold参数为空(应显式)
+影视,推荐和《盗墓笔记》相似的电视剧,,vod_relate_search,"{""query"": {""and"": [{""field"": ""title"", ""value"": ""盗墓笔记""}, {""field"": ""category"", ""value"": ""电视剧""}]}}",,
+影视,有没有类似于《与青春有关的日志》的剧,,vod_relate_search,"{""query"": {""and"": [{""field"": ""title"", ""value"": ""与青春有关的日志""}, {""field"": ""category"", ""value"": ""电视剧""}]}}",,G5已填:真实标题为与青春有关的日志; eval0910:112空值系113(漫长季节)数据噪音
 影视,像《漫长的季节》这种类型的剧还有吗？,,vod_relate_search,"{""query"": {""and"": [{""field"": ""category"", ""value"": ""电视剧""}, {""field"": ""title"", ""value"": ""漫长的季节""}]}}",,
 影视,有类似《鱿鱼游戏》题材的吗？,,vod_relate_search,"{""query"": {""field"": ""title"", ""value"": ""鱿鱼游戏""}}",,
 影视,同奥本海默 类型相同的电影,,vod_relate_search,"{""query"": {""and"": [{""field"": ""title"", ""value"": ""奥本海默""}, {""field"": ""category"", ""value"": ""电影""}]}}",,
@@ -122,7 +122,7 @@
 影视,高分的竞技综艺,,vod_search,"{""action"": ""search"", ""retext"": ""高分的竞技综艺"", ""query"": {""and"": [{""field"": ""tag"", ""values"": ""竞技""}, {""field"": ""category"", ""value"": ""综艺""}]}, ""sort"": {""rate"": {""order"": ""desc""}}}",,G4:.and[0]values应数组
 影视,豆瓣高分的电影,,vod_search,"{""action"": ""search"", ""retext"": ""豆瓣高分的电影"", ""query"": {""field"": ""category"", ""value"": ""电影""}, ""sort"": {""rate"": {""order"": ""desc""}}}",,
 影视,豆瓣高分的悬疑电影,,vod_search,"{""action"": ""search"", ""retext"": ""豆瓣高分的悬疑电影"", ""query"": {""and"": [{""field"": ""tag"", ""value"": ""悬疑""}, {""field"": ""category"", ""value"": ""电影""}]}, ""sort"": {""rate"": {""order"": ""desc""}}}",,
-影视,豆瓣高分的喜剧电影,,vod_search,,,G5:gold参数为空(应显式)
+影视,豆瓣高分的喜剧电影,,vod_search,"{""action"": ""search"", ""retext"": ""豆瓣高分的喜剧电影"", ""sort"": {""rate"": {""order"": ""desc""}}, ""query"": {""and"": [{""field"": ""category"", ""value"": ""电影""}, {""field"": ""tag"", ""value"": ""喜剧""}]}}",,
 影视,豆瓣高分的电视剧,,vod_search,"{""action"": ""search"", ""retext"": ""豆瓣高分的电视剧"", ""query"": {""field"": ""category"", ""value"": ""电视剧""}, ""sort"": {""rate"": {""order"": ""desc""}}}",,
 影视,豆瓣高分的古装电视剧,,vod_search,"{""action"": ""search"", ""retext"": ""豆瓣高分的古装电视剧"", ""query"": {""and"": [{""field"": ""category"", ""value"": ""电视剧""}, {""field"": ""tag"", ""value"": ""古装""}]}, ""sort"": {""rate"": {""order"": ""desc""}}}",,
 影视,豆瓣高分的都市电视剧,,vod_search,"{""action"": ""search"", ""retext"": ""豆瓣高分的都市电视剧"", ""query"": {""and"": [{""field"": ""category"", ""value"": ""电视剧""}, {""field"": ""tag"", ""value"": ""都市""}]}, ""sort"": {""rate"": {""order"": ""desc""}}}",,
@@ -136,7 +136,7 @@
 影视,热度的古装电视剧,,vod_search,"{""action"": ""search"", ""retext"": ""热度的古装电视剧"", ""query"": {""and"": [{""field"": ""category"", ""value"": ""电视剧""}, {""field"": ""tag"", ""value"": ""古装""}]}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
 影视,热度的都市电视剧,,vod_search,"{""action"": ""search"", ""retext"": ""热度的都市电视剧"", ""query"": {""and"": [{""field"": ""category"", ""value"": ""电视剧""}, {""field"": ""tag"", ""value"": ""都市""}]}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
 影视,热度的综艺,,vod_search,"{""action"": ""search"", ""retext"": ""热度的综艺"", ""query"": {""field"": ""category"", ""value"": ""综艺""}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
-影视,热度的喜剧综艺,,vod_search,,,G5:gold参数为空(应显式)
+影视,热度的喜剧综艺,,vod_search,"{""action"": ""search"", ""retext"": ""热度的喜剧综艺"", ""sort"": {""hot"": {""order"": ""desc""}}, ""query"": {""and"": [{""field"": ""category"", ""value"": ""综艺""}, {""field"": ""tag"", ""value"": ""喜剧""}]}}",,
 影视,热度的竞技综艺,,vod_search,"{""action"": ""search"", ""retext"": ""热度的竞技综艺"", ""query"": {""and"": [{""field"": ""tag"", ""value"": ""竞技""}, {""field"": ""category"", ""value"": ""综艺""}]}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
 影视,爆款的电影,,vod_search,"{""action"": ""search"", ""retext"": ""爆款的电影"", ""query"": {""field"": ""category"", ""value"": ""电影""}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
 影视,爆款的悬疑电影,,vod_search,"{""action"": ""search"", ""retext"": ""爆款的悬疑电影"", ""query"": {""and"": [{""field"": ""tag"", ""value"": ""悬疑""}, {""field"": ""category"", ""value"": ""电影""}]}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
@@ -182,7 +182,7 @@
 影视,火的都市电视剧,,vod_search,"{""action"": ""search"", ""retext"": ""火的都市电视剧"", ""query"": {""and"": [{""field"": ""category"", ""value"": ""电视剧""}, {""field"": ""tag"", ""value"": ""都市""}]}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
 影视,火的综艺,,vod_search,"{""action"": ""search"", ""retext"": ""火的综艺"", ""query"": {""field"": ""category"", ""value"": ""综艺""}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
 影视,火的喜剧综艺,,vod_search,"{""action"": ""search"", ""retext"": ""火的喜剧综艺"", ""query"": {""and"": [{""field"": ""tag"", ""value"": ""喜剧""}, {""field"": ""category"", ""value"": ""综艺""}]}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
-影视,火的竞技综艺,,vod_search,,,G5:gold参数为空(应显式)
+影视,火的竞技综艺,,vod_search,"{""action"": ""search"", ""retext"": ""火的竞技综艺"", ""sort"": {""hot"": {""order"": ""desc""}}, ""query"": {""and"": [{""field"": ""category"", ""value"": ""综艺""}, {""field"": ""tag"", ""value"": ""竞技""}]}}",,
 影视,很火的电影,,vod_search,"{""action"": ""search"", ""retext"": ""很火的电影"", ""query"": {""field"": ""category"", ""value"": ""电影""}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
 影视,很火的悬疑电影,,vod_search,"{""action"": ""search"", ""retext"": ""很火的悬疑电影"", ""query"": {""and"": [{""field"": ""tag"", ""value"": ""悬疑""}, {""field"": ""category"", ""value"": ""电影""}]}, ""sort"": {""hot"": {""order"": ""desc""}}}",,
 影视,很火的喜剧电影,,vod_search,"{""action"": ""search"", ""retext"": ""很火的喜剧电影"", ""query"": {""and"": [{""field"": ""tag"", ""value"": ""喜剧""}, {""field"": ""category"", ""value"": ""电影""}]}, ""sort"": {""hot"": {""order"": ""desc""}}}",,

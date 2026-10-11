@@ -39,4 +39,7 @@ ln -sfn "$(cd "$(dirname "$LOG_FILE")" && pwd)/$(basename "$LOG_FILE")" "${LOG_D
 echo "[run.sh] 日志 -> ${LOG_FILE}"
 
 # 保留：历史单体 run.log 若存在则只追加不删除（兼容旧文件）
-exec uvicorn app.main:app --host "$HOST" --port "$PORT" --reload 2>&1 | tee -a "$LOG_FILE"
+# --timeout-graceful-shutdown 5：reload 时旧 worker 最多等 5s 关连接就强杀，
+#   不再无限“Waiting for connections to close”卡住（连接不重来）。
+exec uvicorn app.main:app --host "$HOST" --port "$PORT" --reload \
+     --timeout-graceful-shutdown 5 2>&1 | tee -a "$LOG_FILE"

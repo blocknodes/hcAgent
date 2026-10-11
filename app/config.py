@@ -71,6 +71,7 @@ _RULE_DEFAULTS: dict[str, bool] = {
     # ---- 计划后处理（app/engine.py）----
     "plan.sort_merge": True,      # 串行「检索+排序提问」排序词回填
     "plan.single_obj_qa": True,   # 单目标属性/知识直问 → 直接一条 qa（不拆检索+提问）
+    "plan.whole_sentence_guard": True,  # 整句高置信 vod/qa 单意图守卫（挡 LLM 过度拆分）
 }
 
 
