@@ -495,57 +495,72 @@ def _batch_tool_to_domain(tool: str) -> str:
     return f"(其他:{tool})"
 
 
-def _batch_load_queries(path: str) -> list[tuple[str, str]]:
-    """读 csv，返回 [(query, reason)]；去重、保留首列 query / 可选 reason 列。"""
-    rows, seen = [], set()
+def _batch_load_queries(path: str) -> tuple[list[str], str, list[dict[str, str]]]:
+    """读 csv，返回 (表头, query 列名, 去重后的行 dict)，保留输入的全部原始列。
+
+    --csv-out 会把这些输入列原样带回，不丢弃 csv-in 里除 query 外的信息；
+    query 列按别名命中首个，行按清理后的 query 去重(保留首现)。
+    """
+    fieldnames: list[str] = []
+    rows: list[dict[str, str]] = []
+    seen: set[str] = set()
     with open(path, encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
+        fieldnames = list(reader.fieldnames or [])
         qcol = None
         for cand in ("query", "Query", "retext", "问题", "用户query"):
-            if reader.fieldnames and cand in reader.fieldnames:
+            if cand in fieldnames:
                 qcol = cand
                 break
         if qcol is None:
-            qcol = (reader.fieldnames or ["query"])[0]
+            qcol = fieldnames[0] if fieldnames else "query"
         for r in reader:
             q = re.sub(r"\s+", "", (r.get(qcol, "") or "").strip())
             if not q or q in seen:
                 continue
             seen.add(q)
-            rows.append((q, (r.get("reason", "") or "").strip()))
-    return rows
+            r[qcol] = q  # 清理后的 query 回写原列
+            rows.append(r)
+    return fieldnames, qcol, rows
 
 
-def _batch_run_one(i: int, q: str, reason: str, *, feature_code: str,
+def _batch_run_one(i: int, row: dict[str, str], *, qcol: str, feature_code: str,
                    random_each: bool, device_id: int, client_sid: str | None,
-                   tv_mode: str, debug: bool) -> dict[str, Any]:
+                   tv_mode: str, debug: bool,
+                   slow_agent_url: str | None = None) -> dict[str, Any]:
     """批处理单条：跑一次 runtime 取首工具。
 
     random_each=True(--device-random-all)：本条用独立随机 device，隔离短记忆/多轮上下文；
-    否则统一用传入的 device_id（--device-random 时为全体共用的同一随机 id，默认为固定 id）。
+    否则统一用传入的 device_id（--device-random 时为全体共用的同一随机数，默认为固定 id）。
     """
+    q = row.get(qcol, "")
     did = random_device_id() if random_each else device_id
     try:
         res = _run_runtime(q, feature_code=feature_code, device_id=did,
-                           client_sid=client_sid, tv_mode=tv_mode, debug=debug)
+                           client_sid=client_sid, tv_mode=tv_mode, debug=debug,
+                           slow_agent_url=slow_agent_url)
         tools = [t.get("tool") for t in (res.get("tools") or [])]
         params = [t.get("params") for t in (res.get("tools") or [])]
         dom = _batch_tool_to_domain(tools[0] if tools else "")
-        return {"i": i, "q": q, "tools": tools, "domain0": dom,
-                "params": params, "reason": reason, "err": ""}
+        return {"i": i, "row": row, "tools": tools, "domain0": dom,
+                "params": params, "err": ""}
     except Exception as exc:  # noqa: BLE001
-        return {"i": i, "q": q, "tools": [], "domain0": "(ERR)",
-                "params": [], "reason": reason, "err": f"{type(exc).__name__}: {exc}"}
+        return {"i": i, "row": row, "tools": [], "domain0": "(ERR)",
+                "params": [], "err": f"{type(exc).__name__}: {exc}"}
 
 
 def run_batch(csv_in: str, csv_out: str, *, feature_code: str, random_each: bool,
               device_id: int, client_sid: str | None, tv_mode: str, debug: bool,
-              workers: int, limit: int = 0) -> int:
-    """批处理入口：csv_in → 逐条 runtime → csv_out + 首工具域分布。"""
-    rows = _batch_load_queries(csv_in)
+              workers: int, limit: int = 0,
+              slow_agent_url: str | None = None) -> int:
+    """批处理入口：csv_in → 逐条 runtime → csv_out + 首工具域分布。
+
+    --csv-out 沿用 --csv-in 的全部原始列，只在其后追加结果列，不覆盖/丢弃输入列。
+    """
+    fieldnames, qcol, rows = _batch_load_queries(csv_in)
     if limit:
         rows = rows[:limit]
-    print(f"批处理 {len(rows)} 条 → 远端 runtime (workers={workers})  输入={csv_in}\n")
+    print(f"批处理 {len(rows)} 条 → 远端 runtime (mode={workers})  输入={csv_in}\n")
 
     out: list[dict[str, Any]] = []
     dist: Counter[str] = Counter()
@@ -553,10 +568,11 @@ def run_batch(csv_in: str, csv_out: str, *, feature_code: str, random_each: bool
     t0 = time.time()
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
         futs = {
-            pool.submit(_batch_run_one, i, q, rs, feature_code=feature_code,
+            pool.submit(_batch_run_one, i, r, qcol=qcol, feature_code=feature_code,
                         random_each=random_each, device_id=device_id,
-                        client_sid=client_sid, tv_mode=tv_mode, debug=debug): i
-            for i, (q, rs) in enumerate(rows, 1)
+                        client_sid=client_sid, tv_mode=tv_mode, debug=debug,
+                        slow_agent_url=slow_agent_url): i
+            for i, r in enumerate(rows, 1)
         }
         done = 0
         for fut in as_completed(futs):
@@ -565,25 +581,27 @@ def run_batch(csv_in: str, csv_out: str, *, feature_code: str, random_each: bool
             done += 1
             if o["err"]:
                 errs += 1
-                print(f"[{o['i']:>3}] !ERR {o['q']}  ({o['err']})")
+                print(f"[{o['i']:>3}] !ERR {o['row'].get(qcol, '')}  ({o['err']})")
             else:
                 dist[o["domain0"]] += 1
                 t0n = o["tools"][0] if o["tools"] else "(空)"
-                print(f"[{o['i']:>3}] {o['domain0']:<12s} {t0n or '(空)':<24s} {o['q']}")
+                print(f"[{o['i']:>3}] {o['domain0']:<12s} {t0n or '(空)':<24s} {o['row'].get(qcol, '')}")
             if done % 30 == 0:
                 print(f"    ... {done}/{len(rows)}  ({time.time()-t0:.0f}s)", flush=True)
 
     out.sort(key=lambda x: x["i"])
+    header = list(fieldnames) + ["序号", "首工具域", "工具链", "参数", "err"]
     with open(csv_out, "w", encoding="utf-8-sig", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["序号", "query", "首工具域", "工具链", "参数", "err", "reason"])
+        w.writerow(header)
         for o in out:
-            w.writerow([
-                o["i"], o["q"], o["domain0"],
-                " | ".join(str(t) for t in (o.get("tools") or [])),
-                json.dumps(o.get("params"), ensure_ascii=False) if o.get("params") else "",
-                o.get("err", ""), o.get("reason", ""),
-            ])
+            row = o["row"]
+            w.writerow(
+                [row.get(name, "") for name in fieldnames]
+                + [o["i"], o["domain0"],
+                   " | ".join(str(t) for t in (o.get("tools") or [])),
+                   json.dumps(o.get("params"), ensure_ascii=False) if o.get("params") else "",
+                   o.get("err", "")])
     print(f"\n完成 {len(out)} 条, 用时 {time.time()-t0:.0f}s, 错误 {errs} 条")
     print(f"结果 → {csv_out}\n")
     print("=== 首工具域分布 ===")
@@ -639,6 +657,7 @@ def main() -> int:
         device_id = DEFAULT_DEVICE_ID
 
     # 批处理模式：--csv-in 存在时逐条跑 runtime，输出 csv，忽略位置参数 retext。
+    # --csv-out 保留 --csv-in 的全部原始列，结果列(序号/首工具域/工具链/参数/err)追加在其后。
     if args.csv_in:
         csv_out = args.csv_out or re.sub(r"\.csv$", "", args.csv_in) + "_runtime_out.csv"
         # device 语义：
@@ -655,6 +674,7 @@ def main() -> int:
             debug=args.debug,
             workers=args.workers,
             limit=args.limit,
+            slow_agent_url=args.slow_agent_url,
         )
 
     retexts = args.retext

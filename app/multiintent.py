@@ -114,24 +114,32 @@ _CONTENT = [
     "第\s*\d+\s*集",
 ]
 
-# ---- 设备强词(多字词,命中且未被内容锚覆盖则判设备) ----
-_DEV = [
-    "亮度", "清晰度", "对比度", "色度", "饱和度", "白平衡", "色温", "分辨率", "背光",
-    "色彩", "画质", "图像", "色温",
+# ---- 设备词两表 ----
+# 拆分两表：_DEV_STRONG = 明确设备调参词（音量/亮度/关机…），确信是设备意图，可直接判。
+#            _DEV_WEAK   = 语义两可词（色彩/画质/图像/氛围… 也可能是剧情/美学描述）。
+#                         默认不直接拆进 device —— 命中只通过 weak_device_hint 提示交 LLM 判定
+#                         （见 engine._first → _plan 的 weak_hint）。
+#                         开关 multiintent.dev_weak_gate=1 恢复旧行为（弱词直接拆）.
+_DEV_WEAK = [
+    "色彩", "画质", "图像", "色温", "原画", "原音", "音画", "氛围", "场景细节",
+    "细节增强", "动态范围", "数字艺术",
+]
+_DEV_STRONG = [
+    "亮度", "清晰度", "对比度", "色度", "饱和度", "白平衡", "分辨率", "背光",
     "音量", "静音", "麦克风", "声道", "声场", "环绕", "音效", "音质", "低音", "高音",
     "重低音", "超重低音", "声音模式", "音效演示", "屏幕发声", "蓝牙",
     "关机", "开机", "重启", "唤醒", "快进", "快退", "倒回", "定位", "随机播放",
     "顺序播放", "停止播放", "暂停", "前进", "后退", "延时关机", "定时关机", "自动关机",
     "调节", "调整", "设置", "校准", "校正", "数值", "开关", "调到", "切换到",
     "对焦", "梯形", "控光", "护眼", "HDR", "杜比", "全景声", "像素", "晶晰", "疾速",
-    "运动补偿", "运动画面", "场景细节", "细节增强", "环境光", "原画", "原音", "超清",
+    "运动补偿", "运动画面", "环境光", "超清",
     "超广", "量子点", "中置", "声学", "音响", "屏幕", "分区控光", "全阵列", "防射眼",
     "峰值", "面板", "电视",
     "太暗", "太亮", "太艳", "太红", "太黑", "偏蓝", "偏红", "偏淡", "拖尾", "模糊",
     "刺眼", "卡顿", "暗场", "暗处", "雪花", "不干净", "看不清", "听不清", "斑点",
-    "颜色太", "画面", "声音", "亮度调", "音量调", "快进到", "音画", "氛围", "动态",
-    "数字艺术", "增强", "技术", "按键", "MiniLed", "Imax", "原生肤色", "原生",
-    "按键音", "肤色", "HDR", "动态范围",
+    "颜色太", "画面", "声音", "亮度调", "音量调", "快进到", "动态",
+    "增强", "技术", "按键", "MiniLed", "Imax", "原生肤色", "原生",
+    "按键音", "肤色", "HDR",
 ]
 
 # ---- 裸设备控制词(命中即设备，除非内容锚覆盖——已在前置判断处理) ----
@@ -161,8 +169,14 @@ _CONTENT_STRONG = [
 
 
 def _is_content_clause(t: str) -> bool:
-    for w in _CONTENT_STRONG:
-        if re.search(w, t):
+    # 书名号锚（multiintent.book_title_anchor，默认开）：任何《…》包裹的实体都是内容
+    # （影视/综艺/歌曲/书），内部即使出现设备词（如《中国好声音》的"声音"）也不能判设备
+    # ——挡"《中国好声音》被误拆成 device"这类整句内容误拆。
+    # HC_RULE_MULTIINTENT_BOOK_TITLE_ANCHOR=0 关闭：书名号不再屏蔽设备词（回退旧行为）。
+    if _rule_on("multiintent.book_title_anchor") and re.search(r"《[^》]{1,30}》", t):
+        return True
+    for c in _CONTENT_STRONG:
+        if re.search(c, t):
             return True
     return False
 
@@ -196,9 +210,38 @@ def _is_device(t: str) -> bool:
     # 参数+模式/设备词
     if re.search(r"(音乐|鲜艳|体育|标准|影院|游戏|灰度|显示|声音|图像|音频|电影|护眼|趣味|运动|节能|环境|数字|专业|超清|双标|整点)\s*模式", t2):
         return True
-    if any(w in t2 for w in _DEV):
+    if any(w in t2 for w in _DEV_STRONG):
         return True
     return False
+
+
+# ---- 弱设备词提示（不直接拆，交 LLM 决定） ----
+def weak_device_hint(query: str) -> str:
+    """检测 query 是否含【弱设备词】（色彩/画质/图像…，语义两可：可能是设备调节，
+    也可能是剧情/美学描述）。命中返回提示串（供 _plan 提示 LLM），未命中返回空串。
+    只做提示，**不**参与确定性拆分——这类词不能由规则直接判 device。
+    """
+    q = (query or "").strip()
+    if not q:
+        return ""
+    hits = [w for w in _DEV_WEAK if w in q]
+    if not hits:
+        return ""
+    return f"含弱设备词({'/'.join(hits)})：可能是设备调节，也可能是剧情/美学描述，请结合上下文判定是否拆成设备意图。"
+
+
+def _has_only_weak(t: str) -> bool:
+    """该子句命中弱词、且无强词/裸词/内容锚 → 设备语义两可，只能靠弱词判断。"""
+    t2 = _strip(t)
+    if not t2:
+        return False
+    if _is_content_clause(t2):
+        return False
+    if any(w in t2 for w in _DEV_STRONG):
+        return False
+    if any(w in t2 for w in _BARE_DEV):
+        return False
+    return any(w in t2 for w in _DEV_WEAK)
 
 
 # ---- 入口 ----
@@ -208,8 +251,13 @@ def split_multiintent(query: str) -> Split:
     q = (query or "").strip()
     if not q:
         return Split("", q, False)
+    # 弱设备词（色彩/画质…）默认不参与 _is_device：语义两可（剧情美学 vs 设备调参），
+    # 不直接拆，只通过 weak_device_hint 交 LLM 判定（见 engine._first → _plan）。
+    # 回滚开关 multiintent.dev_weak_gate=1（旧行为）：弱词也直接拆、不提示 LLM。
+    legacy = _rule_on("multiintent.dev_weak_gate")
     for left, right in _boundaries(q):
-        dl, dr = _is_device(left), _is_device(right)
+        dl = _is_device(left) or (legacy and _has_only_weak(left))
+        dr = _is_device(right) or (legacy and _has_only_weak(right))
         if dl and not dr:
             return Split(device=left, content=right, hit=True)
         if dr and not dl:

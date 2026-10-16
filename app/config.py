@@ -64,6 +64,13 @@ _RULE_DEFAULTS: dict[str, bool] = {
     "multiintent.content_device": True,  # 「内容+设备」双目标拆成两条并行意图
     "multiintent.serial_qa": True,       # 串行「检索 → 提问」确定性拆分
     "multiintent.multi_tab": True,       # 卡通/动漫双域并行（children+vod 双 tab）
+    # 书名号内容锚（挡《中国好声音》的"声音"被误判 device 的整句误拆）：
+    # 默认开；HC_RULE_MULTIINTENT_BOOK_TITLE_ANCHOR=0 关闭 → 书名号不再屏蔽设备词。
+    "multiintent.book_title_anchor": True,
+    # 弱设备词（色彩/画质/图像…：既可是设备调参、也可是剧情/美学描述）：
+    # 默认不直接拆进 device —— 命中只通过 weak_device_hint 提示交给 LLM（_plan）判定；
+    # 开关=1 时回滚旧行为（弱词仍能像强词一样直接触发 device 拆分、不提示 LLM）。
+    "multiintent.dev_weak_gate": False,
     # ---- 多轮改写（app/engine.py）----
     "mt.rewrite_badcase": True,   # 多轮改写 badcase（(上轮,本轮) 命中即固定改写，绕过 LLM）
     "mt.inherit_domain": True,    # 多轮域继承（本轮判空时沿用上轮稳定域）
@@ -72,6 +79,15 @@ _RULE_DEFAULTS: dict[str, bool] = {
     "plan.sort_merge": True,      # 串行「检索+排序提问」排序词回填
     "plan.single_obj_qa": True,   # 单目标属性/知识直问 → 直接一条 qa（不拆检索+提问）
     "plan.whole_sentence_guard": True,  # 整句高置信 vod/qa 单意图守卫（挡 LLM 过度拆分）
+    # 所有绕过 LLM 的确定性拆分/守卫规则总闸：本闸为 1（默认）时下方规则全走，
+    # 与开关引入前逐条一致；设 0（HC_RULE_PLAN_SKIP_LLM_RULES=0）→ 跳过
+    # single_obj_qa / multi_tab / whole_sentence_guard / content+device 拆分 /
+    # serial_qa / 音乐频道 override，整句必走 _plan LLM 拆分（对齐"拆规则、LLM 替代"方向）。
+    "plan.skip_llm_rules": True,
+    # 下面这条是【默认关闭的新能力开关】（与上面"默认全开=关掉即止血"相反）：
+    # 开 → 单意图不再强制恢复原句，直接把 LLM 改写后的 q+域交给 hcTools（拆规则/交权给 LLM 用）。
+    # 默认 False = 保持现状（单意图仍恢复原句，逐字节与引入前一致）。
+    "plan.single_intent_llm_rewrite": False,  # 单意图信任 LLM 改写（默认关）
 }
 
 
