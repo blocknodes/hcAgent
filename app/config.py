@@ -18,8 +18,11 @@ API_KEY = os.environ.get("HC_LLM_API_KEY", "")
 # hcTools 意图解析服务地址（POST /api/predict，拿最终工具与参数）。
 HCTOOLS_BASE = (os.environ.get("HC_HCTOOLS_BASE", "http://127.0.0.1:8084")).rstrip("/")
 
+# LLM 请求体里的 model 名（对应 vllm --served-model-name 或 --lora-modules 名）。
+# 默认 baseline；切 LoRA 时设 HC_LLM_MODEL=lora1 等。plan/多轮改写/兜底qa 全部共用此值。
+MODEL = os.environ.get("HC_LLM_MODEL", "baseline")
+
 # ---- 常量默认值（不读环境）----
-MODEL = "baseline"
 TIMEOUT = 120.0
 MAX_RETRY = 3
 MAX_PLAN_STEPS = 6
@@ -88,6 +91,15 @@ _RULE_DEFAULTS: dict[str, bool] = {
     # 开 → 单意图不再强制恢复原句，直接把 LLM 改写后的 q+域交给 hcTools（拆规则/交权给 LLM 用）。
     # 默认 False = 保持现状（单意图仍恢复原句，逐字节与引入前一致）。
     "plan.single_intent_llm_rewrite": False,  # 单意图信任 LLM 改写（默认关）
+    # 体育裸队名短路：整句精确等于队名词表某条 → 直发 sports_team_search，不走 hcTools。
+    # 默认开；HC_RULE_SPORTS_TEAM_SHORTCUT=0 关闭 → 队名查询回退 hcTools 解析。
+    "sports.team_shortcut": True,
+    # 少儿内容并行补影视：judged children 的意图克隆一条同级无依赖 vod 意图，
+    # 产出两个并行工具（educ_search_all + vod_search）——少儿媒资影视库一般也有。
+    # 【默认开且会改变默认行为】（与上面“全开=零漂移”相反，属有意改行为）：
+    # 关闭（HC_RULE_CHILDREN_ADD_VOD=0）即回到只出 children 单工具，用于 A/B 量化 delta。
+    # 刻意独立于 plan.skip_llm_rules 总闸：总闸关掉（整句走 LLM）时仍照补 vod。
+    "children.add_vod": True,
 }
 
 

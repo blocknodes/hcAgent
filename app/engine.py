@@ -736,6 +736,42 @@ def _multi_tab_intents(query: str, tv_mode: str | int = "0") -> list[Intent]:
     ]
 
 
+# vod 克隆的 index 偏移：少儿意图原步号 +100。保证与计划步号(1..N)及续跑
+# toolHistory 里的 s{index} 不冲突——克隆只在本轮出 step，不写入续跑计划状态，
+# 下轮 _executed_indexes 读到 s101 时计划里无此 index，next_batch 自然忽略。
+_VOD_CLONE_INDEX_OFFSET = 100
+
+
+def _expand_children_vod(batch: list[Intent]) -> list[Intent]:
+    """少儿内容并行补影视：对 batch 里每条 children 意图追加一条同级无依赖 vod 意图。
+
+    少儿媒资库里影视一般也有，并行多出一个 vod_search，客户端可多渲染一个影视 tab。
+    工具+params 仍交 hcTools 各域权威解析（children→educ_search*，vod→vod_search*）。
+
+    - 只对 domain=="children" 的意图补；educ_history/qa 等其它域不补。
+    - 已有相同 query 的 vod 意图（如 multi_tab 已出 children+vod）不重复补。
+    - 克隆无依赖(depends=False)，当批即发；tool 置 "execute" 让 hcTools 重新选 vod 工具。
+    开关 children.add_vod（默认开，独立于 plan.skip_llm_rules 总闸）：
+    关闭(HC_RULE_CHILDREN_ADD_VOD=0) → 只出 children 单工具，用于 A/B 量化 delta。
+    """
+    if not config.rule_on("children.add_vod"):
+        return batch
+    existing_vod = {(it.query or "").strip() for it in batch if it.domain == "vod"}
+    out: list[Intent] = []
+    for it in batch:
+        out.append(it)
+        if it.domain != "children":
+            continue
+        q = (it.query or "").strip()
+        if q in existing_vod:
+            continue
+        existing_vod.add(q)
+        out.append(Intent(query=it.query, domain="vod", tool="execute",
+                          index=it.index + _VOD_CLONE_INDEX_OFFSET,
+                          depends=False, dep_on=0, src=it.src))
+    return out
+
+
 def _load_maybe_str(v: Any) -> Any:
     """dict/list 原样返回；字符串尝试 JSON 反解（上游 result 可能是 JSON 文本）。"""
     if not isinstance(v, str):
@@ -1241,6 +1277,16 @@ async def _hctools_params(it: Intent) -> tuple[str, dict[str, Any], str]:
     domain_key = _HCTOOLS_DOMAINS.get(it.domain)
     if not domain_key:
         return "", {}, ""
+    # 体育裸队名短路：整句精确等于队名词表某条 → 直发 sports_team_search，不走 hcTools。
+    # 精确全串匹配 → 带额外意图的句子（"nba雄鹿比赛视频""湖人vs森林狼"）不命中，零回归。
+    if domain_key == "sports" and config.rule_on("sports.team_shortcut"):
+        # it.query 是 planner 改写后的句子(可能已非裸队名，如"德国男篮"→"搜索德国男篮比赛视频")，
+        # it.src 是用户原始输入。二者任一精确等于队名词表即短路。
+        # 不能写 is_bare_team_name(it.query or it.src)：or 取首个非空=改写句，永远吃不到 src。
+        for cand in (it.src, it.query):
+            if detect.is_bare_team_name(cand or ""):
+                team = (cand or "").strip().strip("。！!?？，,、.~～ 　")
+                return "sports_team_search", {"sport_team": team}, "rule:sports_team_shortcut"
     try:
         # 用原子/自包含意图 it.query 调 hcTools：串行多意图里 src 是整句，
         # 直接用整句会让 hcTools 把"然后再问…评分最高"等后续意图当成本步搜索条件，
@@ -1374,6 +1420,9 @@ async def build_response(req) -> dict[str, Any]:
     # 匹配则把该意图强置 music（让 hcTools 的 music_song_search 兜底检索，不误判影视）。
     # 仅对"播放/放《X》"形的裸书名号意图生效，不影响带歌/歌曲/听 字样的正常句。
     _reseed_bare_song(batch, device_id=device_id, cur_query=query, short_memory=short_memory)
+    # 少儿内容并行补影视：域定下后(含 reseed 改判)对每条 children 意图追加同级 vod 意图，
+    # 产出 educ_search_all + vod_search 两个并行工具（少儿媒资影视库一般也有）。
+    batch = _expand_children_vod(batch)
     # multi-tab 双域并行标记：首轮无历史卡通查询由 _first 直接切成 children+vod
     # 两个并行无依赖意图。有双方才标记 parallel，供客户端并发渲染两个 tab。
     is_dual_tab = stop and not history and len(batch) == 2 and (

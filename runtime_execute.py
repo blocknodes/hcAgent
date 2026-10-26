@@ -29,6 +29,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
 RUNTIME_URL = "http://10.18.210.7:31392/api/runtime/execute"
+RUNTIME_URL = "http://10.18.217.60:30525/api/runtime/execute"
 DEFAULT_FEATURE_CODE = "861003009000056000000505"
 DEFAULT_DEVICE_ID = 9900111205682291335156314657157449362655530101519471739595839462
 SSE_TIMEOUT = 90  # 单次 SSE 连接超时(秒)
