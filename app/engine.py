@@ -23,13 +23,11 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from . import config, detect, hctools, llm, multiintent
-from .mt_rewrite_badcases import mt_rewrite_badcase
+from . import config, hctools, llm, multiintent
 from .prompts import (
     T0_PLAN_PROMPT,
     T1_STEP_PROMPT,
     MT_REWRITE_PROMPT,
-    CONTENT_DOMAIN_PROMPT,
     build_llm_metadata,
 )
 
@@ -77,10 +75,7 @@ def _mt_add(device_id: str, turn: dict[str, str]) -> None:
             turns[-1]["answer"] = turn.get("answer", "")
         else:
             new_turn = {"q": turn.get("q", ""), "answer": turn.get("answer", "")}
-            # q_raw(用户原始 query)、domain(落定域) 一并透传。仅在有值且与 q 不同时保留。
-            qr = turn.get("q_raw")
-            if qr and qr != turn.get("q"):
-                new_turn["q_raw"] = qr
+            # domain(落定域) 一并透传，供下一轮多轮改写的 LLM metadata 使用。
             dom = turn.get("domain")
             if dom:
                 new_turn["domain"] = dom
@@ -148,45 +143,6 @@ def _short_turns(short_memory: list[dict[str, Any]] | None) -> list[dict[str, st
     return out
 
 
-def _last_short_q(short_memory: list[dict[str, Any]] | None) -> str:
-    """取 shortMemory 里最后一轮 dialogData.query（用户原始 query）。
-
-    用于改写 badcase 的『上轮 query』：进程内 _MT_CONTEXT(real_q) 没有历史时，
-    退而求其次用 shortMemory 携带的最近一轮原始用户 query 兜底。仅取最末轮。
-    """
-    for ent in reversed(short_memory or []):
-        if not isinstance(ent, dict):
-            continue
-        dialog = ent.get("dialogData") or {}
-        if isinstance(dialog, dict):
-            q = str(dialog.get("query") or "").strip()
-            if q:
-                return q
-    return ""
-
-
-def _mt_last_domain(device_id: str) -> str:
-    """返回该 device 对话历史末轮的落定域（多轮域继承用），无则 ""。"""
-    real_q = _mt_get(device_id)
-    return (real_q[-1].get("domain") or "") if real_q else ""
-
-
-def _inherit_mt_domain(device_id: str, batch: list["Intent"]) -> None:
-    """多轮域继承：对 batch 里 detect 判空(domain="")的意图，沿用上一轮稳定域。
-
-    仅当上轮有落定域、且本轮该意图确实无任何域信号时继承；不覆盖本轮已判的
-    明确域（显式切换业务的句不受影响）。single 单意图会话尤其受益。
-    """
-    if not config.rule_on("mt.inherit_domain"):
-        return
-    prev_dom = _mt_last_domain(device_id)
-    if not prev_dom:
-        return
-    for it in batch:
-        if not it.domain:
-            it.domain = prev_dom
-
-
 def _mt_merge(real_q: list[dict[str, str]], short_a: list[dict[str, str]]) -> list[dict[str, str]]:
     """把真实改写链路(real_q.q) 和 shortMemory 应答(short_a.a) 按轮对齐成 q1-a1/q2-a2。
 
@@ -219,27 +175,9 @@ async def _mt_rewrite(cur_query: str, device_id: str, short_memory: list[dict[st
     (请求 shortMemory 携带的应答 & 候选媒资)。两者按轮对齐成 q1-a1/q2-a2 序列，
     key 为用户设计：real query 取改写链路、应答取 shortMemory，缺一用另一侧补齐。
     仅改写、不写回。无有效历史直接用原句。
-
-    优先级：badcase(上一轮真实 query + 本轮请求 命中 → 固定改写)  > LLM。
     """
-    # badcase 优先：(上轮用户原话, 本轮请求) 命中即固定改写，绕过 LLM。
-    # 上轮原话优先取 _MT_CONTEXT 末轮的 q_raw(用户原始 query)，回退末轮 q(改写句)，
-    # 再回退 shortMemory 最近轮 dialogData.query。
     real_q = _mt_get(device_id)
-    prev_q = ""
-    prev_domain = ""
-    if real_q:
-        last_q = real_q[-1]
-        prev_q = last_q.get("q_raw") or last_q.get("q") or ""
-        prev_domain = last_q.get("domain") or ""
-    if not prev_q:
-        prev_q = _last_short_q(short_memory)
-    bad = mt_rewrite_badcase() if config.rule_on("mt.rewrite_badcase") else None
-    hit = bad.lookup(prev_q, cur_query) if (bad is not None and prev_q) else None
-    if hit is not None:
-        logger.info("mt改写 badcase 命中 prev=%r cur=%r -> %r (%s)",
-                    prev_q, cur_query, hit["target"], hit.get("id", ""))
-        return hit["target"] or cur_query
+    prev_domain = (real_q[-1].get("domain") or "") if real_q else ""
     short_a = _short_turns(short_memory)
     merged = _mt_merge(real_q, short_a)
     if not merged:
@@ -276,79 +214,16 @@ def _has_mt_history(device_id: str, short_memory: list[dict[str, Any]] | None) -
     return bool(short_memory)
 
 
-_BARE_SONG_VERB = re.compile(r"(?:播放|放|听|点播|播一下|播\s*)《([^》]{1,24})》")
-
-
-def _song_names_from_ctx(device_id: str, short_memory: list[dict[str, Any]] | None) -> list[str]:
-    """从上一轮对话提取候选歌名（《X》书名号内的 X），供裸书名号意图回填 music 用。
-
-    数据源：本进程 _MT_CONTEXT 的末轮 answer（真实应答文本，含"《吉量》"）+
-    请求 shortMemory 的 dialogData.answer。均形如"…演唱的歌曲是《吉量》…"或回显歌名。
-    无候选返回 []。
-    """
-    names: list[str] = []
-    for turn in _mt_get(device_id):
-        ans = turn.get("answer") or ""
-        names += re.findall(r"《([^》]{1,24})》", ans)
-    for ent in short_memory or []:
-        if not isinstance(ent, dict):
-            continue
-        d = ent.get("dialogData") or {}
-        if isinstance(d, dict):
-            names += re.findall(r"《([^》]{1,24})》", (d.get("answer") or ""))
-    return list(dict.fromkeys(names))
-
-
-def _reseed_bare_song(batch: list[Intent], *, device_id: str, cur_query: str,
-                      short_memory: list[dict[str, Any]] | None) -> None:
-    """裸书名号歌曲兜底：本轮意图是“播放《X》”且 X 曾在上一轮应答出现过 → 域改 music。
-
-    背景：两轮会话「周深在2026年的春晚唱的什么歌」→「帮我播一下这个歌」。MT 改写
-    常把后者压成「播放《吉量》」，丢掉了"歌"字；detect 里《吉量》无 music 锚（非
-    《庆余年》等影视具名白名单）→ 保 LLM 首轮 qa 的 vod 倾向 → 误判 vod、调 vod_fuzzy。
-
-    这里的《吉量》会从上一轮应答（"演唱的歌曲是《吉量》…"）里识别为【歌名】：
-    - 意图语句形如 "播放/放《X》" 且 无 "歌曲/歌/听/音乐" 字样的裸放 → X∈上一轮歌名
-      → 域强置 music（hcTools music_song_search 对"播放X"本来就能兜底检索歌曲）。
-    - 非裸书名号播放句、或 X 不在上下文歌名 → 不动（保持 detect 原判定）。
-    - 带"MV/看/电影/电视剧/剧"等影视载体字样的意图不参与，避免影视剧被误拉。
-    """
-    if not config.rule_on("mt.bare_song_reseed"):
-        return
-    ctx_names = _song_names_from_ctx(device_id, short_memory)
-    if not ctx_names:
-        return
-    for it in batch:
-        q = (it.query or "").strip()
-        # 只救裸书名号 + 播放动作且无歌曲/音乐锚的意图
-        m = re.search(r"^(?:播放|放|播放一下|点播一下|帮我播放|帮我放|请播放)[\s]*《([^》]{1,24})》", q)
-        if not m:
-            continue
-        title = m.group(1)
-        if re.search(r"(歌曲|歌|听|音乐|单曲|专辑|MV|mv)", q):
-            continue                       # 已带 song 锚，detect 自己会判 music
-        if title not in ctx_names:
-            continue                       # 书名号内容从未在上下文歌名里出现 → 不动
-        # 已在上下文里确认是上一轮应答的歌名 → 强制 music，交给 hcTools 歌曲域兜底
-        it.domain = "music"
-        logger.info("mt歌曲名锚兜底: 意图 %r 书名号<%s> 命中上轮歌名 -> domain=music", q, title)
-
-
-def _mt_append_answer(device_id: str, query: str, answer: str, query_raw: str = "",
-                      domain: str = "") -> None:
+def _mt_append_answer(device_id: str, query: str, answer: str, domain: str = "") -> None:
     """把一轮 已完成 (query, answer) 追加进 device 对话历史。
 
     出现在 build_response 末尾，answer 取本轮 steps 的检索/执行 retext 摘要，
     供下一轮 LLM 改写时还原指上一环/刚才那部等历史引用。
-    query = 本轮真正改写/执行的自包含句；query_raw = 用户原始 query（可选，
-    用于改写 badcase 以上一轮用户原话做匹配键）；domain = 本轮落定的稳定域，
-    供下一轮 detect 判空/弱信号时做多轮域继承。
+    query = 本轮真正改写/执行的自包含句；domain = 本轮落定的域（下一轮改写的 metadata 用）。
     """
     if not device_id or not answer.strip():
         return
     turn = {"q": query or "", "answer": answer.strip()}
-    if query_raw and query_raw != query:
-        turn["q_raw"] = query_raw
     if domain:
         turn["domain"] = domain
     _mt_add(device_id, turn)
@@ -421,129 +296,13 @@ def parse_plan(value: Any) -> Plan:
     return Plan(intents=intents)
 
 
-# 串行"检索+对结果排序筛选提问"里的排序词(评分最高/人气最高/播放量最高/最新/最经典…)，
-# LLM 常把它下放成第二句 qa 的二次筛选("查询结果中评分最高的XX")，导致第一句检索丢 sort。
-# 这里规则回填：排名词 belongs 第一句检索，而非第二句结果筛选。
-_SORT_PAT = [
-    (r"评分最高[的一部]*", "评分最高"),
-    (r"人气最高[的一部]*", "人气最高"),
-    (r"播放量最高[的一部]*", "播放量最高"),
-    (r"播放最高[的一部]*", "播放量最高"),
-    (r"最新的一部|最新", "最新"),
-    (r"最经典的一部|最经典", "最经典"),
-    (r"最热[的一部]*", "人气最高"),
-]
-_QA_VERB = ("导演是谁", "主演是谁", "主演都有谁", "男主角是谁", "女主角是谁",
-            "评分怎么样", "评分是多少", "哪一年上映", "讲的是什么", "讲的是什么故事",
-            "导演", "主演", "主角", "票房", "评分")
-
-
-# 单目标属性/泛知识直问：整句只问一个可执行属性（X的导演/主演/简介/…是谁、是什么、什么时候）。
-# LLM T0 常把它误拆成「检索 + 提问」两步（如「《小猪佩奇 第一季》的导演是谁」被拆成
-# children 检索 1 步 + qa 提问 1 步），制造冗余检索步，夹具只认 fan_knowledge_agent。
-# 这类纯问句应直接一条 qa → hcTools qa 域(fan_knowledge_agent)。
-_QA_SINGLE_BLOCK = re.compile(
-    # 前置检索/播放动作（搜索X/给我看X/放X/我要看X…）
-    r"搜索|搜一下|搜|查一下|查一|查|帮忙|给我|帮我|我要|我想|看看吧|看看|看一|推荐|"
-    r"播放|点播|放一|放个|放|我要看|想看|有没有|如何|怎么办|"
-    # 排序/筛选（评分最高/最新/最经典/免费/高清…）
-    r"评分最高|人气最高|最经典|最热|最新|最高|高清|免费|完整版|国语版|上映|"
-    # 串行第二目标（然后…/接着…/顺便…/再问…）
-    r"然后|接着|同时|再问|顺便|加上|并且|以及|又问",
-)
-
-
-def _is_single_obj_qa(query: str) -> bool:
-    """单目标属性框架：是否拆「检索 + 提问」两步。
-
-    命中条件：通用问答信号(_is_qa)已判为知识问答 + 整句不含任何「检索/排序/串行/播放」
-    动作词 + 非「媒资检索」描述。用于保证纯问句（X的导演/主演是谁…）不超过 LLM，
-    否则让 LLM 判域（会拆两步制造冗余检索）。
-    用例：『这部《小猪佩奇 第一季》的主演是谁』→ True；
-          『张艺谋主演的电视剧』→ False（媒资检索，交 LLM 判 vod_search 而非 qa）。
-    """
-    q = (query or "").strip()
-    if not q or not detect._is_qa(q):
-        return False
-    if _QA_SINGLE_BLOCK.search(q):
-        return False
-    # 媒资检索排除：X主演的/执导的/参演的 + 影视载体(电影/电视剧/片/剧集…) —
-    # 这类是"检索某人演/导的剧"，不是属性提问，交 LLM 判 vod_search(actor/director 检索)。
-    # 刻意不用「主演」裸词——它既在知识问答(「主演是谁」)也在检索(「主演的电影」)。
-    if re.search(
-        r"(?:主演|参演|出演|饰演|导演|执导|担任)的.{0,4}"
-        r"(?:电影|电视剧|电视连续剧|连续剧|剧集|影片|影视片|片|片子|作品|剧|剧场版)", q):
-        return False
-    if re.search(r"此人主演|谁主演", q) and re.search(r"(电影|电视剧|片)", q):
-        return False
-    # 引文定位排除：引某句台词/某片段问「出自哪部电影/电视剧/出处」 → 媒资定位（vod_fuzzy），
-    # 交 detect 判 vod，不是开放属性问答。"我命由我不由天，是哪部电影里面的经典台词" 永远 vod。
-    # 只认「台词/片段/名场面/那句 + 出自哪部/哪个/出处 + 影视载体」的引文定位；
-    # 不碰「XX剧多少集/XX季有几集」这类纯知识量问答，也不拦儿童/动画台词（哪部动画片里的台词
-    # → 交 detect 判 children，符合域判原则）。
-    if re.search(r"(台词|片段|名场面|那句|那场戏|出哪部|出自哪|来自哪|哪个片段)", q) and (
-        re.search(r"(电影|电视剧|影视|影片|片子|剧|经典|出处|动画|片)", q)):
-        return False
-    return True
-
-
-def _merge_sort_word_to_retrieval(plan: Plan) -> Plan:
-    """串行"检索 + 对结果排序筛选提问"：把第二句抛出的排序词回填回第一句检索。
-
-    触发条件（LLM 常把排序词下放成第二句 qa 的结果筛选，需回填，不污染普通串行）：
-      - 至少 2 个意图；
-      - 第一个意图是 vod 检索（domain=vod）；
-      - 后续某个【提问】意图含排序词；
-      - 第一个检索意图当前 query 未携带该排序词。
-    命中后把排序词并入检索 query 前端，让下游 hcomp 合成 sort。
-    """
-    if len(plan.intents) < 2:
-        return plan
-    first = plan.intents[0]
-    if first.domain != "vod" or not first.query:
-        return plan
-    sort_word = ""
-    for it in plan.intents[1:]:
-        q = it.query or ""
-        has_qa = any(v in q for v in _QA_VERB)
-        if not has_qa:
-            continue
-        for pat, rep in _SORT_PAT:
-            if re.search(pat, q):
-                sort_word = rep
-                break
-        if sort_word:
-            break
-    if not sort_word or sort_word in first.query:
-        return plan
-    fq = first.query
-    fq_clean = re.sub(r"^(搜索|帮我搜|帮我搜索|帮我找一下|帮我找|搜一下|找一下|帮我查|查一下|搜|找)\s*", "", fq).strip()
-    merged = f"{sort_word}的{fq_clean}" if fq_clean else f"{sort_word}"
-    new_first = Intent(query=merged, domain=first.domain, tool=first.tool,
-                       index=first.index, depends=first.depends, dep_on=first.dep_on,
-                       src=first.src)
-    return Plan(intents=[new_first] + plan.intents[1:])
-
-
-def _with_source(plan: Plan, src: str, tv_mode: str | int = "0",
-                 segment: dict | None = None) -> Plan:
-    """给计划内每个意图标注 src=原文 + detect 判域修正。
-
-    detect_domain 用每个意图【自含的 query】（非整句 src）在 LLM 判的 domain 上做确定性覆盖。
-    必须用 LLM 判的 domain 而非整句：多轮场景里整句会把其他子任务的信号（如"导演是谁"）
-    串扰到本子任务判域，导致"搜索《XXX》的电影"这类 LLM 判的 vod 检索被 `_is_qa` 误改到 qa。
-    每个子意图按其自身内容独立判域，才与下游 hcTools(用 it.query) 一致、对齐 golden。
-    命中：即改 domain；未命中保留 LLM 判定。domain 定了，tool+params 仍交给 hcTools。
-    segment：可选 ASR 分词元数据，透传给 detect_domain 做 tvPlay(点播视频) 裁决。
-    """
-    out: list[Intent] = []
-    for it in plan.intents:
-        # 用原子子意图 it.query 判域；query 空时回退整句 src。
-        judge = (it.query or "").strip() or src
-        domain = detect.detect_domain(judge, it.domain, tv_mode=tv_mode, segment=segment)
-        out.append(Intent(query=it.query, domain=domain, tool=it.tool,
-                          index=it.index, depends=it.depends, dep_on=it.dep_on, src=src))
-    return Plan(intents=out)
+def _with_source(plan: Plan, src: str) -> Plan:
+    """给计划内每个意图标注 src=用户原文；domain 完全沿用 LLM 判定。"""
+    return Plan(intents=[
+        Intent(query=it.query, domain=it.domain, tool=it.tool,
+               index=it.index, depends=it.depends, dep_on=it.dep_on, src=src)
+        for it in plan.intents
+    ])
 
 
 def _extract_bare_objects(text: str) -> list[dict]:
@@ -594,67 +353,6 @@ def _clean_llm_text(text: str) -> str:
     elif len(t) >= 2 and t[0] in "「『" and t[-1] in "」』":
         t = t[1:-1]
     return t.strip()
-
-
-# ---------------------------------------------------------------------------
-# segment 分词摘要：把 ASR 侧给的 wordList(词+权值+词性)精简成一行提示，
-# 注入 T0 计划 prompt 作为 LLM 的辅助判断依据（不改变契约，仅在原文难处歧时参考）。
-# ---------------------------------------------------------------------------
-_SEG_ATTR_CN = {"tvPlay": "点播视频", "episode": "集数", "audio": "音频", "song": "歌曲"}
-
-# 分词 tag → 对工具/域选择的裁决语义（高权重时才发声，权重>=0.5）
-# 顺序即优先级：tvPlay 是最强信号（ASR 明确标点播视频），audio/歌曲次之。
-_SEG_RULES = [
-    # (attr, 裁决文本) —— 读法：查询原文里出现该词条且权重达标时，工具域应归向谁
-    ("tvPlay",  "【分词裁决】命中 点播视频，判定为影视剧播放/检索意图（tvPlay 域），不要按歌名/音频处理"),
-    ("episode", "【分词裁决】命中 集数，属于点播片集（可在 点播 之上叠加集数参数）"),
-    ("song",    "【分词裁决】命中 歌曲，属于歌曲/音乐意图（music 域）"),
-    ("audio",   "【分词裁决】命中 音频，属于音频内容意图"),
-]
-
-
-def _segment_hint(segment: dict[str, Any] | None) -> str:
-    """把 data.segment 里的分词信号压缩成 prompt 提示；无信号返回空串。
-
-    只取 wordList 里带 attrWeights 的项（权值>=0.5 才算有参考价值），
-    输出形如「分词参考: 一人随歌=点播视频(1)，35集=集数(1)」。
-    该行作为 LLM 的辅助判断依据，可与模型自身判断分歧。
-    """
-    if not segment or not isinstance(segment, dict):
-        return ""
-    wl = segment.get("wordList") or []
-    if not wl:
-        return ""
-    parts: list[str] = []
-    rulings: list[str] = []
-    for w in wl:
-        if not isinstance(w, dict):
-            continue
-        kw = w.get("keyWordString") or w.get("wordNormal") or w.get("wordStr") or ""
-        at = w.get("wordAttrs") or []
-        wts = w.get("attrWeights") or {}
-        if not kw:
-            continue
-        for attr in at:
-            wt = wts.get(attr) if isinstance(wts, dict) else None
-            try:
-                wt = float(wt) if wt is not None else 0.0
-            except (TypeError, ValueError):
-                wt = 0.0
-            if wt < 0.5:
-                continue
-            cn = _SEG_ATTR_CN.get(attr, attr)
-            parts.append(f"{kw}={cn}({wt:g})")
-            for a, ruling in _SEG_RULES:
-                if attr == a:
-                    rulings.append(ruling)
-                    break
-    if not parts:
-        return ""
-    out = "分词参考: " + "，".join(parts)
-    if rulings:
-        out += "。" + "。".join(rulings)
-    return out
 
 
 # ---------------------------------------------------------------------------
@@ -751,87 +449,6 @@ def next_batch(plan: Plan, executed: set[int]) -> list[Intent]:
         out.append(it)
         if len(out) >= config.MAX_PLAN_STEPS:
             break
-    return out
-
-
-# ---------------------------------------------------------------------------
-# 卡通/动漫 双域并行（multi_tab）—— 对齐 「0821多意图&多业务」sheet 的
-# multi_tab_search 标注与 mock._dual_domain：首轮无历史 + 动画/动漫/卡通 query，
-# 一次下发两个并行 tab（children + vod），数据层用 parallel=true 标记。
-# 域内工具由下游 hcTools 权威解析（children → educ_search*，vod → vod_search*）。
-# ---------------------------------------------------------------------------
-# 双域触发词（对齐 0821 多意图&多业务 sheet multi_tab_search）：动画/动漫/卡通 均算。
-# 排除「动漫的片头曲/主题曲/原声/广播剧」这类把动画当定语、实为音乐/有声查询的句子
-# （0901 music/audio golden 里 4 条，触发 dual 会把它们从单域打回双域 → 回归）；
-# 再排除设备侧：开机/关机动画定制、AI 动画(=屏保)、动画定制 这类 tv_control 屏显功能
-# （0901 device golden 里 6 条），它们只是“动画”做名词定语，并非内容意图。
-_MULTI_TAB_RE = re.compile(r"动画|动漫|卡通|动画片")
-_MULTI_TAB_EXCL = re.compile(
-    r"片头曲|片尾曲|插曲|主题曲|原声|原声带|广播剧|配音|配乐|主题歌|片头歌|"
-    r"声优|音乐|歌曲|MV|旋律"
-    r"|(?:AI|ai|Ai)动画|(?:开机|关机)动画定制|动画设置|屏保|运动画面"
-)
-
-
-def _is_multi_tab(query: str, history: list | None = None) -> bool:
-    """判定是否走双域并行。仅无任何历史/上下文的纯首轮卡通/动画查询触发，
-    避免续跑/多轮把该 query 误判成双域。"""
-    q = (query or "").strip()
-    if not q:
-        return False
-    if history:
-        return False
-    if not _MULTI_TAB_RE.search(q):
-        return False
-    if _MULTI_TAB_EXCL.search(q):
-        return False
-    return True
-
-
-def _multi_tab_intents(query: str, tv_mode: str | int = "0") -> list[Intent]:
-    """双域并行的两个意图：children(tab) + vod(tab)，均无依赖、原句 src。"""
-    q = (query or "").strip()
-    return [
-        Intent(query=q, domain="children", tool="execute", index=1,
-               depends=False, dep_on=0, src=q),
-        Intent(query=q, domain="vod", tool="execute", index=2,
-               depends=False, dep_on=0, src=q),
-    ]
-
-
-# vod 克隆的 index 偏移：少儿意图原步号 +100。保证与计划步号(1..N)及续跑
-# toolHistory 里的 s{index} 不冲突——克隆只在本轮出 step，不写入续跑计划状态，
-# 下轮 _executed_indexes 读到 s101 时计划里无此 index，next_batch 自然忽略。
-_VOD_CLONE_INDEX_OFFSET = 100
-
-
-def _expand_children_vod(batch: list[Intent]) -> list[Intent]:
-    """少儿内容并行补影视：对 batch 里每条 children 意图追加一条同级无依赖 vod 意图。
-
-    少儿媒资库里影视一般也有，并行多出一个 vod_search，客户端可多渲染一个影视 tab。
-    工具+params 仍交 hcTools 各域权威解析（children→educ_search*，vod→vod_search*）。
-
-    - 只对 domain=="children" 的意图补；educ_history/qa 等其它域不补。
-    - 已有相同 query 的 vod 意图（如 multi_tab 已出 children+vod）不重复补。
-    - 克隆无依赖(depends=False)，当批即发；tool 置 "execute" 让 hcTools 重新选 vod 工具。
-    开关 children.add_vod（默认开，独立于 plan.skip_llm_rules 总闸）：
-    关闭(HC_RULE_CHILDREN_ADD_VOD=0) → 只出 children 单工具，用于 A/B 量化 delta。
-    """
-    if not config.rule_on("children.add_vod"):
-        return batch
-    existing_vod = {(it.query or "").strip() for it in batch if it.domain == "vod"}
-    out: list[Intent] = []
-    for it in batch:
-        out.append(it)
-        if it.domain != "children":
-            continue
-        q = (it.query or "").strip()
-        if q in existing_vod:
-            continue
-        existing_vod.add(q)
-        out.append(Intent(query=it.query, domain="vod", tool="execute",
-                          index=it.index + _VOD_CLONE_INDEX_OFFSET,
-                          depends=False, dep_on=0, src=it.src))
     return out
 
 
@@ -1012,9 +629,6 @@ def _tool_result_text(history: list[dict[str, Any]] | None) -> str:
     return ""
 
 
-# 多意图内容子句域路由：规则优先于 LLM。判定正则已收敛到 app.detect.content_domain_rule()
-# （单一事实源，见 detect.py），engine 只引用，不再各自内嵌正则。
-
 # ---------------------------------------------------------------------------
 # 多意图并行(多状态机)
 # ---------------------------------------------------------------------------
@@ -1026,142 +640,29 @@ class TraceStateMachine:
 
     async def tick(self, trace_id: str, query: str, history: list[dict[str, Any]] | None,
                    tv_mode: str | int = "0", device_id: str = "",
-                   trace_id_real: str = "",
-                   segment: dict[str, Any] | None = None) -> tuple[list[Intent], bool]:
+                   trace_id_real: str = "") -> tuple[list[Intent], bool]:
         """trace_id=状态 key(device_id)；trace_id_real=请求真实 traceId(审计用)。"""
         entry = self._load(trace_id)
         if entry is None:
             return await self._first(trace_id, query, history, tv_mode=tv_mode,
-                                     device_id=device_id, trace_id_real=trace_id_real,
-                                     segment=segment)
+                                     device_id=device_id, trace_id_real=trace_id_real)
         return await self._continue(trace_id, history, device_id=device_id,
                                     tv_mode=tv_mode, trace_id_real=trace_id_real)
 
     async def _first(self, trace_id: str, query: str, history,
                      tv_mode: str | int = "0", device_id: str = "",
-                     trace_id_real: str = "",
-                     segment: dict[str, Any] | None = None) -> tuple[list[Intent], bool]:
-        self._segment = segment  # 供 _plan 读取分词参考
-        # 所有绕过 LLM 的确定性拆分/守卫规则总闸：plan.skip_llm_rules（默认开=现有行为）。
-        # 关掉（HC_RULE_PLAN_SKIP_LLM_RULES=0）→ 跳过下方全部确定性分支，
-        # 整句直接交 _plan LLM 拆分（对齐”拆规则、用 LLM/RL 替代规则”方向；供 A/B 量化）。
-        skip_llm_rules = config.rule_on("plan.skip_llm_rules")
-        if skip_llm_rules:
-            # 单目标属性/知识直答：纯问句（谁/哪年/导演… 直接一条 qa，不让 LLM 拆两步）。
-            if config.rule_on("plan.single_obj_qa") and _is_single_obj_qa(query):
-                return [Intent(query=query, domain="qa", tool="execute", index=1, src=query)], True
-            # 卡通/动漫 双域并行：无历史首轮 + 动画/动漫/卡通 query → 一次两个并行 tab。
-            if config.rule_on("multiintent.multi_tab") and _is_multi_tab(query) and not (history or []):
-                return _multi_tab_intents(query, tv_mode=tv_mode), True
-            # 整句高置信单意图守卫：命中 vod_media_strong / qa_subjective 强制单步、
-            # 用原句交 hcTools 对应域权威解析（避免”看完《中国好声音》”被拆分误拆）。
-            # 双闸：显式串行标记 or 真设备命令词 → 放行给下方确定性拆分。
-            if (config.rule_on("plan.whole_sentence_guard") and str(tv_mode) != "6"
-                    and not re.search(r"然后|接着|之后|；|先.{0,8}再|再.{0,6}(?:把|调|搜|放|看)", query)
-                    and not re.search(
-                        r"音量|调大声|调小声|调大|调小|静音|亮度|全屏|分屏|投屏|息屏|关机|开机|重启|"
-                        r"快进|快退|暂停|切换到|切到|护眼模式|声音模式|音乐模式|杜比|环绕声|清晰度调|分辨率调",
-                        query)):
-                if detect._is_vod_media_strong(query):
-                    return [Intent(query=query, domain="vod", tool="execute", index=1, src=query)], True
-                if detect._is_qa_subjective(query):
-                    return [Intent(query=query, domain="qa", tool="execute", index=1, src=query)], True
-            # 多意图确定性拆解（规则优先）：命中断定”内容+设备”双目标 → 直接拆成两条
-            # 并行、无依赖意图(dep=[], stop=true)，两条独立交给 hcTools权威解析最终 tool+params。
-            mi = multiintent.split_multiintent(query)
-            if mi.hit and mi.device and mi.content:
-                mi = multiintent.split_multiintent(query)
-            if mi.hit and mi.device and mi.content:
-                # 规则已断言 mi.device 是设备子句，故域强置 device（除非 detect 命中高置信音乐
-                # 强信号，如"切换到七里香"实为歌曲切歌 → music_override 拉回 music）。
-                dev_dom = detect.detect_domain(mi.device, "device", tv_mode=tv_mode)
-                if dev_dom != "music":
-                    dev_dom = "device"
-                # 内容子句：先规则引擎判定；判空则用 LLM 从用户原话选域(裸实体依赖此兜底)。
-                cont_dom = detect.detect_domain(mi.content, "", tv_mode=tv_mode)
-                if not cont_dom or cont_dom == "qa":
-                    cont_dom = await self._content_domain(
-                        mi.content, trace_id=trace_id_real, device_id=device_id, tv_mode=tv_mode)
-                    cont_dom = cont_dom or detect.detect_domain(mi.content, "", tv_mode=tv_mode) or ""
-                content_int = Intent(query=mi.content, domain=cont_dom, tool="execute",
-                                     index=2, depends=False, dep_on=0, src=mi.content)
-                device_int = Intent(query=mi.device, domain=dev_dom, tool="execute",
-                                    index=1, depends=False, dep_on=0, src=mi.device)
-                return [device_int, content_int], True
-            # 串行「检索 → 提问」确定性拆分（规则优先）：搜X，然后(再)问X的Y →
-            # step1=检索(vod, 依赖回填排序词)，step2=对某部属性提问(qa→fan_knowledge_agent, dep=1)。
-            # 属于编排层(拆意图)，非 hcTools 工具参数层；工具+参数仍由下游 hcTools 权威解析。
-            sq = multiintent.split_serial_qa(query)
-            if sq.hit:
-                # 交给与 LLM 计划同一条派生管线：排序词回填 + 域审计(_with_source)，对齐 golden。
-                ser_plan = Plan(intents=[
-                    Intent(query=sq.search, domain="vod", tool="execute", index=1,
-                           depends=False, dep_on=0, src=query),
-                    Intent(query=sq.question, domain="qa", tool="execute", index=2,
-                           depends=False, dep_on=0, src=query),
-                ])
-                if config.rule_on("plan.sort_merge"):
-                    ser_plan = _merge_sort_word_to_retrieval(ser_plan)
-                ser_plan = _with_source(ser_plan, query, tv_mode=tv_mode,
-                                        segment=getattr(self, "_segment", None))
-                # 首批发依赖序号靠前的可用步(step1 检索)；step2 提问依赖 step1，留待续跑。
-                batch = next_batch(ser_plan, set())
-                if not batch:
-                    batch = ser_plan.intents
-                if batch:
-                    self._store(trace_id, ser_plan)
-                    # 两意图并行(无依赖)，首批即发全部：step1=检索、step2=fuzzy 提问无媒资候选
-                    # 可锚定时(路由到 fan_knowledge_agent)，并行反而保证 step2 必发(不依赖 step1 结果)。
-                    return batch, True
-        # 音乐电视频道频信号：查哪个频道有老歌/二胡/名曲 等 → 必须用原句给 hcTools
-            # （LLM 常拆成「搜索老歌节目」丢"台"信号 → 判 music_song_search，实际应 tvchannel）。
-            if detect._music_override(query) == "music" and re.search(
-                r"台|频道|CCTV|cctv|中央|卫视|广播频道", query
-            ):
-                tm_dom = detect.detect_domain(query, "music", tv_mode=tv_mode) or "music"
-                return [Intent(query=query, domain=tm_dom, tool="execute", index=1, src=query)], True
-        # 纯 LLM(T1) 分解：add_steps、依赖、落库、选工均一次 LLM 决策，编排层零规则。
-        # 弱设备词（色彩/画质/图像…）：语义可能（剧情/美学描述 vs 设备调参），
-        # 默认【不直接拆进 device】，只把 weak_device_hint 提示交给 LLM 判断。
-        # 开关 multi. multiintent.dev_weak_gate（默认关）：开=回滚旧行为（弱词直接拆、不提示），
-        # 保持 config._RULE_DEFAULTS 全开即零偏差的可量化原则。
+                     trace_id_real: str = "") -> tuple[list[Intent], bool]:
+        # 整句交 T0 LLM 拆分；弱设备词（色彩/画质/图像…）只作为提示交给 LLM 判断。
         weak_hint = multiintent.weak_device_hint(query)
-        if weak_hint and config.rule_on("multiintent.dev_weak_gate"):
-            weak_hint = ""  # 旧行为：弱词直接拆，不提示 LLM
         plan = await self._plan(query, trace_id=trace_id_real, device_id=device_id,
                                 tv_mode=tv_mode, has_history=bool(history),
-                                segment=getattr(self, "_segment", None),
                                 weak_hint=weak_hint)
-        # 串行"检索+排序提问"排序词回填。
-        if config.rule_on("plan.sort_merge"):
-            plan = _merge_sort_word_to_retrieval(plan)
         if not plan.intents:
-            # LLM 没出方案（空/纯聊天/失败）→ 兜底：单一自包含意图（非语言规则），
-            # 但仍过 detect 判域，息屏(tv_mode=6)知识/点歌/有声可被纠到对应域；
-            # 亮屏不干预（llm_domain="" 保留空，交由外部）。
-            dom = detect.detect_domain(query, "", tv_mode=tv_mode,
-                                    segment=getattr(self, "_segment", None))
-            if not dom:
-                dom = ""
-            return [Intent(query=query, domain=dom, tool="execute", index=1, src=query)], True
-        plan = _with_source(plan, query, tv_mode=tv_mode,
-                            segment=getattr(self, "_segment", None))
-        # 首轮【单意图】计划：T0 常给原子 query 加动作/语序前缀(如“老版上海滩”→“播放老版上海滩”),
-        # 这类改写会误导 hcTools 判 action(search↔play)。对原子单意图强制恢复为原句(query)，
-        # 让 hcTools 以用户原话解析(工具选型以原文为准)。多意图/多步(内部依赖改写)不受影响。
-        # 开关 plan.single_intent_llm_rewrite（默认关）：开→跳过恢复，直接信任 LLM 改写后的 q+域
-        # 交给 hcTools（拆规则/交权 LLM 用）。默认关=保持现状逐字节一致。
-        if plan.total() == 1 and not config.rule_on("plan.single_intent_llm_rewrite"):
-            only = plan.intents[0]
-            # 恢复原句后，用它重新判域：T0 给原子 query 加“播放/搜索”前缀时，
-            # _with_source 是在前缀句上判的域。原句才是用户真实意图，也让域 badcase/
-            # 信号词表（按原句归一）准确命中（如“最近开播、女主演技好的古装剧”→vod，
-            # “搜索最近开播、古装剧”前缀不加域 badcase 反而判 qa）。
-            restored = detect.detect_domain(query, only.domain, tv_mode=tv_mode,
-                                            segment=getattr(self, "_segment", None))
-            plan = Plan(intents=[Intent(query=query, domain=restored or only.domain, tool=only.tool,
-                                        index=only.index, depends=only.depends, dep_on=only.dep_on,
-                                        src=only.src)])
+            # LLM 没出方案（空/纯聊天/失败）→ 兜底：原句单意图、空域，
+            # 由 _build_steps 的 execute→qa 兜底落到 fan_knowledge_agent。
+            return [Intent(query=query, domain="", tool="execute", index=1, src=query)], True
+        # 域与 q 完全信任 LLM（单意图也不恢复原句）。
+        plan = _with_source(plan, query)
         executed = _executed_indexes(history)
         batch = next_batch(plan, executed)
         if not batch:
@@ -1171,43 +672,11 @@ class TraceStateMachine:
             self._store(trace_id, plan)
         return batch, stop
 
-    async def _content_domain(self, query: str, trace_id: str = "", device_id: str = "",
-                              tv_mode: str | int = "0") -> str:
-        """内容子句域路由：规则 detect 对裸实体(队名/歌名/剧名)判空时，
-        先用确定性内容域规则，再未命中才让 LLM 从用户原词选域；仅用于内容意向、不改设备条域。"""
-        rule = detect.content_domain_rule(query)
-        if rule:
-            return rule
-        try:
-            msg = await llm.chat(
-                [{"role": "system", "content": CONTENT_DOMAIN_PROMPT},
-                 {"role": "user", "content": query}],
-                model=config.MODEL,
-                metadata=build_llm_metadata(
-                    purpose="content_domain", same_turn=True, op="classify",
-                    device_id=device_id, trace_id=trace_id, tv_mode=tv_mode,
-                ),
-            )
-            if "__error__" in msg:
-                return ""
-            out = llm.text_of(msg).strip().lower()
-            for d in ("vod", "music", "audio", "sports", "education", "children", "qa"):
-                if d in out:
-                    return d if d != "qa" else ""
-        except Exception:  # noqa: BLE001
-            return ""
-        return ""
-
     async def _plan(self, query: str, trace_id: str = "", device_id: str = "",
                     tv_mode: str | int = "0", has_history: bool = False,
                     has_short_memory: bool = False,
-                    segment: dict[str, Any] | None = None,
                     weak_hint: str = "") -> Plan:
-        hint = _segment_hint(segment)
         user = f"用户请求：{query}"
-        if hint:
-            # 分词信号仅供歧义消解参考（如 裸集数35集/歌名），不替代用户原文。
-            user += f"\n【{hint}】"
         if weak_hint:
             # 弱设备词提示：语义两可（剧情美学 vs 设备调参），交 LLM 判定是否拆设备意图。
             user += f"\n【判定提示】{weak_hint}"
@@ -1340,16 +809,6 @@ async def _hctools_params(it: Intent) -> tuple[str, dict[str, Any], str]:
     domain_key = _HCTOOLS_DOMAINS.get(it.domain)
     if not domain_key:
         return "", {}, ""
-    # 体育裸队名短路：整句精确等于队名词表某条 → 直发 sports_team_search，不走 hcTools。
-    # 精确全串匹配 → 带额外意图的句子（"nba雄鹿比赛视频""湖人vs森林狼"）不命中，零回归。
-    if domain_key == "sports" and config.rule_on("sports.team_shortcut"):
-        # it.query 是 planner 改写后的句子(可能已非裸队名，如"德国男篮"→"搜索德国男篮比赛视频")，
-        # it.src 是用户原始输入。二者任一精确等于队名词表即短路。
-        # 不能写 is_bare_team_name(it.query or it.src)：or 取首个非空=改写句，永远吃不到 src。
-        for cand in (it.src, it.query):
-            if detect.is_bare_team_name(cand or ""):
-                team = (cand or "").strip().strip("。！!?？，,、.~～ 　")
-                return "sports_team_search", {"sport_team": team}, "rule:sports_team_shortcut"
     try:
         # 用原子/自包含意图 it.query 调 hcTools：串行多意图里 src 是整句，
         # 直接用整句会让 hcTools 把"然后再问…评分最高"等后续意图当成本步搜索条件，
@@ -1371,20 +830,17 @@ async def _build_steps(
 ) -> tuple[list[dict[str, Any]], bool]:
     """组装本轮 steps。
 
-    返回 (steps, turnslow_force_stop)：第二项仅在 `plan.turnslow_fallback` 开启且
-    本轮回退到 qa 终点时为 True（供 forceStop 强制终止）；开关关闭时恒为 False，
-    此时 forceStop 仍等于 stop，与引入前逐字节一致。
+    返回 (steps, turnslow_force_stop)：第二项仅在本轮 turnSlow 兜底落到 qa 终点时为 True
+    （供 forceStop 强制终止）。
     """
     # turnSlow 兜底路由：上一步返回过 turnSlow 的工具，本步禁止重发 → 换兜底工具。
-    # 开关关闭时 turnslow_hits 恒为空，下方换工具分支不生效（零行为变化）。
-    turnslow_hits = (_turnslow_steps(history)
-                     if config.rule_on("plan.turnslow_fallback") else {})
+    turnslow_hits = _turnslow_steps(history)
     forced = False
     # 批内各 step 的 hcTools 调用相互独立，并发执行
     results = await asyncio.gather(*[_hctools_params(it) for it in batch])
     steps: list[dict[str, Any]] = []
     for it, (tool, params, hit_source) in zip(batch, results):
-        # 单意图信号：_first 对原子单意图会恢复原句(query=src)，此时 query==src；
+        # 单意图信号：query==src（如 LLM 失败兜底的原句意图）；
         # 多意图里 src 恒为整句(如"少儿编程…；放首歌")、query 是原子子意图。
         single = it.src and it.src == it.query
         # hcTools 返回的 params.retext 是其规范化回显句(如"放首歌")。
@@ -1457,7 +913,7 @@ async def _build_steps(
         }
         if hit_source:
             step["hitSource"] = hit_source
-        # 透传真正发给 hcTools 的改写后 query（评估/审计用；badcase raw 需匹配它）
+        # 透传真正发给 hcTools 的改写后 query（评估/审计用）
         step["hitQuery"] = it.query
         steps.append(step)
     return steps, forced
@@ -1514,21 +970,9 @@ async def build_response(req) -> dict[str, Any]:
     # 串行续跑状态按 device_id 存（换 request 用 device_id 识别会话），而非 trace_id——
     # 串行 N 步 = N 个 SSE 请求 = N 个不同 trace_id，只有 device 稳定才能跨轮推进依赖链。
     batch, stop = await _SM.tick(device_id, mt_query, history, tv_mode=tv_mode,
-                                 device_id=device_id, trace_id_real=trace_id,
-                                 segment=req.data.segment)
-    # 多轮继承：本轮某个意图 detect 判空(无域信号)时，沿用上一轮落定的稳定域，
-    # 避免"律动感强的""适合零基础的"这类漂移到无关域。
-    _inherit_mt_domain(device_id, batch)
-    # 歌曲名锚兜底：LLM 改写仍可能把"播一下这个歌"压成裸的「播放《吉量》」（丢“歌”字），
-    # detect 对裸书名号无 music 锚时会保 LLM 的 vod。这里在上一轮应答里找《吉量》类歌名，
-    # 匹配则把该意图强置 music（让 hcTools 的 music_song_search 兜底检索，不误判影视）。
-    # 仅对"播放/放《X》"形的裸书名号意图生效，不影响带歌/歌曲/听 字样的正常句。
-    _reseed_bare_song(batch, device_id=device_id, cur_query=query, short_memory=short_memory)
-    # 少儿内容并行补影视：域定下后(含 reseed 改判)对每条 children 意图追加同级 vod 意图，
-    # 产出 educ_search_all + vod_search 两个并行工具（少儿媒资影视库一般也有）。
-    batch = _expand_children_vod(batch)
-    # multi-tab 双域并行标记：首轮无历史卡通查询由 _first 直接切成 children+vod
-    # 两个并行无依赖意图。有双方才标记 parallel，供客户端并发渲染两个 tab。
+                                 device_id=device_id, trace_id_real=trace_id)
+    # 双域并行标记：首轮无历史、本批恰好是 children+vod 两个并行意图时标记 parallel，
+    # 供客户端并发渲染两个 tab。
     is_dual_tab = stop and not history and len(batch) == 2 and (
         {i.domain for i in batch} == {"children", "vod"}
     )
@@ -1542,11 +986,11 @@ async def build_response(req) -> dict[str, Any]:
     _bind_sports_short_memory_match_id(steps, short_memory, query)
     # 本轮 answer 摘要：取各 step 的 retext，供下一轮多轮改写引用具体内容/序号。
     turn_answer = "；".join(s.get("retext") or "" for s in steps if s.get("retext"))
-    # 本轮落定域：优先取 batch 里第一个非空域(多意图单域为主)，用于下轮弱句继承。
+    # 本轮落定域：取 batch 里第一个非空域，写入多轮上下文（下一轮改写的 LLM metadata 用）。
     round_domain = next((i.domain for i in batch if i.domain), "")
     # 写入 _MT_CONTEXT 的 q 用【真正改写/执行】的 mt_query，而非用户原始 query——
     # _MT_CONTEXT 语义即“真实 query 链”，供跨轮合并时还原真实执行语境。
-    _mt_append_answer(device_id, mt_query, turn_answer, query_raw=query, domain=round_domain)
+    _mt_append_answer(device_id, mt_query, turn_answer, domain=round_domain)
     body = {
         "code": 200, "message": "success", "traceId": trace_id, "deviceId": device_id,
         "data": {
@@ -1556,14 +1000,9 @@ async def build_response(req) -> dict[str, Any]:
         },
         "stop": stop,
         # forceStop=异常情况下的强制终止，runtime 不可 override（区别于 stop=正常续链、
-        # 可被 runtime override）。按开关二分为两种口径：
-        #   - 开关关（旧口径）：恒等于 stop，与开关引入前逐字节一致。
-        #   - 开关开（新口径）：=【异常标志】，正常路径恒 False，仅 turnSlow 兜底落到 qa
-        #     终点（链路走尽）时 True。不再镜像 stop —— 故 forceStop 与 stop 语义解耦，
-        #     forceStop ⇒ stop 的不变式不成立（多步中途翻车可 stop=false 而 forceStop=true，
-        #     多步逻辑本轮未动）。开关开启态下 runtime 应只看 forceStop 判异常终止。
-        "forceStop": (turnslow_force_stop if config.rule_on("plan.turnslow_fallback")
-                      else stop),
+        # 可被 runtime override）。正常路径恒 False，仅 turnSlow 兜底落到 qa 终点
+        # （链路走尽）时 True。与 stop 语义解耦：forceStop ⇒ stop 的不变式不成立。
+        "forceStop": turnslow_force_stop,
     }
     if is_dual_tab:
         body["data"]["parallel"] = True

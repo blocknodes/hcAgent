@@ -14,7 +14,6 @@ class Memory(BaseModel):
 class SlowData(BaseModel):
     query: str | None = ""
     tvMode: str | int | None = None
-    segment: dict[str, Any] | None = Field(default_factory=dict)
     memory: Memory | None = Field(default_factory=Memory)
     toolHistory: list[dict[str, Any]] | None = Field(default_factory=list)
     toolList: list[Any] | None = Field(default_factory=list)

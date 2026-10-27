@@ -113,7 +113,7 @@ def build_llm_metadata(
 ) -> dict[str, Any]:
     """构造一次 LLM 调用的业务 metadata。
 
-    - purpose: 本次调用的业务类型（plan/mt_rewrite/step_rewrite/content_domain）
+    - purpose: 本次调用的业务类型（plan/mt_rewrite/step_rewrite）
     - same_turn: 是否与当前请求【同一个交互轮次】内发起：
         True  = 随本轮请求同步派生（T0/tool 解析等，属当前轮）
         False = 由后续请求触发的续跑（T1 改写在新的 toolHistory 请求轮）或跨轮多轮改写
@@ -146,18 +146,3 @@ def build_llm_metadata(
     if extra:
         md.update({k: str(v) for k, v in extra.items()})
     return md
-
-
-# 多意图拆分后，内容子句的域判定。规则 detect 对裸实体(队名/歌名/剧名/书名)常判空，
-# 需 LLM 从用户原话选出内容所属业务域。
-CONTENT_DOMAIN_PROMPT = """你是电视语音助手。我们在同一句用户请求里并行派生了多条意图，其中一条是对【内容检索】。
-请判断这条内容要检索哪个业务域。只能从下面选一个英文域：
-  vod        影视/电影/电视剧/纪录片/戏曲/话剧（看视频）
-  music      音乐/歌曲/单曲/专辑/MV/歌名（听歌）
-  audio      有声书/图书/评书/广播剧/演讲/听书（听书/音频）
-  sports     体育/球赛/球队/赛事/比赛/比分
-  education  教育/课本/课程/年级/学科/教案/学习
-  children  儿童动画/卡通/少儿节目/儿歌/儿童故事
-  qa        其它/通用问答
-输出：只输出一个英文域单词(vod/music/audio/sports/education/children/qa)，不要多余文字。
-内容请求：{query}"""
