@@ -677,6 +677,69 @@ def _executed_indexes(history: list[dict[str, Any]] | None) -> set[int]:
     return out
 
 
+# ---------------------------------------------------------------------------
+# turnSlow 兜底路由（协议派生，非语言规则：查表，无词表无 LLM）
+# ---------------------------------------------------------------------------
+# 契约来源：飞书《工具转慢链路的场景》。工具处理不了时不返回业务结果，而返回
+#   {"code":"200","message":"success","data":{"reason":<R>,"turnSlow":true}}
+# 上一步的这条结果会随 data.toolHistory[].result 回到本服务，于是：
+#   1) 本步禁止重发「刚返回过 turnSlow 的工具」（线程讨论原话："慢链路不应该再出同一个工具"）；
+#   2) 改发文档表规定的兜底工具。
+# 判定完全从 toolHistory 推导，不新增状态（history 每轮全量回传，天然幂等）。
+#
+# 兜底目标分两类，这决定 forceStop：
+#   - 同域 fuzzy 搜索（vod/education）：还有退路 → stop 按业务正常算，forceStop=False。
+#   - fan_knowledge_agent（qa，链路终点）：走到它就是最后一发 → forceStop=True。
+#
+# reason 缺省按 NO_DATA 处理：线上实测有裸 {"turnSlow": true}（无 reason 字段）。
+_TURNSLOW_NO_REASON = "NO_DATA"
+
+# reason -> (按域分流的兜底工具)。同域 fuzzy 只对 vod/education 有定义（文档表口径）；
+# 其余 reason / 未知 reason / 缺省一律 → fan_knowledge_agent。
+_TURNSLOW_FUZZY = {
+    "NO_SLOT_MAPPING_VALUE": {"vod": "vod_fuzzy_search", "education": "edu_fuzzy_search"},
+}
+# 兜底落到 qa 智能体（链路终点）时用的工具名。
+_TURNSLOW_QA_TOOL = "fan_knowledge_agent"
+
+
+def _turnslow_steps(history: list[dict[str, Any]] | None) -> dict[str, str]:
+    """从 toolHistory 提取「返回过 turnSlow 的工具」→ reason。
+
+    返回 {toolName: reason}；只认 data.turnSlow is True 的条目。
+    同一工具多次出现时保留首次的 reason（首个失败原因即路由依据）。"""
+    out: dict[str, str] = {}
+    for item in history or []:
+        if not isinstance(item, dict):
+            continue
+        raw = item.get("result")
+        if isinstance(raw, str):
+            raw = _load_maybe_str(raw)
+        if not isinstance(raw, dict):
+            continue
+        data = raw.get("data")
+        if not isinstance(data, dict) or data.get("turnSlow") is not True:
+            continue
+        tool = item.get("toolName") or item.get("tool") or ""
+        if not isinstance(tool, str) or not tool:
+            continue
+        if tool in out:
+            continue
+        reason = data.get("reason")
+        out[tool] = reason if isinstance(reason, str) and reason else _TURNSLOW_NO_REASON
+    return out
+
+
+def _turnslow_route(tool: str, reason: str, domain: str) -> str:
+    """按文档表给出兜底工具名；无同域模糊兜底时收口 fan_knowledge_agent。"""
+    by_domain = _TURNSLOW_FUZZY.get(reason.upper())
+    if by_domain:
+        target = by_domain.get(domain)
+        if target:
+            return target
+    return _TURNSLOW_QA_TOOL
+
+
 def next_batch(plan: Plan, executed: set[int]) -> list[Intent]:
     """下一批：无依赖全发(并行)；依赖意图需其依赖项已执行(串行)。"""
     out: list[Intent] = []
@@ -1303,7 +1366,20 @@ async def _hctools_params(it: Intent) -> tuple[str, dict[str, Any], str]:
 # ---------------------------------------------------------------------------
 # 响应组装
 # ---------------------------------------------------------------------------
-async def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
+async def _build_steps(
+    batch: list[Intent], history: list[dict[str, Any]] | None = None,
+) -> tuple[list[dict[str, Any]], bool]:
+    """组装本轮 steps。
+
+    返回 (steps, turnslow_force_stop)：第二项仅在 `plan.turnslow_fallback` 开启且
+    本轮回退到 qa 终点时为 True（供 forceStop 强制终止）；开关关闭时恒为 False，
+    此时 forceStop 仍等于 stop，与引入前逐字节一致。
+    """
+    # turnSlow 兜底路由：上一步返回过 turnSlow 的工具，本步禁止重发 → 换兜底工具。
+    # 开关关闭时 turnslow_hits 恒为空，下方换工具分支不生效（零行为变化）。
+    turnslow_hits = (_turnslow_steps(history)
+                     if config.rule_on("plan.turnslow_fallback") else {})
+    forced = False
     # 批内各 step 的 hcTools 调用相互独立，并发执行
     results = await asyncio.gather(*[_hctools_params(it) for it in batch])
     steps: list[dict[str, Any]] = []
@@ -1338,6 +1414,34 @@ async def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
                 params = {"messages": [{"role": "user", "content": fb_q}],
                           "riskRespStrategy": "all_replace"}
                 hit_source = "execute_fallback_qa"
+        # turnSlow 兜底路由：本步工具刚刚返回过 turnSlow（"处理不了"）→ 禁止重发，
+        # 按文档表换兜底工具。放在 execute→qa 兜底【之后】：否则 normalize 前的
+        # "execute" 会绕过比对，漏掉该换的情况。
+        if turnslow_hits and tool_name in turnslow_hits:
+            reason = turnslow_hits[tool_name]
+            target = _turnslow_route(tool_name, reason, it.domain)
+            fb_q = it.src if single else (it.query or it.src or "")
+            if target == _TURNSLOW_QA_TOOL:
+                # qa 是链路终点：走到它就是最后一发，forceStop 置真（runtime 不可 override），
+                # 防止"工具出错→换兜底→兜底也出错"被反复回调。
+                qa_tool, qa_params, qa_hit = await hctools.predict(fb_q, "qa")
+                if qa_tool:
+                    tool_name = qa_tool
+                    params = qa_params
+                    # 审计：保留 turnSlow 换工具的出处（qa_hit 是 hcTools 内部判据，二者都留）
+                    hit_source = f"turnslow_fallback_qa:{qa_hit}" if qa_hit else "turnslow_fallback_qa"
+                else:
+                    tool_name = _TURNSLOW_QA_TOOL
+                    params = {"messages": [{"role": "user", "content": fb_q}],
+                              "riskRespStrategy": "all_replace"}
+                    hit_source = "turnslow_fallback_qa"
+                forced = True
+            else:
+                # 同域模糊搜索兜底：整句原话直给，参数恒可构造（无 DSL）。
+                tool_name = target
+                params = ({"query": fb_q} if target == "vod_fuzzy_search"
+                          else {"retext": fb_q})
+                hit_source = f"turnslow_fallback:{reason}"
         if it.include_tool_result and it.tool_result:
             # 串行预测第二步：messages 仍由 qa schema 正常生成，s1 返回字符串单独透传。
             params = dict(params) if isinstance(params, dict) else {}
@@ -1356,7 +1460,7 @@ async def _build_steps(batch: list[Intent]) -> list[dict[str, Any]]:
         # 透传真正发给 hcTools 的改写后 query（评估/审计用；badcase raw 需匹配它）
         step["hitQuery"] = it.query
         steps.append(step)
-    return steps
+    return steps, forced
 
 
 _SM = TraceStateMachine()
@@ -1428,7 +1532,7 @@ async def build_response(req) -> dict[str, Any]:
     is_dual_tab = stop and not history and len(batch) == 2 and (
         {i.domain for i in batch} == {"children", "vod"}
     )
-    steps = await _build_steps(batch)
+    steps, turnslow_force_stop = await _build_steps(batch, history)
     # 胜负预测走真正的串行续跑：首轮只发 s1 并 stop=false；runtime 回传
     # toolHistory 后，状态机才发依赖 s1 的 fan_knowledge_agent(s2)。
     if not history and _arm_forecast_serial_plan(device_id, batch, steps, query):
@@ -1451,7 +1555,15 @@ async def build_response(req) -> dict[str, Any]:
             "steps": steps,
         },
         "stop": stop,
-        "forceStop": stop,  # 强制停止：当前与 stop 保持一致
+        # forceStop=异常情况下的强制终止，runtime 不可 override（区别于 stop=正常续链、
+        # 可被 runtime override）。按开关二分为两种口径：
+        #   - 开关关（旧口径）：恒等于 stop，与开关引入前逐字节一致。
+        #   - 开关开（新口径）：=【异常标志】，正常路径恒 False，仅 turnSlow 兜底落到 qa
+        #     终点（链路走尽）时 True。不再镜像 stop —— 故 forceStop 与 stop 语义解耦，
+        #     forceStop ⇒ stop 的不变式不成立（多步中途翻车可 stop=false 而 forceStop=true，
+        #     多步逻辑本轮未动）。开关开启态下 runtime 应只看 forceStop 判异常终止。
+        "forceStop": (turnslow_force_stop if config.rule_on("plan.turnslow_fallback")
+                      else stop),
     }
     if is_dual_tab:
         body["data"]["parallel"] = True

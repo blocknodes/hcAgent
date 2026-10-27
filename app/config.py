@@ -91,6 +91,14 @@ _RULE_DEFAULTS: dict[str, bool] = {
     # 开 → 单意图不再强制恢复原句，直接把 LLM 改写后的 q+域交给 hcTools（拆规则/交权给 LLM 用）。
     # 默认 False = 保持现状（单意图仍恢复原句，逐字节与引入前一致）。
     "plan.single_intent_llm_rewrite": False,  # 单意图信任 LLM 改写（默认关）
+    # turnSlow 兜底路由 + forceStop 强制停止（飞书《工具转慢链路的场景》）。
+    # 上一步工具返回 data.turnSlow=true（处理不了）→ 本步禁止重发同一工具、改发兜底工具；
+    # 兜底落到 fan_knowledge_agent（qa，链路终点）时同时置 forceStop=true —— runtime 不可
+    # override，防"工具出错→换兜底→兜底也出错"的死循环（《零散想法与感悟沉淀》定义：
+    # stop=正常续链、可被 runtime 覆盖；forceStop=异常终止、不可覆盖）。
+    # 【默认关】：此时 forceStop 恒等于 stop，与开关引入前逐字节一致。
+    # 开：HC_RULE_PLAN_TURNSLOW_FALLBACK=1。
+    "plan.turnslow_fallback": False,
     # 体育裸队名短路：整句精确等于队名词表某条 → 直发 sports_team_search，不走 hcTools。
     # 默认开；HC_RULE_SPORTS_TEAM_SHORTCUT=0 关闭 → 队名查询回退 hcTools 解析。
     "sports.team_shortcut": True,
